@@ -4,10 +4,9 @@
 
 The memory interop library (sub-component #1) is available via
 APT/Debian installation `sudo apt install intel-dlstreamer-cpp` and
-installed into folder [/opt/intel/dlstreamer/include/]{.title-ref}, see
+installed into folder `/opt/intel/dlstreamer/include/`, see
 page
-`Memory Interop and C++ abstract interfaces <cpp_interfaces>`{.interpreted-text
-role="doc"} for details.
+[Memory Interop and C++ abstract interfaces](./cpp_interfaces.md) for details.
 
 ## C++ elements and GStreamer elements
 
@@ -17,8 +16,8 @@ libraries and packaged into separate Debian packages with corresponding
 dependencies on other packages.
 
 Packages typically install two .so files named
-[libgstdlstreamer_XYZ.so]{.title-ref} and
-[libdlstreamer_XYZ.so]{.title-ref} where XYZ is name of framework the
+`libgstdlstreamer_XYZ.so` and
+`libdlstreamer_XYZ.so` where XYZ is name of framework the
 elements based on. The first .so file contains all C++ elements, the
 second is tiny .so file with GStreamer wrappers and registered as
 GStreamer plug-in.
@@ -26,15 +25,15 @@ GStreamer plug-in.
 The following Debian packages are currently distributed in scope of
 Intel® DL Streamer Architecture 2.0.
 
-  Debian package               Dependencies
-  ---------------------------- ---------------------------------------------------------------------------
-  intel-dlstreamer-cpp         libc6-dev
-  intel-dlstreamer-dpcpp       intel-oneapi-compiler-dpcpp-cpp-runtime, level-zero, intel-level-zero-gpu
-  intel-dlstreamer-ffmpeg      libavcodec-dev, libavformat-dev, libavutil-dev, libswscale-dev
-  intel-dlstreamer-opencl      ocl-icd-libopencl1, intel-opencl-icd
-  intel-dlstreamer-opencv      libopencv-imgproc-dev
-  intel-dlstreamer-vaapi       intel-media-va-driver-non-free, libva-drm2, libva2
-  intel-dlstreamer-openvino:   
+| Debian package | Dependencies |
+|---|---|
+| intel-dlstreamer-cpp | libc6-dev |
+| intel-dlstreamer-dpcpp | intel-oneapi-compiler-dpcpp-cpp-runtime, level-zero, intel-level-zero-gpu |
+| intel-dlstreamer-ffmpeg | libavcodec-dev, libavformat-dev, libavutil-dev, libswscale-dev |
+| intel-dlstreamer-opencl | ocl-icd-libopencl1, intel-opencl-icd |
+| intel-dlstreamer-opencv | libopencv-imgproc-dev |
+| intel-dlstreamer-vaapi | intel-media-va-driver-non-free, libva-drm2, libva2 |
+| intel-dlstreamer-openvino: | &nbsp; |
 
 ## Packages content
 

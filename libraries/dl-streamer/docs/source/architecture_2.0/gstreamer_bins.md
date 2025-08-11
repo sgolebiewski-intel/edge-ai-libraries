@@ -33,12 +33,12 @@ for preserving original frame.
 ## Pipelines with branches
 
 Pipeline with branches is a bit tricky to write. So, an auxiliary
-element was introduced \-- `processbin`. Is simplifies writing pipelines
+element was introduced - `processbin`. Is simplifies writing pipelines
 shown on [High level bin elements architecture]{.title-ref} graph.
 
-Here\'s an example of the same pipeline without and with `processbin`:
+Here's an example of the same pipeline without and with `processbin`:
 
-``` sh
+```sh
 # Without processbin
 filesrc location=$FILE ! decodebin3 ! \
 tee name=t t. ! queue !  meta_aggregate name=mux ! fakesink \
@@ -56,17 +56,17 @@ processbin \
 fakesink
 ```
 
-In some way, `processbin` flattens the pipeline, so it\'s easier to
+In some way, `processbin` flattens the pipeline, so it's easier to
 write, read, and modify. Internally, it builds sub-pipeline which is
 shown on [High level bin elements architecture]{.title-ref} diagram.
 
 ## Pre-processing
 
-Block [Pre-processing]{.title-ref} on diagram [High level bin elements
-architecture]{.title-ref} may contain one or multiple *low-level
+Block `Pre-processing` on the `High level bin elements
+architecture` diagram may contain one or multiple *low-level
 elements* to convert `video/x-raw` or `audio/x-raw` buffers into data
-format and layout required by [processing element]{.title-ref},
-according to caps negotiation with [processing element]{.title-ref}.
+format and layout required by `processing element`,
+according to caps negotiation with `processing element`.
 
 ### Video Pre-processing
 
@@ -101,20 +101,19 @@ where *PRIMARY* is used for as many operations as possible, and
 The following table summarizes default preprocessing backend depending
 on decode or inference device. Note that preprocessing elements
 communicate with decode element only by caps negotiation, and assume CPU
-decode if caps negotiated to [memory:System]{.title-ref} and GPU decode
-if caps negotiated to [memory:VASurface]{.title-ref}. You can override
-default pre-processing backend by setting property
-[pre-process-backend]{.title-ref} in bin elements, however not all
+decode if caps negotiated to `memory:System` and GPU decode
+if caps negotiated to `memory:VASurface`. You can override
+default pre-processing backend by setting the `pre-process-backend` property in bin elements, however not all
 combinations of decode and inference devices and pre-processing backends
 are compatible, and overriding pre-processing backend may impact
 performance.
 
-  Decode device   Inference device   Default Pre-processing Backend
-  --------------- ------------------ --------------------------------
-  CPU             CPU                gst-opencv
-  CPU             GPU                gst-opencv
-  GPU             CPU                vaapi
-  GPU             GPU                vaapi-surface-sharing
+| Decode device | Inference device | Default Pre-processing Backend |
+| --- | --- | --- |
+| CPU | CPU | gst-opencv |
+| CPU | GPU | gst-opencv |
+| GPU | CPU | vaapi |
+| GPU | GPU | vaapi-surface-sharing |
 
 #### Video Pre-processing Elements
 
@@ -130,7 +129,7 @@ executed on full frame.
 In case of per-ROI inference, element `roi_split` inserted before
 pre-processing elements. The `roi_split` iterates over all
 `GstVideoRegionOfInterestMeta` attached to `GstBuffer`, and produces as
-many `GstBuffer`\'s as metadata found in original buffer. Every produced
+many `GstBuffer`'s as metadata found in original buffer. Every produced
 `GstBuffer` has single `GstVideoCropMeta` with rectangle (x,y,w,h)
 according to `GstVideoRegionOfInterestMeta` in original buffer.
 
@@ -173,7 +172,7 @@ parallelization and performance:
 
 If `batch_size` property specified in bin element (and passed to
 inference element), one of these elements negotiate caps with inference
-element on `other/tensors` media type having **\'N\'** dimension in
+element on `other/tensors` media type having **'N'** dimension in
 tensor shape greater than 1.
 
 Element `vaapi_batch_proc` accumulate internally *N* frames, then submit
@@ -207,8 +206,8 @@ corresponding (one of *M*) stream.
 
 ## Processing
 
-Block [Processing]{.title-ref} on diagram [High level bin elements
-architecture]{.title-ref} usually represented as single element.
+Block `Processing` on the `High level bin elements
+architecture` diagram usually represented as single element.
 
 For inference this is an element that infer a result from trained neural
 network using some inference engine as backend. An inference element
@@ -225,8 +224,8 @@ input and output caps once NN is read.
 
 ## Post-processing
 
-The [Post-processing]{.title-ref} box on diagram [High level bin
-elements architecture]{.title-ref} usually consist of single element.
+The `Post-processing` box on the `High level bin
+elements architecture` diagram usually consist of single element.
 
 In case of inference a post-processing element is responsible for
 decoding output tensor and converting it into metadata (ex.,
@@ -242,7 +241,7 @@ of media analytics pipeline. Most of Intel® DL Streamer bin elements
 internally use auxiliary element `processbin` to create a processing
 sub-pipeline.
 
-### Element `video_inference`
+### "Video_inference" Element
 
 This is generic inference element, it serves as base for `object_detect`
 and `object_classify` bin elements. However, it can also be used as is.
@@ -290,7 +289,7 @@ digraph gpu_cpu {
 
     subgraph cluster_pre {
 
-    :   
+    :
 
         style=\"rounded, dotted\"
 
@@ -373,7 +372,7 @@ digraph queue {
 
     subgraph cluster_pre {
 
-    :   
+    :
 
         style=\"rounded, dotted\"
 
@@ -395,14 +394,13 @@ digraph queue {
 }
 :::
 
-### Element `object_detect`
+### "Object_detect" Element
 
 The `object_detect` element is based on `video_inference` and sets
 post-processing element to `tensor_postproc_detection` by default. It
 also disables attaching raw tensor data as metadata by default.
 
-### Element `object_classify`
+### "Object_classify" Element
 
 The `object_classify` element is based on `video_inference` and sets
-[inference-region]{.title-ref} property to [roi-list]{.title-ref} by
-default.
+`inference-region` property to `roi-list` by default.

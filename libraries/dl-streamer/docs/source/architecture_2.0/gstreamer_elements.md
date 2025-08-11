@@ -43,7 +43,7 @@ digraph {
 
 To register C++ element with GStreamer, `register_elements_gst_plugin`
 function is used. It should be called from `plugin_init` function of
-GStreamer plugin, here\'s an example:
+GStreamer plugin, here's an example:
 
 ``` cpp
 static gboolean plugin_init(GstPlugin *plugin) {
@@ -56,7 +56,7 @@ static gboolean plugin_init(GstPlugin *plugin) {
 In case of using C++ element in GStreamer pipeline, the shim
 `GstDlsTransform` is responsible for element creation and operation. The
 following sequence diagram shows how `GstDlsTransform` communicates with
-GStreamer and an C++ element. It doesn\'t show all possible calls, but
+GStreamer and an C++ element. It doesn't show all possible calls, but
 only the main ones.
 
 ::: {.graphviz caption="High-level sequence diagram of element creation and operation"}

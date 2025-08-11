@@ -72,14 +72,9 @@ between media frameworks and OpenCL/SYCL
 
 Intel® DL Streamer hides complexity of dealing with low-level interfaces
 and greatly simplifies memory interop by defining abstract interfaces
-`Tensor <api_ref/class_dlstreamer_Tensor>`{.interpreted-text role="doc"}
-and
-`MemoryMapper <api_ref/class_dlstreamer_MemoryMapper>`{.interpreted-text
-role="doc"}, and providing header-only implementation of the
-`` `Tensor ``[ interface for various frameworks and
-]{.title-ref}`MemoryMapper`\` implementation for all technically
-feasible zero-copy mappings on CPU and GPU and mappings between CPU and
-GPU:
+[Tensor](./api_ref/class_dlstreamer_Tensor) and [MemoryMapper](./api_ref/class_dlstreamer_MemoryMapper),
+and providing header-only implementation of the `Tensor` interface for various frameworks and
+`MemoryMapper` implementation for all technically feasible zero-copy mappings on CPU and GPU and mappings between CPU and GPU:
 
 ::: {.graphviz caption="Memory interop diagram"}
 
@@ -97,27 +92,24 @@ digraph {
 :::
 
 All memory mappers implemented under unified interface
-`MemoryMapper <api_ref/class_dlstreamer_MemoryMapper>`{.interpreted-text
-role="doc"} with
-`TensorPtr <api_ref/class_dlstreamer_TensorPtr>`{.interpreted-text
-role="doc"} or
-`FramePtr <api_ref/class_dlstreamer_FramePtr>`{.interpreted-text
-role="doc"} as input parameter, but each mapper from framework `AAA` to
+[MemoryMapper](./api_ref/class_dlstreamer_MemoryMapper) with
+[TensorPtr](./api_ref/class_dlstreamer_TensorPtr) or
+[FramePtr](./api_ref/class_dlstreamer_FramePtr) as input parameter, but each mapper from framework `AAA` to
 framework `BBB` internally casts input pointer to specific class `AAA`
 Tensor / `AAA` Frame and creates output as specific class `BBB` Tensor /
 `BBB` Frame, see table below for each supported framework/library:
 
-  Framework / Library   Native memory object   Class implementing `Tensor <api_ref/class_dlstreamer_Tensor>`{.interpreted-text role="doc"}    Class implementing `Frame <api_ref/class_dlstreamer_Frame>`{.interpreted-text role="doc"}
+  Framework / Library   Native memory object   Class implementing [Tensor](./api_ref/class_dlstreamer_Tensor)    Class implementing [Frame](./api_ref/class_dlstreamer_Frame)
   --------------------- ---------------------- ---------------------------------------------------------------------------------------------- -------------------------------------------------------------------------------------------
-  CPU (no framework)    void\*                 `CPUTensor <api_ref/class_dlstreamer_CPUTensor>`{.interpreted-text role="doc"}                 `(BaseFrame) <api_ref/class_dlstreamer_BaseFrame>`{.interpreted-text role="doc"}
-  FFmpeg                AVFrame                                                                                                               `FFmpegFrame <api_ref/class_dlstreamer_FFmpegFrame>`{.interpreted-text role="doc"}
-  GStreamer             GstMemory, GstBuffer   `GSTTensor <api_ref/class_dlstreamer_GSTTensor>`{.interpreted-text role="doc"}                 `GSTFrame <api_ref/class_dlstreamer_GSTFrame>`{.interpreted-text role="doc"}
-  Level-zero            void\*                 `USMTensor <api_ref/class_dlstreamer_USMTensor>`{.interpreted-text role="doc"}                 `(BaseFrame) <api_ref/class_dlstreamer_BaseFrame>`{.interpreted-text role="doc"}
-  OpenCL                cl_mem                 `OpenCLTensor <api_ref/class_dlstreamer_OpenCLTensor>`{.interpreted-text role="doc"}           `(BaseFrame) <api_ref/class_dlstreamer_BaseFrame>`{.interpreted-text role="doc"}
-  OpenCV                cv::Mat                `OpenCVTensor <api_ref/class_dlstreamer_OpenCVTensor>`{.interpreted-text role="doc"}           `(BaseFrame) <api_ref/class_dlstreamer_BaseFrame>`{.interpreted-text role="doc"}
-  OpenCV                cv::UMat               `OpenCVUMatTensor <api_ref/class_dlstreamer_OpenCVUMatTensor>`{.interpreted-text role="doc"}   `(BaseFrame) <api_ref/class_dlstreamer_BaseFrame>`{.interpreted-text role="doc"}
-  OpenVINO™             ov::Tensor             `OpenVINOTensor <api_ref/class_dlstreamer_OpenVINOTensor>`{.interpreted-text role="doc"}       `OpenVINOFrame <api_ref/class_dlstreamer_OpenVINOFrame>`{.interpreted-text role="doc"}
-  SYCL                  void\*                 `SYCLUSMTensor <api_ref/class_dlstreamer_SYCLUSMTensor>`{.interpreted-text role="doc"}         `(BaseFrame) <api_ref/class_dlstreamer_BaseFrame>`{.interpreted-text role="doc"}
+  CPU (no framework)    void\*                 [CPUTensor](./api_ref/class_dlstreamer_CPUTensor)                 [BaseFrame](./api_ref/class_dlstreamer_BaseFrame)
+  FFmpeg                AVFrame                                                                                                               [FFmpegFrame](./api_ref/class_dlstreamer_FFmpegFrame)
+  GStreamer             GstMemory, GstBuffer   [GSTTensor](./api_ref/class_dlstreamer_GSTTensor)                 [GSTFrame](./api_ref/class_dlstreamer_GSTFrame)
+  Level-zero            void\*                 [USMTensor](./api_ref/class_dlstreamer_USMTensor)                 [BaseFrame](./api_ref/class_dlstreamer_BaseFrame)
+  OpenCL                cl_mem                 [OpenCLTensor](./api_ref/class_dlstreamer_OpenCLTensor)           [BaseFrame](./api_ref/class_dlstreamer_BaseFrame)
+  OpenCV                cv::Mat                [OpenCVTensor](./api_ref/class_dlstreamer_OpenCVTensor)           [BaseFrame](./api_ref/class_dlstreamer_BaseFrame)
+  OpenCV                cv::UMat               [OpenCVUMatTensor](./api_ref/class_dlstreamer_OpenCVUMatTensor)   [BaseFrame](./api_ref/class_dlstreamer_BaseFrame)
+  OpenVINO™             ov::Tensor             [OpenVINOTensor](./api_ref/class_dlstreamer_OpenVINOTensor)       [OpenVINOFrame](./api_ref/class_dlstreamer_OpenVINOFrame)
+  SYCL                  void\*                 [SYCLUSMTensor](./api_ref/class_dlstreamer_SYCLUSMTensor)         [BaseFrame](./api_ref/class_dlstreamer_BaseFrame)
 
 Application can create `Tensor` and `Frame` objects by either passing
 pre-allocated native memory object to C++ constructor (wrap already
@@ -135,10 +127,8 @@ https://github.com/open-edge-platform/edge-ai-libraries/tree/main/libraries/dl-s
 and almost every C++ element.
 
 There is special mapper
-`MemoryMapperChain <api_ref/class_dlstreamer_MemoryMapperChain>`{.interpreted-text
-role="doc"} implementing unified interface
-`MemoryMapper <api_ref/class_dlstreamer_MemoryMapper>`{.interpreted-text
-role="doc"} as arbitrary chain of multiple mappers. As examples, FFmpeg
+[MemoryMapperChain](./api_ref/class_dlstreamer_MemoryMapperChain) implementing unified interface
+[MemoryMapper](./api_ref/class_dlstreamer_MemoryMapper) as arbitrary chain of multiple mappers. As examples, FFmpeg
 to DPC++/USM is chain of the following mappers
 
 ::: {.graphviz caption="FFmpeg to USM memory mappers chain"}
@@ -174,18 +164,13 @@ digraph {
 ## Abstract interfaces for C++ elements
 
 Additionally, this Intel® DL Streamer sub-component defines abstract
-interfaces `Source <api_ref/class_dlstreamer_Source>`{.interpreted-text
-role="doc"} ,
-`Transform <api_ref/class_dlstreamer_Transform>`{.interpreted-text
-role="doc"} and `Sink <api_ref/class_dlstreamer_Sink>`{.interpreted-text
-role="doc"} used as base interfaces for all C++ and GStreamer elements.
+interfaces [Source](./api_ref/class_dlstreamer_Source) ,
+[Transform](./api_ref/class_dlstreamer_Transform) and [Sink](./api_ref/class_dlstreamer_Sink) used as base interfaces for all C++ and GStreamer elements.
 These interfaces take unified pointers to
-`Tensor <api_ref/class_dlstreamer_Tensor>`{.interpreted-text role="doc"}
-and `Frame <api_ref/class_dlstreamer_Frame>`{.interpreted-text
-role="doc"} objects as input and output parameters in functions
-[read]{.title-ref}, [process]{.title-ref}, [write]{.title-ref} and allow
-to easily build chain of multiple operations. See next page
-`C++ elements <cpp_elements>`{.interpreted-text role="doc"} for details.
+[Tensor](./api_ref/class_dlstreamer_Tensor)
+and [Frame](./api_ref/class_dlstreamer_Frame) objects as input and output parameters in functions
+[read], [process], [write] and allow to easily build chain of multiple operations. See next page
+[C++ elements](cpp_elements).
 
 ## How to use in CMake build system
 
@@ -238,10 +223,9 @@ include/dlstreamer
 ```
 
 The following header files implement
-`Tensor <api_ref/class_dlstreamer_Tensor>`{.interpreted-text role="doc"}
+[Tensor](./api_ref/class_dlstreamer_Tensor)
 interface memory objects in various frameworks and
-`MemoryMapper <api_ref/class_dlstreamer_MemoryMapper>`{.interpreted-text
-role="doc"} for memory mapping between frameworks. These header files
+[MemoryMapper](./api_ref/class_dlstreamer_MemoryMapper) for memory mapping between frameworks. These header files
 installed under corresponding subfolders of
 `/opt/intel/dlstreamer/include/dlstreamer` by same package
 `intel-dlstreamer-cpp`:

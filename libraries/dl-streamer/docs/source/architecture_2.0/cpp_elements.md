@@ -10,24 +10,14 @@ The C++ elements implementation typically inherit one of base classes
 which partially implement some functions in corresponding abstract
 interfaces:
 
--   `BaseSource <api_ref/class_dlstreamer_BaseSource>`{.interpreted-text
-    role="doc"} partially implements
-    `Source <api_ref/class_dlstreamer_Source>`{.interpreted-text
-    role="doc"}
--   `BaseTransform <api_ref/class_dlstreamer_BaseTransform>`{.interpreted-text
-    role="doc"} partially implements
-    `Transform <api_ref/class_dlstreamer_Transform>`{.interpreted-text
-    role="doc"}
--   `BaseTransformInplace <api_ref/class_dlstreamer_BaseTransformInplace>`{.interpreted-text
-    role="doc"} partially implements
-    `Transform <api_ref/class_dlstreamer_Transform>`{.interpreted-text
-    role="doc"}
--   `BaseSink <api_ref/class_dlstreamer_BaseSink>`{.interpreted-text
-    role="doc"} partially implements
-    `Sink <api_ref/class_dlstreamer_Sink>`{.interpreted-text role="doc"}
-
-so that C++ element implements only remaining virtual functions (mostly
-`read`, `process` and `write` functions) as shown in diagram below
+-   [BaseSource](./api_ref/class_dlstreamer_BaseSource) partially implements
+    [Source](./api_ref/class_dlstreamer_Source)
+-   [BaseTransform](./api_ref/class_dlstreamer_BaseTransform) partially implements
+    [Transform](./api_ref/class_dlstreamer_Transform)
+-   [BaseTransformInplace](./api_ref/class_dlstreamer_BaseTransformInplace) partially implements
+    [Transform](./api_ref/class_dlstreamer_Transform)
+-   [BaseSink](./api_ref/class_dlstreamer_BaseSink) partially implements
+    [Sink](./api_ref/class_dlstreamer_Sink) so that C++ element implements only remaining virtual functions (mostly `read`, `process` and `write` functions) as shown in diagram below
 
 ::: {.graphviz caption="C++ interfaces and base classes"}
 
@@ -73,27 +63,25 @@ and sub-folders.
 ## Element description
 
 The
-`ElementDesc <api_ref/struct_dlstreamer_ElementDesc>`{.interpreted-text
-role="doc"} structure is used to describe an element input/output
+[ElementDesc](api_ref/struct_dlstreamer_ElementDesc) structure is used to describe an element input/output
 capabilities and supported parameters, and provide instance creation
 function. The most important are the following fields:
 
--   `name` \-- Name of element. Same name is used for both GStreamer and
+-   `name` - Name of element. Same name is used for both GStreamer and
     direct programming applications.
--   `params` \-- Array of parameters supported by element. In case of
+-   `params` - Array of parameters supported by element. In case of
     GStreamer, those will be translated to GStreamer properties.
--   `input_info` \-- Types of input [Frames]{.title-ref} that element
+-   `input_info` - Types of input [Frames]{.title-ref} that element
     can consume. In case of GStreamer interop, it will be represented as
     sink capabilities.
--   `output_info` \-- Types of output [Frames]{.title-ref} that element
+-   `output_info` - Types of output [Frames]{.title-ref} that element
     can produce. In case of GStreamer interop, it will be represented as
     source (src) capabilities.
--   `create` \-- Pointer to a function that creates an instance of an
+-   `create` - Pointer to a function that creates an instance of an
     element.
 
-Here\'s example of
-`ElementDesc <api_ref/struct_dlstreamer_ElementDesc>`{.interpreted-text
-role="doc"} structure for simple post-processing element:
+Here's example of
+[ElementDesc](api_ref/struct_dlstreamer_ElementDesc) structure for simple post-processing element:
 
 ``` cpp
 // Element parameters
@@ -122,10 +110,9 @@ Instance of C++ element can be created using functions `create_source`,
 `create_transform`, `create_sink`. These functions take pointer to
 `ElementDesc`, initialization parameters (as `std::map`) and optional
 context pointer as
-`parameters <api_ref/namespace_dlstreamer>`{.interpreted-text
-role="doc"}:
+[parameters](./api_ref/namespace_dlstreamer)
 
-``` cpp
+```cpp
 auto ffmpeg_source = create_source(ffmpeg_multi_source, {{"inputs", inputs}}, ffmpeg_ctx);
 ```
 

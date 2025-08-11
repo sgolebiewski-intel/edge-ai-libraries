@@ -19,41 +19,45 @@ interfaces:
 -   [BaseSink](./api_ref/class_dlstreamer_BaseSink) partially implements
     [Sink](./api_ref/class_dlstreamer_Sink) so that C++ element implements only remaining virtual functions (mostly `read`, `process` and `write` functions) as shown in diagram below
 
-::: {.graphviz caption="C++ interfaces and base classes"}
+> **CAPTION:** C++ interfaces and base classes
+
+```graphviz
 
 digraph {
+    node[shape=record,style=filled,fillcolor=lightskyblue1]
+    edge[dir=back, arrowtail=empty]
 
-:   node\[shape=record,style=filled,fillcolor=lightskyblue1\]
-    edge\[dir=back, arrowtail=empty\]
+    Desc[label = "{ElementDesc|+name\l+description\l+author\l+params\l+input_info\l+output_info\l+flags\l+create\l}"]
+    Element[label = "{«interface»\nElement|+ init()\l+ get_context(...)\l}"]
 
-    Desc\[label = \"{ElementDesc+ init()l+ get_context(\...)l}\"\]
+    Source[label = "{«interface»\Source|+ set_output_info(...)\l+ get_output_info(...)\l+ read()\l}"]
+    Transform[label = "{«interface»\nTransform|+ set_input_info(...)\l+ set_output_info(...)\l+ get_input_info(...)\l+ get_output_info(...)\l+ process(TensorPtr, TensorPtr)\l+ process(FramePtr, FramePtr)\l}"]
+    TransformInplace[label = "{«interface»\nTransformInplace|+ set_info(const FrameInfo&)\l+ process(TensorPtr)\l+ process(FramePtr)\l}"]
+    Sink[label = "{«interface»\Sink|+ set_input_info(...)\l+ get_input_info(...)\l+ write(FramePtr)\l}"]
 
-    Source\[label = \"{«interface»Source+ set_input_info(\...)l+
-    set_output_info(\...)l+ get_input_info(\...)l+
-    get_output_info(\...)l+ process(TensorPtr, TensorPtr)l+
-    process(FramePtr, FramePtr)l}\"\] TransformInplace\[label =
-    \"{«interface»nTransformInplace+ set_input_info(\...)l+
-    get_input_info(\...)l+ write(FramePtr)l}\"\]
+    BaseESource[label = "{BaseElement\<Source\>|+ init_once()\l+ init()\l+ get_context(...)\l}"]
+    BaseT1[label = "{BaseElement\<Transform\>|+ init_once()\l+ init()\l+ get_context(...)\l}"]
+    BaseT2[label = "{BaseElement\<TransformInplace\>|+ init_once()\l+ init()\l+ get_context(...)\l}"]
+    BaseESink[label = "{BaseElement\<Sink\>|+ init_once()\l+ init()\l+ get_context(...)\l}"]
 
-    BaseESource\[label = \"{BaseElement\<Source\>+ init_once()l+
-    init()l+ get_context(\...)l}\"\] BaseT2\[label =
-    \"{BaseElement\<TransformInplace\>+ init_once()l+ init()l+
-    get_context(\...)l}\"\]
+    BaseSource[label = "BaseSource"]
+    BaseTransform[label = "BaseTransform"]
+    BaseInplace[label = "BaseTransformInplace"]
+    BaseSink[label = "BaseSink"]
 
-    BaseSource\[label = \"BaseSource\"\] BaseTransform\[label =
-    \"BaseTransform\"\] BaseInplace\[label = \"BaseTransformInplace\"\]
-    BaseSink\[label = \"BaseSink\"\]
+    Element->{Source Transform TransformInplace Sink}
 
-    Element-\>{Source Transform TransformInplace Sink}
+    Source->BaseESource
+    Transform->BaseT1
+    TransformInplace->BaseT2
+    Sink->BaseESink
 
-    Source-\>BaseESource Transform-\>BaseT1 TransformInplace-\>BaseT2
-    Sink-\>BaseESink
-
-    BaseESource-\>BaseSource BaseT1-\>BaseTransform BaseT2-\>BaseInplace
-    BaseESink-\>BaseSink
-
-}
-:::
+    BaseESource->BaseSource
+    BaseT1->BaseTransform
+    BaseT2->BaseInplace
+    BaseESink->BaseSink
+  }
+```
 
 Many examples how to create C++ elements can be found on github
 repository in [folder

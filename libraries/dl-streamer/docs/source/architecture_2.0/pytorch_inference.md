@@ -107,28 +107,24 @@ autovideosink
 
 Below is a graph showing how the `object_detect` bin will be built.
 
-::: {.graphviz caption="object_detect internal pipeline"}
+> **CAPTION:** object_detect internal pipeline
+
+```graphviz
 
 digraph {
+    rankdir="LR"
+    node[shape=box, style="rounded, filled", fillcolor=white]
 
-:   rankdir=\"LR\" node\[shape=box, style=\"rounded, filled\",
-    fillcolor=white\]
+    tee[label="tee", fillcolor=gray95]
+    preproc[label="preprocess=videoscale ! videoconvert ! video/x-raw,format=RGBP ! tensor_convert ! opencv_tensor_normalize range=<0,1>"]
+    processing[label="process=pytorch_tensor_inference model=torchvision.models.detection.ssdlite320_mobilenet_v3_large"]
+    postproc[label="postprocess=tensor_postproc_detection labels-file=coco_91cl_bkgr.txt"]
+    aggregate[label="aggregate=meta_aggregate"]
 
-    tee\[label=\"tee\", fillcolor=gray95\]
-    preproc\[label=\"preprocess=videoscale ! videoconvert !
-    video/x-raw,format=RGBP ! tensor_convert ! opencv_tensor_normalize
-    range=\<0,1\>\"\]
-    processing\[label=\"process=pytorch_tensor_inference
-    model=torchvision.models.detection.ssdlite320_mobilenet_v3_large\"\]
-    postproc\[label=\"postprocess=tensor_postproc_detection
-    labels-file=coco_91cl_bkgr.txt\"\]
-    aggregate\[label=\"aggregate=meta_aggregate\"\]
-
-    tee -\> preproc -\> processing -\> postproc -\> aggregate tee -\>
-    aggregate
-
-}
-:::
+    tee -> preproc -> processing -> postproc -> aggregate
+    tee -> aggregate
+  }
+```
 
 By default, preprocessing will include color conversion to `RGB`,
 resizing to `resize_size` if it can be obtained from the model's

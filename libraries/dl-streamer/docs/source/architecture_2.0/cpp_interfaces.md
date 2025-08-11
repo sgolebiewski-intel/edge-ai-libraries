@@ -19,14 +19,8 @@ The memory interop sub-component is available via APT installation
 `sudo apt install intel-dlstreamer-cpp` and on [github
 https://github.com/open-edge-platform/edge-ai-libraries/tree/main/libraries/dl-streamer/include/dlstreamer\>]{.title-ref}\_\_.
 
-::: note
-::: title
-Note
-:::
-
-This sub-component implemented as C++ header-only library. Python
+> **Note:** This sub-component implemented as C++ header-only library. Python
 bindings for this library coming in next releases.
-:::
 
 ## Why memory interop library?
 
@@ -76,20 +70,35 @@ and greatly simplifies memory interop by defining abstract interfaces
 and providing header-only implementation of the `Tensor` interface for various frameworks and
 `MemoryMapper` implementation for all technically feasible zero-copy mappings on CPU and GPU and mappings between CPU and GPU:
 
-::: {.graphviz caption="Memory interop diagram"}
+> **CAPTION:** Memory interop diagram
+
+```graphviz
 
 digraph {
+    node[shape=record,style=filled,fillcolor=lightskyblue1]
 
-:   node\[shape=record,style=filled,fillcolor=lightskyblue1\]
-
-    Gst-\>CPU Gst-\>DMA Gst-\>OpenCL Gst-\>VAAPI DMA-\>USM USM-\>DMA
-    DMA-\>OpenCL OpenCL-\>CPU OpenCL-\>DMA CPU-\>OpenCV
-    OpenCL-\>OpenCV_UMat CPU-\>OpenVino OpenCL-\>OpenVino OpenVino-\>CPU
-    VAAPI-\>OpenVino USM-\>CPU DMA-\>VAAPI VAAPI-\>DMA FFmpeg-\>VAAPI
-    FFmpeg-\>CPU
-
-}
-:::
+    Gst->CPU
+    Gst->DMA
+    Gst->OpenCL
+    Gst->VAAPI
+    DMA->USM
+    USM->DMA
+    DMA->OpenCL
+    OpenCL->CPU
+    OpenCL->DMA
+    CPU->OpenCV
+    OpenCL->OpenCV_UMat
+    CPU->OpenVino
+    OpenCL->OpenVino
+    OpenVino->CPU
+    VAAPI->OpenVino
+    USM->CPU
+    DMA->VAAPI
+    VAAPI->DMA
+    FFmpeg->VAAPI
+    FFmpeg->CPU
+  }
+```
 
 All memory mappers implemented under unified interface
 [MemoryMapper](./api_ref/class_dlstreamer_MemoryMapper) with
@@ -131,35 +140,36 @@ There is special mapper
 [MemoryMapper](./api_ref/class_dlstreamer_MemoryMapper) as arbitrary chain of multiple mappers. As examples, FFmpeg
 to DPC++/USM is chain of the following mappers
 
-::: {.graphviz caption="FFmpeg to USM memory mappers chain"}
+> **CAPTION:** FFmpeg to USM memory mappers chain
+
+```graphviz
 
 digraph {
+    rankdir="LR"
+    node[shape=record,style=filled,fillcolor=lightskyblue1]
 
-:   rankdir=\"LR\"
-    node\[shape=record,style=filled,fillcolor=lightskyblue1\]
+    USM0[label="USM (Level-zero)"]
+    USM1[label="USM (DPC++)"]
 
-    USM0\[label=\"USM (Level-zero)\"\] USM1\[label=\"USM (DPC++)\"\]
-
-    FFmpeg-\>VAAPI-\>DMA-\>USM0-\>USM1
-
-}
-:::
+    FFmpeg->VAAPI->DMA->USM0->USM1
+  }
+```
 
 and GStreamer to OpenCV UMat is chain of the following mappers
 
-::: {.graphviz caption="Gst to USM memory mappers chain"}
+> **CAPTION:** Gst to USM memory mappers chain
+
+```graphviz
 
 digraph {
+    rankdir="LR"
+    node[shape=record,style=filled,fillcolor=lightskyblue1]
 
-:   rankdir=\"LR\"
-    node\[shape=record,style=filled,fillcolor=lightskyblue1\]
+    UMat[label="OpenCV cv::UMat"]
 
-    UMat\[label=\"OpenCV cv::UMat\"\]
-
-    Gst-\>VAAPI-\>DMA-\>OpenCL-\>UMat
-
-}
-:::
+    Gst->VAAPI->DMA->OpenCL->UMat
+  }
+```
 
 ## Abstract interfaces for C++ elements
 

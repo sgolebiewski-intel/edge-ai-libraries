@@ -7,24 +7,24 @@ tracking, etc. Internally such elements builds sub-pipeline using
 *low-level elements*. The diagram below shows high-level sub-pipeline
 inside Intel® DL Streamer bin elements.
 
-::: {.graphviz caption="High level bin elements architecture"}
+> **CAPTION:** High level bin elements architecture
+
+```graphviz
 
 digraph {
+    rankdir="LR"
+    node[shape=box, style="rounded, filled", fillcolor=white]
 
-:   rankdir=\"LR\" node\[shape=box, style=\"rounded, filled\",
-    fillcolor=white\]
+    tee[label="tee", fillcolor=gray95]
+    preproc[label="Pre-processing"]
+    processing[label="Processing"]
+    postproc[label="Post-processing"]
+    aggregate[label="Aggregate"]
 
-    tee\[label=\"tee\", fillcolor=gray95\]
-    preproc\[label=\"Pre-processing\"\]
-    processing\[label=\"Processing\"\]
-    postproc\[label=\"Post-processing\"\]
-    aggregate\[label=\"Aggregate\"\]
-
-    tee -\> preproc -\> processing -\> postproc -\> aggregate tee -\>
-    aggregate
-
-}
-:::
+    tee -> preproc -> processing -> postproc -> aggregate
+    tee -> aggregate
+  }
+```
 
 The diagram shows two branches which are produced by `tee` element. The
 *upper branch* is used for data-processing. The *bottom branch* is used
@@ -143,24 +143,25 @@ buffer as number objects on frame require inference operation.
 
 The graph below high-level representation of per-ROI inference:
 
-::: {.graphviz caption="Per-ROI inference"}
+> **CAPTION:** Per-ROI inference
+
+```graphviz
 
 digraph {
+    rankdir="LR"
+    node[shape=box, style="rounded, filled", fillcolor=white]
 
-:   rankdir=\"LR\" node\[shape=box, style=\"rounded, filled\",
-    fillcolor=white\]
+    tee[label="tee", fillcolor=gray95]
+    preproc[label="Pre-processing"]
+    infer[label="Inference"]
+    postproc[label="Post-processing"]
+    aggregate[label="meta_aggregate", fillcolor=lightskyblue1]
+    roisplit[label="roi_split", fillcolor=lightskyblue1]
 
-    tee\[label=\"tee\", fillcolor=gray95\]
-    preproc\[label=\"Pre-processing\"\] infer\[label=\"Inference\"\]
-    postproc\[label=\"Post-processing\"\]
-    aggregate\[label=\"meta_aggregate\", fillcolor=lightskyblue1\]
-    roisplit\[label=\"roi_split\", fillcolor=lightskyblue1\]
-
-    tee -\> roisplit -\> preproc -\> infer -\> postproc -\> aggregate
-    tee -\> aggregate
-
-}
-:::
+    tee -> roisplit -> preproc -> infer -> postproc -> aggregate
+    tee -> aggregate
+  }
+```
 
 ### Batched Pre-processing
 
@@ -255,144 +256,130 @@ pre-processing backend, inference device, inference region, etc. The
 elements `tee` and `aggregate` are omitted for simplicity, but in
 reality they are present in every pipeline.
 
-::: {.graphviz caption="The *gst-opencv* pre-processing and full-frame inference on *CPU* or *GPU*"}
+> **CAPTION:** The *gst-opencv* pre-processing and full-frame inference on *CPU* or *GPU*
+
+```graphviz
 
 digraph cpu_cpu {
-
-:   rankdir=\"LR\" node\[shape=box, style=\"rounded, filled\",
-    fillcolor=lightskyblue1\]
+    rankdir="LR"
+    node[shape=box, style="rounded, filled", fillcolor=lightskyblue1]
 
     subgraph cluster_pre {
-
-    :   style=\"rounded, dotted\" label = \"Pre-processing stage\";
-        node\[fillcolor=gray95\] preproc_in\[label=\"videoscale\",
-        fillcolor=gray95\] preproc_out\[label=\"tensor_convert\",
-        fillcolor=lightskyblue1\] preproc_in -\> videoconvert -\>
-        preproc_out;
-
+        style="rounded, dotted"
+        label = "Pre-processing stage";
+        node[fillcolor=gray95]
+        preproc_in[label="videoscale", fillcolor=gray95]
+        preproc_out[label="tensor_convert", fillcolor=lightskyblue1]
+        preproc_in -> videoconvert -> preproc_out;
     }
 
-    infer\[label=\"openvino_tensor_inference\"\]
-    postproc\[label=\<[tensor_postproc]()\<i\>xxx\</i\>\>\]
+    infer[label="openvino_tensor_inference"]
+    postproc[label=<tensor_postproc_<i>xxx</i>>]
 
-    preproc_out -\> infer -\> postproc;
+    preproc_out -> infer -> postproc;
+  }
+```
 
-}
-:::
+> **CAPTION:** The *vaapi* pre-processing and full-frame inference on *CPU*
 
-::: {.graphviz caption="The *vaapi* pre-processing and full-frame inference on *CPU*"}
+```graphviz
 
 digraph gpu_cpu {
-
-:   rankdir=\"LR\" node\[shape=box, style=\"rounded, filled\",
-    fillcolor=lightskyblue1\]
+    rankdir="LR"
+    node[shape=box, style="rounded, filled", fillcolor=lightskyblue1]
 
     subgraph cluster_pre {
-
-    :
-
-        style=\"rounded, dotted\"
-
-        :   label = \"Pre-processing stage\";
-
-        node\[fillcolor=gray95\] preproc_in\[label=\"vaapipostproc\",
-        fillcolor=gray95\] preproc_out\[label=\"tensor_convert\",
-        fillcolor=lightskyblue1\] preproc_in -\> videoconvert
-        videoconvert -\> preproc_out \[label=\"system\"\];
-
+        style="rounded, dotted"
+		    label = "Pre-processing stage";
+        node[fillcolor=gray95]
+        preproc_in[label="vaapipostproc", fillcolor=gray95]
+        preproc_out[label="tensor_convert", fillcolor=lightskyblue1]
+        preproc_in -> videoconvert
+        videoconvert -> preproc_out [label="system"];
     }
 
-    infer\[label=\"openvino_tensor_inference\"\]
-    postproc\[label=\<[tensor_postproc]()\<i\>xxx\</i\>\>\]
+    infer[label="openvino_tensor_inference"]
+    postproc[label=<tensor_postproc_<i>xxx</i>>]
 
-    preproc_out -\> infer -\> postproc;
+    preproc_out -> infer -> postproc;
+  }
+```
 
-}
-:::
+> **CAPTION:** The *vaapi-opencl* pre-processing and full-frame inference on *GPU*
 
-::: {.graphviz caption="The *vaapi-opencl* pre-processing and full-frame inference on *GPU*"}
+```graphviz
 
 digraph gpu_gpu {
-
-:   rankdir=\"LR\" node\[shape=box, style=\"rounded, filled\",
-    fillcolor=lightskyblue1\]
+    rankdir="LR"
+    node[shape=box, style="rounded, filled", fillcolor=lightskyblue1]
 
     subgraph cluster_pre {
+        style="rounded, dotted"
+		label = "Pre-processing stage";
+        preproc_in[label="vaapipostproc", fillcolor=gray95]
+        vaapi_ocl[label="vaapi_to_opencl"]
+        preproc_out[label="opencl_tensor_normalize"]
 
-    :   style=\"rounded, dotted\" label = \"Pre-processing stage\";
-        preproc_in\[label=\"vaapipostproc\", fillcolor=gray95\]
-        vaapi_ocl\[label=\"vaapi_to_opencl\"\]
-        preproc_out\[label=\"opencl_tensor_normalize\"\]
-
-        preproc_in -\> vaapi_ocl; vaapi_ocl -\> preproc_out
-        \[label=\"OpenCL\"\];
-
+        preproc_in -> vaapi_ocl;
+        vaapi_ocl -> preproc_out [label="OpenCL"];
     }
 
-    infer\[label=\"openvino_tensor_inference\"\]
-    postproc\[label=\<[tensor_postproc]()\<i\>xxx\</i\>\>\]
+    infer[label="openvino_tensor_inference"]
+    postproc[label=<tensor_postproc_<i>xxx</i>>]
 
-    preproc_out -\> infer -\> postproc
+    preproc_out -> infer -> postproc
+  }
+```
 
-}
-:::
+> **CAPTION:** The *vaapi-surface-sharing* pre-processing and full-frame inference on *GPU*
 
-::: {.graphviz caption="The *vaapi-surface-sharing* pre-processing and full-frame inference on *GPU*"}
+```graphviz
 
 digraph vasharing {
-
-:   rankdir=\"LR\" node\[shape=box, style=\"rounded, filled\",
-    fillcolor=lightskyblue1\]
+    rankdir="LR"
+    node[shape=box, style="rounded, filled", fillcolor=lightskyblue1]
 
     subgraph cluster_pre {
-
-    :   style=\"rounded, dotted\" label = \"Pre-processing stage\";
-        preproc_out\[label=\"vaapipostproc\", fillcolor=gray95\];
-
+        style="rounded, dotted"
+		label = "Pre-processing stage";
+        preproc_out[label="vaapipostproc", fillcolor=gray95];
     }
 
-    infer\[label=\"openvino_tensor_inference\"\]
-    postproc\[label=\<[tensor_postproc]()\<i\>xxx\</i\>\>\]
+    infer[label="openvino_tensor_inference"]
+    postproc[label=<tensor_postproc_<i>xxx</i>>]
 
-    preproc_out -\> infer -\> postproc
-
-}
-:::
+    preproc_out -> infer -> postproc
+  }
+```
 
 The `queue` element can be inserted after inference element to enable
 parallel inference execution if number of inference requests (`nireq`)
 is greater than one.
 
-::: {.graphviz caption="The ``queue`` after inference"}
+> **CAPTION:** The ``queue`` after inference
+
+```graphviz
 
 digraph queue {
-
-:   rankdir=\"LR\" node\[shape=box, style=\"rounded, filled\",
-    fillcolor=lightskyblue1\]
+    rankdir="LR"
+    node[shape=box, style="rounded, filled", fillcolor=lightskyblue1]
 
     subgraph cluster_pre {
-
-    :
-
-        style=\"rounded, dotted\"
-
-        :   label = \"Pre-processing stage\";
-
-        node\[fillcolor=gray95\] preproc_in\[label=\"vaapipostproc\",
-        fillcolor=gray95\] preproc_out\[label=\"tensor_convert\",
-        fillcolor=lightskyblue1\] preproc_in -\> preproc_out
-        \[label=\"system\"\];
-
+        style="rounded, dotted"
+		    label = "Pre-processing stage";
+        node[fillcolor=gray95]
+        preproc_in[label="vaapipostproc", fillcolor=gray95]
+        preproc_out[label="tensor_convert", fillcolor=lightskyblue1]
+        preproc_in -> preproc_out [label="system"];
     }
 
-    q\[label=\"queue\", fillcolor=gray95\]
-    infer\[label=\"openvino_tensor_inference\"\]
-    postproc\[label=\<[tensor_postproc]()\<i\>xxx\</i\>\>\]
+    q[label="queue", fillcolor=gray95]
+    infer[label="openvino_tensor_inference"]
+    postproc[label=<tensor_postproc_<i>xxx</i>>]
 
-    preproc_out -\> infer -\> q -\> postproc
-
-}
-:::
+    preproc_out -> infer -> q -> postproc
+  }
+```
 
 ### "Object_detect" Element
 

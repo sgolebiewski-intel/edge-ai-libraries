@@ -7,23 +7,21 @@ tracking, etc. Internally such elements builds sub-pipeline using
 *low-level elements*. The diagram below shows high-level sub-pipeline
 inside Intel® DL Streamer bin elements.
 
-> **CAPTION:** High level bin elements architecture
-
-```graphviz
-
-digraph {
-    rankdir="LR"
-    node[shape=box, style="rounded, filled", fillcolor=white]
-
-    tee[label="tee", fillcolor=gray95]
-    preproc[label="Pre-processing"]
-    processing[label="Processing"]
-    postproc[label="Post-processing"]
-    aggregate[label="Aggregate"]
-
-    tee -> preproc -> processing -> postproc -> aggregate
-    tee -> aggregate
-  }
+```mermaid
+---
+title: High level bin elements architecture
+---
+graph LR
+   tee([""tee""])
+   preproc([""Pre-processing""])
+   processing([""Processing""])
+   postproc([""Post-processing""])
+   aggregate([""Aggregate""])
+   tee --> preproc
+   preproc --> processing
+   processing --> postproc
+   postproc --> aggregate
+   tee --> aggregate
 ```
 
 The diagram shows two branches which are produced by `tee` element. The
@@ -143,24 +141,29 @@ buffer as number objects on frame require inference operation.
 
 The graph below high-level representation of per-ROI inference:
 
-> **CAPTION:** Per-ROI inference
+```mermaid
+---
+title: Per-ROI inference
+---
+graph LR
+   tee([""tee""])
+   preproc([""Pre-processing""])
+   infer([""Inference""])
+   postproc([""Post-processing""])
+   aggregate([""meta_aggregate""])
+   roisplit([""roi_split""])
+   tee --> roisplit
+   roisplit --> preproc
+   preproc --> infer
+   infer --> postproc
+   postproc --> aggregate
+   tee --> aggregate
 
-```graphviz
-
-digraph {
-    rankdir="LR"
-    node[shape=box, style="rounded, filled", fillcolor=white]
-
-    tee[label="tee", fillcolor=gray95]
-    preproc[label="Pre-processing"]
-    infer[label="Inference"]
-    postproc[label="Post-processing"]
-    aggregate[label="meta_aggregate", fillcolor=lightskyblue1]
-    roisplit[label="roi_split", fillcolor=lightskyblue1]
-
-    tee -> roisplit -> preproc -> infer -> postproc -> aggregate
-    tee -> aggregate
-  }
+classDef black_text color:black
+class tee,roisplit,aggregate black_text
+style tee fill: #f2f2f2, color: black
+style roisplit fill: #b0e2ff, color: black
+style aggregate fill: #b0e2ff
 ```
 
 ### Batched Pre-processing
@@ -256,28 +259,27 @@ pre-processing backend, inference device, inference region, etc. The
 elements `tee` and `aggregate` are omitted for simplicity, but in
 reality they are present in every pipeline.
 
-> **CAPTION:** The *gst-opencv* pre-processing and full-frame inference on *CPU* or *GPU*
+```mermaid
+---
+title: The gst-opencv pre-processing and full-frame inference on CPU or GPU
+---
+graph LR
+subgraph PS[Pre-processing stage]
+   preproc_in([""videoscale""])
+   preproc_out([""tensor_convert""])
+   videoconvert(["videoconvert"])
+end
+   infer([""openvino_tensor_inference""])
+   postproc(["<tensor_postproc_<i>xxx</i>>"])
+   preproc_in --> videoconvert
+   videoconvert --> preproc_out
+   preproc_out --> infer
+   infer --> postproc
 
-```graphviz
 
-digraph cpu_cpu {
-    rankdir="LR"
-    node[shape=box, style="rounded, filled", fillcolor=lightskyblue1]
-
-    subgraph cluster_pre {
-        style="rounded, dotted"
-        label = "Pre-processing stage";
-        node[fillcolor=gray95]
-        preproc_in[label="videoscale", fillcolor=gray95]
-        preproc_out[label="tensor_convert", fillcolor=lightskyblue1]
-        preproc_in -> videoconvert -> preproc_out;
-    }
-
-    infer[label="openvino_tensor_inference"]
-    postproc[label=<tensor_postproc_<i>xxx</i>>]
-
-    preproc_out -> infer -> postproc;
-  }
+classDef gray fill:#f2f2f2,color:black
+class preproc_in,videoconvert gray
+style PS fill:#fcfcfc,stroke:black,stroke-width:1px,stroke-dasharray:6,5;
 ```
 
 > **CAPTION:** The *vaapi* pre-processing and full-frame inference on *CPU*

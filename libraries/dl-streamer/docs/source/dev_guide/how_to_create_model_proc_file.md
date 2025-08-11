@@ -88,8 +88,6 @@ accuracy, this may not be enough.
 In the table below you can find examples of model-proc files that use
 some of the operations described above:
 
-
-
 | Model | Model-proc | Operation |
 |---|---|---|
 | [MobileNet](https://github.com/onnx/models/blob/main/validated/vision/classification/mobilenet) | [mobilenetv2-7.json](https://github.com/open-edge-platform/edge-ai-libraries/tree/main/libraries/dl-streamer/samples/gstreamer/model_proc/onnx/mobilenetv2-7.json)   | normalization |
@@ -160,7 +158,6 @@ Examples of labels in model-proc files:
 | ImageNet | [resnet-18-pytorch](https://github.com/openvinotoolkit/open_model_zoo/tree/master/models/public/resnet-18-pytorch) | [preproc-aspect-ratio.json](https://github.com/open-edge-platform/edge-ai-libraries/tree/main/libraries/dl-streamer/samples/gstreamer/model_proc/public/preproc-aspect-ratio.json) |
 | COCO | [YOLOv2](https://github.com/openvinotoolkit/open_model_zoo/tree/master/models/public/yolo-v2-tf) |[yolo-v2-tf.json](https://github.com/open-edge-platform/edge-ai-libraries/tree/main/libraries/dl-streamer/samples/gstreamer/model_proc/public/yolo-v2-tf.json) |
 | PASCAL VOC | [yolo-v2-ava-0001](https://github.com/openvinotoolkit/open_model_zoo/tree/master/models/intel/yolo-v2-ava-0001) | [yolo-v2-ava-0001.json](https://github.com/open-edge-platform/edge-ai-libraries/tree/main/libraries/dl-streamer/samples/gstreamer/model_proc/intel/yolo-v2-ava-0001.json) |
-
 
 ## Practice
 

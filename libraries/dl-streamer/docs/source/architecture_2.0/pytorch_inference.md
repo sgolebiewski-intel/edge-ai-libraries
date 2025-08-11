@@ -15,7 +15,7 @@ following requirements are met. Visit
     `intel-dlstreamer-gst-python3` packages are installed. If not, add
     DLStreamer apt repository and install the following packages:
 
-> ``` sh
+> ```bash
 > apt-get update
 > apt-get install -y python3-intel-dlstreamer
 > ```
@@ -23,20 +23,20 @@ following requirements are met. Visit
 2.  Python requirements are installed. If not, install using
     `reqirements.txt` file:
 
-> ``` sh
+> ```bash
 > python3 -m pip install --upgrade pip
 > python3 -m pip install -r requirements.txt
 > ```
 
 3.  DLStreamer environment has been configured. If not:
 
-> ``` sh
+> ```bash
 > source /opt/intel/dlstreamer/setupvars.sh
 > ```
 
 4.  Verify the GStreamer python loader plugin via:
 
-> ``` sh
+> ```bash
 > gst-inspect-1.0 python
 > ```
 >

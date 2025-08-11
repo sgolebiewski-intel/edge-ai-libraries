@@ -5,46 +5,30 @@ DeepStream to Intel® DL Streamer Pipeline Framework. We also have a
 running example through the document that will be updated at each step
 to help show the modifications being described.
 
-::: note
-::: title
-Note
-:::
-
-The intermediate steps of the pipeline are not meant to run. They are
+> **Note:** The intermediate steps of the pipeline are not meant to run. They are
 simply there as a reference example of the changes being made in each
 section.
-:::
 
 ## Contents
 
--   `Preparing Your Model <preparing_model>`{.interpreted-text
-    role="ref"}
--   `Configuring Model for Intel® DL Streamer <configure_model>`{.interpreted-text
-    role="ref"}
--   `GStreamer Pipeline Adjustments <gstreamer_pipeline_adj>`{.interpreted-text
-    role="ref"}
--   `Mux and Demux Elements <mux_demux_elements>`{.interpreted-text
-    role="ref"}
--   `Inferencing Elements <inferencing_elements>`{.interpreted-text
-    role="ref"}
--   `Video Processing Elements <video_processing_elements>`{.interpreted-text
-    role="ref"}
--   `Metadata Elements <metadata_elements>`{.interpreted-text
-    role="ref"}
--   `Multiple Input Streams <multiple-input-streams>`{.interpreted-text
-    role="ref"}
--   `DeepStream to DLStreamer Elements Mapping Cheetsheet <mapping_cheetsheet>`{.interpreted-text
-    role="ref"}
+-   [Preparing Your Model](#preparing-your-model)
+-   [Configuring Model for Intel® DL Streamer](#configuring-model-for-intel-dl-streamer)
+-   [GStreamer Pipeline Adjustments](#gstreamer-pipeline-adjustments)
+-   [Mux and Demux Elements](#mux-and-demux-elements)
+-   [Inferencing Elements](#inferencing-elements)
+-   [Video Processing Elements](#video-processing-elements)
+-   [Metadata Elements](#metadata-elements)
+-   [Multiple Input Streams](#multiple-input-streams)
+-   [DeepStream to DLStreamer Elements Mapping Cheetsheet](#deepstream-to-dlstreamer-elements-mapping-cheetsheet)
 
-------------------------------------------------------------------------
+## Preparing Your Model
 
-To use Intel® DL Streamer Pipeline Framework and OpenVINO™ Toolkit the
+> **Note:** To use Intel® DL Streamer Pipeline Framework and OpenVINO™ Toolkit the
 model needs to be in Intermediate Representation (IR) format. To convert
-your model to this format, please follow
-`model preparation <model_preparation>`{.interpreted-text role="doc"}
+your model to this format, please follow [model preparation](model_preparation.md)
 steps.
 
-------------------------------------------------------------------------
+## Configuring Model for Intel® DL Streamer
 
 NVIDIA DeepStream uses a combination of model configuration files and
 DeepStream element properties to specify interference actions as well as
@@ -54,91 +38,23 @@ documented here:
 
 Similarly, Intel® DL Streamer Pipeline Framework uses GStreamer element
 properties for inference settings and
-`model proc <model_proc_file>`{.interpreted-text role="doc"} files for
-pre- and post-processing steps.
+[model proc](model_proc_file.md) files for pre- and post-processing steps.
 
 The following table shows how to map commonly used NVIDIA DeepStream
 configuration properties to Intel® DL Streamer settings.
 
-+-------------+-------------+-------------+-------------+-------------+
-| NVIDIA      | NVIDIA      | Intel® DL   | Intel® DL   | Description |
-| DeepStream  | DeepStream  | Streamer    | Streamer    |             |
-| config file | element     | model proc  | element     |             |
-|             | property    | file        | property    |             |
-+=============+=============+=============+=============+=============+
-| model-      | model-      |             | model       | Path to     |
-| engine-file | engine-file |             | \<path\>    | inference   |
-| \<path\>    | \<path\>    |             |             | model       |
-|             |             |             |             | network     |
-|             |             |             |             | file.       |
-+-------------+-------------+-------------+-------------+-------------+
-| lab         |             |             | labels-file | Path to     |
-| elfile-path |             |             | \<path\>    | .txt file   |
-| \<path\>    |             |             |             | containing  |
-|             |             |             |             | object      |
-|             |             |             |             | classes.    |
-+-------------+-------------+-------------+-------------+-------------+
-| n           |             |             | | gvadetect | Type of     |
-| etwork-type |             |             |   for       | inference   |
-| \<0..3\>    |             |             |             | operation.  |
-|             |             |             |  detection, |             |
-|             |             |             |   instance  |             |
-|             |             |             |   s         |             |
-|             |             |             | egmentation |             |
-|             |             |             | |           |             |
-|             |             |             | gvaclassify |             |
-|             |             |             |   for       |             |
-|             |             |             |   clas      |             |
-|             |             |             | sification, |             |
-|             |             |             |   semantic  |             |
-|             |             |             |   s         |             |
-|             |             |             | egmentation |             |
-+-------------+-------------+-------------+-------------+-------------+
-| batch-size  | batch-size  |             | batch-size  | Number of   |
-| \<N\>       | \<N\>       |             | \<N\>       | frames      |
-|             |             |             |             | batched     |
-|             |             |             |             | together    |
-|             |             |             |             | for a       |
-|             |             |             |             | single      |
-|             |             |             |             | inference.  |
-+-------------+-------------+-------------+-------------+-------------+
-| maintain-a  |             | resize:     |             | Number of   |
-| spect-ratio |             | a           |             | frames      |
-|             |             | spect-ratio |             | batched     |
-|             |             |             |             | together    |
-|             |             |             |             | for a       |
-|             |             |             |             | single      |
-|             |             |             |             | inference.  |
-+-------------+-------------+-------------+-------------+-------------+
-| num-detec   |             |             |             | Number of   |
-| ted-classes |             |             |             | classes     |
-|             |             |             |             | detected by |
-|             |             |             |             | the model,  |
-|             |             |             |             | inferred    |
-|             |             |             |             | from label  |
-|             |             |             |             | file by     |
-|             |             |             |             | Intel® DL   |
-|             |             |             |             | Streamer.   |
-+-------------+-------------+-------------+-------------+-------------+
-| interval    | interval    |             | inferen     | Inference   |
-| \<N\>       | \<N\>       |             | ce-interval | action      |
-|             |             |             | \<N+1\>     | executed    |
-|             |             |             |             | every Nth   |
-|             |             |             |             | frame,      |
-|             |             |             |             | please note |
-|             |             |             |             | Intel® DL   |
-|             |             |             |             | Streamer    |
-|             |             |             |             | value is    |
-|             |             |             |             | greater by  |
-|             |             |             |             | 1.          |
-+-------------+-------------+-------------+-------------+-------------+
-|             | threshold   |             | threshold   | Threshold   |
-|             |             |             |             | for         |
-|             |             |             |             | detection   |
-|             |             |             |             | results.    |
-+-------------+-------------+-------------+-------------+-------------+
+| NVIDIA DeepStream config file | NVIDIA DeepStream element property | Intel® DL Streamer model proc file | Intel® DL Streamer element property | Description |
+|---|---|---|---|---|
+| model-engine-file <path> | model-engine-file <path> | &nbsp; | model <path> | Path to inference model network file. |
+| labelfile-path <path> | &nbsp; | &nbsp; | labels-file <path> | Path to .txt file containing object classes. |
+| network-type <0..3> | &nbsp; | &nbsp; | <br>gvadetect for detection, instance segmentation<br>gvaclassify for classification, semantic segmentation<br><br> | Type of inference operation. |
+| batch-size <N> | batch-size <N> | &nbsp; | batch-size <N> | Number of frames batched together for a single inference. |
+| maintain-aspect-ratio | &nbsp; | resize: aspect-ratio | &nbsp; | Number of frames batched together for a single inference. |
+| num-detected-classes | &nbsp; | &nbsp; | &nbsp; | Number of classes detected by the model, inferred from label file by Intel® DL Streamer. |
+| interval <N> | interval <N> | &nbsp; | inference-interval <N+1> | Inference action executed every Nth frame, please note Intel® DL Streamer value is greater by 1. |
+| &nbsp; | threshold | &nbsp; | threshold | Threshold for detection results. |
 
-------------------------------------------------------------------------
+## GStreamer Pipeline Adjustments
 
 In the following sections we will be converting DeepStream pipeline to
 Pipeline Framework. The DeepStream pipeline is taken from one of the
@@ -148,7 +64,7 @@ reads a video stream from the input file, decodes it, runs inference,
 overlays the inferences on the video, re-encodes and outputs a new .mp4
 file.
 
-``` shell
+```shell
 filesrc location=input_file.mp4 ! decodebin3 ! \
 nvstreammux batch-size=1 width=1920 height=1080 ! queue ! \
 nvinfer config-file-path=./config.txt ! \
@@ -164,9 +80,9 @@ pipeline.
 
 ![image](deepstream_mapping_dlstreamer.png)
 
-The next chapters give more details on how to replace each element.
+## Mux and Demux Elements
 
-------------------------------------------------------------------------
+The next chapters give more details on how to replace each element.
 
 -   Remove `nvstreammux` and `nvstreamdemux` and all their properties.
     -   These elements combine multiple input streams into a single
@@ -186,7 +102,7 @@ followed it. Notably, the `batch-size` property is also removed. It will
 be added in the next section as a property of the Pipeline Framework
 inference elements.
 
-``` shell
+```shell
 filesrc location=input_file.mp4 ! decodebin3 ! \
 nvinfer config-file-path=./config.txt ! \
 nvvideoconvert ! "video/x-raw(memory:NVMM), format=RGBA" ! \
@@ -194,7 +110,7 @@ nvdsosd ! queue ! \
 nvvideoconvert ! "video/x-raw, format=I420" ! videoconvert ! avenc_mpeg4 bitrate=8000000 ! qtmux ! filesink location=output_file.mp4
 ```
 
-------------------------------------------------------------------------
+## Inferencing Elements
 
 -   Remove `nvinfer` and replace it with `gvainference`, `gvadetect` or
     `gvaclassify` depending on the following use cases:
@@ -226,7 +142,7 @@ needed). We replaced `config-file-path` property with `model` and
 `model-proc` properties as described in "Configuring Model for Intel® DL
 Streamer" above.
 
-``` shell
+```shell
 filesrc location=input_file.mp4 ! decodebin3 ! \
 gvadetect model=./model.xml model-proc=./model_proc.json batch-size=1 ! queue ! \
 nvvideoconvert ! "video/x-raw(memory:NVMM), format=RGBA" ! \
@@ -234,7 +150,7 @@ nvdsosd ! queue ! \
 nvvideoconvert ! "video/x-raw, format=I420" ! videoconvert ! avenc_mpeg4 bitrate=8000000 ! qtmux ! filesink location=output_file.mp4
 ```
 
-------------------------------------------------------------------------
+## Video Processing Elements
 
 -   Replace NVIDIA-specific video processing elements with native
     GStreamer elements.
@@ -260,14 +176,14 @@ Intel Graphics. Also, we will use the GStreamer standard element
 `decodebin` to choose an appropriate demuxer and decoder depending on
 the input stream as well as what is available on the system.
 
-``` shell
+```shell
 filesrc location=input_file.mp4 ! decodebin3 ! \
 gvadetect model=./model.xml model-proc=./model_proc.json batch-size=1 ! queue ! \
 nvdsosd ! queue ! \
 videoconvert ! avenc_mpeg4 bitrate=8000000 ! qtmux ! filesink location=output_file.mp4
 ```
 
-------------------------------------------------------------------------
+## Metadata Elements
 
 -   Replace `nvtracker` with
     `gvatrack <../elements/gvatrack>`{.interpreted-text role="doc"}
@@ -299,31 +215,31 @@ videoconvert ! avenc_mpeg4 bitrate=8000000 ! qtmux ! filesink location=output_fi
 The only metadata processing that is done in this pipeline is to overlay
 the inferences on the video for which we use `gvawatermark`.
 
-``` shell
+```shell
 filesrc location=input_file.mp4 ! decodebin3 ! \
 gvadetect model=./model.xml model-proc=./model_proc.json batch-size=1 ! queue ! \
 gvawatermark ! queue ! \
 videoconvert ! avenc_mpeg4 bitrate=8000000 ! qtmux ! filesink location=output_file.mp4
 ```
 
-------------------------------------------------------------------------
+## Multiple Input Streams
 
-| Unlike DeepStream, where all sources need to be linked to the sink
-  pads of the `nvstreammux` element, Pipeline Framework uses existing
-  GStreamer mechanisms to define multiple parallel video processing
-  streams. This approach allow to reuse native GStreamer elements within
-  the pipeline. The input stream can share same Inference Engine if they
-  have same `model-instance-id` property. This allows creating inference
-  batching across streams.
+Unlike DeepStream, where all sources need to be linked to the sink
+pads of the `nvstreammux` element, Pipeline Framework uses existing
+GStreamer mechanisms to define multiple parallel video processing
+streams. This approach allow to reuse native GStreamer elements within
+the pipeline. The input stream can share same Inference Engine if they
+have same `model-instance-id` property. This allows creating inference
+batching across streams.
 
-| For DeepStream, the simple pipeline involving two streams would look
-  like code snippet below. The first line defines a common inference
-  element for two (muxed and batched) streams. The second line defines
-  per-stream input operations prior to muxing. The third line defines
-  per-stream output operations after de-muxing.
+For DeepStream, the simple pipeline involving two streams would look
+like code snippet below. The first line defines a common inference
+element for two (muxed and batched) streams. The second line defines
+per-stream input operations prior to muxing. The third line defines
+per-stream output operations after de-muxing.
 
 ``` shell
-nvstreammux ! nvinfer batch-size=2 config-file-path=./config.txt ! nvstreamdemux \ 
+nvstreammux ! nvinfer batch-size=2 config-file-path=./config.txt ! nvstreamdemux \
 filesrc ! decode ! mux.sink_0 filesrc ! decode ! mux.sink_1 \
 demux.src_0 ! encode ! filesink demux.src_1 ! encode ! filesink
 ```
@@ -334,33 +250,33 @@ two parallel streams using native GStreamer syntax. By setting
 instance `gvadetect` element. Hence, the shared inference parameters
 (model, batch size, \...) can be defined only in the first line.
 
-``` shell
-filesrc ! decode ! gvadetect model-instance-id=model1 model=./model.xml batch-size=2 ! encode ! filesink \ 
+```shell
+filesrc ! decode ! gvadetect model-instance-id=model1 model=./model.xml batch-size=2 ! encode ! filesink \
 filesrc ! decode ! gvadetect model-instance-id=model1 ! encode ! filesink
 ```
 
-------------------------------------------------------------------------
+## DeepStream to DLStreamer Elements Mapping Cheetsheet
 
 Below table lists quick reference for mapping typical DeepStream
 elements to Intel® DL Streamer elements or GStreamer.
 
-  DeepStream Element                                                                                           DLStreamer Element
-  ------------------------------------------------------------------------------------------------------------ -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-  [nvinfer](https://docs.nvidia.com/metropolis/deepstream/dev-guide/text/DS_plugin_gst-nvinfer.html)           `gvadetect <../elements/gvadetect>`{.interpreted-text role="doc"}, `gvaclassify <../elements/gvaclassify>`{.interpreted-text role="doc"}, `gvainference <../elements/gvainference>`{.interpreted-text role="doc"}
-  [nvdsosd](https://docs.nvidia.com/metropolis/deepstream/dev-guide/text/DS_plugin_gst-nvdsosd.html)           `gvawatermark <../elements/gvawatermark>`{.interpreted-text role="doc"}
-  [nvtracker](https://docs.nvidia.com/metropolis/deepstream/dev-guide/text/DS_plugin_gst-nvtracker.html)       `gvatrack <../elements/gvatrack>`{.interpreted-text role="doc"}
-  [nvmsgconv](https://docs.nvidia.com/metropolis/deepstream/dev-guide/text/DS_plugin_gst-nvmsgconv.html)       `gvametaconvert <../elements/gvametaconvert>`{.interpreted-text role="doc"}
-  [nvmsgbroker](https://docs.nvidia.com/metropolis/deepstream/dev-guide/text/DS_plugin_gst-nvmsgbroker.html)   `gvametapublish <../elements/gvametapublish>`{.interpreted-text role="doc"}
+| DeepStream Element | DLStreamer Element |
+|---|---|
+| [nvinfer](https://docs.nvidia.com/metropolis/deepstream/dev-guide/text/DS_plugin_gst-nvinfer.html) | [gvadetect](../elements/gvadetect), [gvaclassify](../elements/gvaclassify), [gvainference](../elements/gvainference) |
+| [nvdsosd](https://docs.nvidia.com/metropolis/deepstream/dev-guide/text/DS_plugin_gst-nvdsosd.html) | [gvawatermark](../elements/gvawatermark) |
+| [nvtracker](https://docs.nvidia.com/metropolis/deepstream/dev-guide/text/DS_plugin_gst-nvtracker.html) | [gvatrack](../elements/gvatrack) |
+| [nvmsgconv](https://docs.nvidia.com/metropolis/deepstream/dev-guide/text/DS_plugin_gst-nvmsgconv.html) | [gvametaconvert](../elements/gvametaconvert) |
+| [nvmsgbroker](https://docs.nvidia.com/metropolis/deepstream/dev-guide/text/DS_plugin_gst-nvmsgbroker.html) | [gvametapublish](../elements/gvametapublish) |
 
-  DeepStream Element   GStreamer Element
-  -------------------- -------------------
-  nvvideoconvert       videoconvert
-  nvv4l2decoder        decodebin3
-  nvv4l2h264dec        vah264dec
-  nvv4l2h265dec        vah265dec
-  nvv4l2h264enc        va264enc
-  nvv4l2h265enc        va265enc
-  nvv4l2vp8dec         vavp8dec
-  nvv4l2vp9dec         vavp9dec
-  nvv4l2vp8enc         vavp8enc
-  nvv4l2vp9enc         vavp9enc
+| DeepStream Element | GStreamer Element |
+|---|---|
+| nvvideoconvert | videoconvert |
+| nvv4l2decoder | decodebin3 |
+| nvv4l2h264dec | vah264dec |
+| nvv4l2h265dec | vah265dec |
+| nvv4l2h264enc | va264enc |
+| nvv4l2h265enc | va265enc |
+| nvv4l2vp8dec | vavp8dec |
+| nvv4l2vp9dec | vavp9dec |
+| nvv4l2vp8enc | vavp8enc |
+| nvv4l2vp9enc | vavp9enc |

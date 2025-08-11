@@ -112,7 +112,7 @@ property of GStreamer inference elements -
 gvainference/gvadetect/gvaclassify. For example, this is a pipeline with
 object detection (gvadetect) and classification (gvaclassify)
 
-``` sh
+```bash
 gvadetect model=MODEL1_FILE_PATH.xml ! gvaclassify model=MODEL1_FILE_PATH.xml
 ```
 
@@ -122,7 +122,7 @@ and to have the same filename (with different extension).
 An example pipeline including gvadetect and gvaclassify with
 pre-processing/post-processing rules may look like
 
-``` sh
+```bash
 gvadetect model=MODEL1_FILE_PATH.xml model-proc=MODEL1_FILE_PATH.json ! gvaclassify model=MODEL2_FILE_PATH.xml model-proc=MODEL2_FILE_PATH.json
 ```
 

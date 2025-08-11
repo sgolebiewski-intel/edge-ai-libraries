@@ -9,14 +9,14 @@ missed GStreamer element(s) using apt package manager.
 
 Example for installing GStreamer plugin `x264enc`
 
-``` none
+```bash
 sudo apt update
 sudo apt install gstreamer1.0-plugins-ugly
 ```
 
 More generic case
 
-``` none
+```bash
 sudo apt update
 sudo apt install libgstreamer1.0-dev libgstreamer-plugins-base1.0-dev libgstreamer-plugins-bad1.0-dev gstreamer1.0-plugins-base gstreamer1.0-plugins-good gstreamer1.0-plugins-bad gstreamer1.0-plugins-ugly gstreamer1.0-libav gstreamer1.0-tools gstreamer1.0-x gstreamer1.0-alsa gstreamer1.0-gl gstreamer1.0-gtk3 gstreamer1.0-qt5 gstreamer1.0-pulseaudio
 ```
@@ -30,6 +30,6 @@ about the path to GStreamer custom plugin(s) directory installed in the
 Example of updating `GST_PLUGIN_PATH` about path to the custom plugin
 i.e. `/usr/lib/x86_64-linux-gnu/gstreamer-1.0`
 
-``` none
+```bash
 export GST_PLUGIN_PATH=${GST_PLUGIN_PATH}:/usr/lib/x86_64-linux-gnu/gstreamer-1.0
 ```

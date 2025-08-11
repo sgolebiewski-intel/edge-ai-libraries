@@ -10,7 +10,7 @@ install it locally and configure your IDE to format your code with it.
 
 If you are using Ubuntu it is quite simple:
 
-``` sh
+```bash
 sudo apt install -y clang-format-12
 sudo ln -s /usr/bin/clang-format-12 /usr/bin/clang-format
 ```
@@ -18,7 +18,7 @@ sudo ln -s /usr/bin/clang-format-12 /usr/bin/clang-format
 If you are using different distro you can find an appropriate repository
 here `https://apt.llvm.org/`. And install the newest version:
 
-``` sh
+```bash
 sudo apt install -y clang-format-9
 sudo ln -s /usr/bin/clang-format-9 /usr/bin/clang-format
 ```

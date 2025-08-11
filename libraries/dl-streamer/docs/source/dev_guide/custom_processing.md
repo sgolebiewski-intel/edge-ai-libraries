@@ -2,8 +2,7 @@
 
 The DL model inference in general works with tensor data on input and
 output. The tensor is abstract N-dimension array, in GStreamer inference
-plugins it stored under frame `Metadata <metadata>`{.interpreted-text
-role="doc"} using flexible key-value container
+plugins it stored under frame [Metadata ](metadata) using flexible key-value container
 [GstStructure](https://gstreamer.freedesktop.org/documentation/gstreamer/gststructure.html).
 The C++ class **GVA::Tensor** with [header-only
 implementation](https://github.com/open-edge-platform/edge-ai-libraries/tree/main/libraries/dl-streamer/include/dlstreamer/gst/videoanalytics/tensor.h#L38)
@@ -14,7 +13,7 @@ involves model specific pre-processing and post-processing logic.
 GStreamer inference plugins support pre-/post-processing for many
 popular model topologies and use-cases, configurable via JSON file
 format as described in
-`model preparation <model_preparation>`{.interpreted-text role="doc"}
+[model preparation](model_preparation.md)
 page.
 
 If specific model pre-/post-processing not supported, there are several
@@ -76,9 +75,7 @@ gvaclassify.
 The advantage of this option is applicability for any application type
 including gst-launch utility.
 
-The `gvapython element <../elements/gvapython>`{.interpreted-text
-role="doc"} takes reference to user provided Python script with function
-to be called on every frame processing.
+The [gvapython element](../elements/gvapython) takes reference to user provided Python script with function to be called on every frame processing.
 
 The callback function can attach/modify metadata as demonstrated in
 [sample](https://github.com/dlstreamer/dlstreamer/tree/master/samples/gstreamer/gst_launch/gvapython/face_detection_and_classification)

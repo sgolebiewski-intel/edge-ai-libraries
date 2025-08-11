@@ -138,8 +138,14 @@ AIVID TECHVISION and others.
 > **\*** *Other names and brands may be claimed as the property of
 > others.*
 
-::: {.toctree maxdepth="2" hidden=""}
-get_started/get_started_index dev_guide/dev_guide_index
-elements/elements supported_models api_ref/api_reference
+::: {.toctree}
+:maxdepth: 2
+:hidden:
+
+get_started/get_started_index
+dev_guide/dev_guide_index
+elements/elements
+supported_models
+api_ref/api_reference
 architecture_2.0/architecture_2.0
 :::

@@ -138,7 +138,7 @@ AIVID TECHVISION and others.
 > **\*** *Other names and brands may be claimed as the property of
 > others.*
 
-::: {.toctree}
+:::{.toctree}
 :maxdepth: 2
 :hidden:
 

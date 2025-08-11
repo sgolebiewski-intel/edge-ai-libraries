@@ -50,8 +50,18 @@ completed yet. There is no strict backward compatibility in preview mode
 (some changes/renaming may occur). It could be used for evaluation and
 prototyping, it's not recommended for production usage yet.
 
-::: {.toctree maxdepth="1"}
-migration_guide cpp_interfaces cpp_elements gstreamer_elements
-gstreamer_bins python_bindings pytorch_inference elements_list packaging
-samples_2.0 api_ref/index
+:::{.toctree}
+:maxdepth: 1
+
+migration_guide
+cpp_interfaces
+cpp_elements
+gstreamer_elements
+gstreamer_bins
+python_bindings
+pytorch_inference
+elements_list
+packaging
+samples_2.0
+api_ref/index
 :::

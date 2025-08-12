@@ -16,8 +16,7 @@ differences between programming models
 | Why choice: | <br>Very easy to program - small or no C++/Python coding to build GStreamer pipeline<br>Out-of-box support for many typical use cases<br><br> | <br>Pretty easy to program<br>Allows to create custom C++ elements and mix with existent C++ elements in GStreamer pipeline<br><br> | <br>Full flexibility of C++/Python programming to any library/framework APIs:<br>FFmpeg, GStreamer, OpenVINO™, Level-Zero, OpenCL, OpenCV Mat, SYCL, VA-API<br>Application is responsible for pipeline management and data flow (queues, async execution, multi-stream, etc)<br>Application can use memory interop library and any C++ elements provided by Intel® DL Streamer<br><br> |
 | Sample(s): | <br>GStreamer command-line: samples/gstreamer/gst_launch<br>GStreamer C++: samples/gstreamer/cpp<br>GStreamer Python: samples/gstreamer/python<br><br> | <br>For example, what if we should implement object classification (on ROI cropped images) with background removal?<br>Adding custom C++ element opencv_remove_background<br>in ~100 C++ lines allows to achieve that<br>We reused many existent low-level elements for pre-processing, inference, post-processing on segmentation and classification models.<br><br> | <br>FFmpeg+OpenVINO™: samples/ffmpeg_openvino<br>FFmpeg+DPCPP/SYCL: samples/ffmpeg_dpcpp<br><br> |
 
-
-See `Samples 2.0 <samples_2.0>`{.interpreted-text role="doc"} for table
+See [Samples 2.0](./samples_2.0.md) for table
 with all samples.
 
 ## Backward compatibility between 1.0 and 2.0

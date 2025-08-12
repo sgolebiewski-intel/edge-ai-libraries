@@ -84,18 +84,17 @@ pipeline.
 
 The next chapters give more details on how to replace each element.
 
--   Remove `nvstreammux` and `nvstreamdemux` and all their properties.
-    -   These elements combine multiple input streams into a single
-        batched video stream (NVIDIA-specific). Intel® DL Streamer takes
-        a different approach: it employs generic GStreamer syntax to
-        define parallel streams. The cross-stream batching happens at
-        the inferencing elements by setting the same `model-instance-id`
-        property.
-    -   In this example, there is only one video stream so we can skip
-        this for now. See more on how to construct multi-stream
-        pipelines in the following section
-        `Multiple Input Streams <multiple-input-streams>`{.interpreted-text
-        role="ref"} below.
+- Remove `nvstreammux` and `nvstreamdemux` and all their properties.
+  - These elements combine multiple input streams into a single
+    batched video stream (NVIDIA-specific). Intel® DL Streamer takes
+    a different approach: it employs generic GStreamer syntax to
+    define parallel streams. The cross-stream batching happens at
+    the inferencing elements by setting the same `model-instance-id`
+    property.
+  - In this example, there is only one video stream so we can skip
+    this for now. See more on how to construct multi-stream
+    pipelines in the following section
+    [Multiple Input Streams](#multiple-input-streams) below.
 
 At this stage we have removed `nvstreammux` and the `queue` that
 followed it. Notably, the `batch-size` property is also removed. It will
@@ -112,30 +111,30 @@ nvvideoconvert ! "video/x-raw, format=I420" ! videoconvert ! avenc_mpeg4 bitrate
 
 ## Inferencing Elements
 
--   Remove `nvinfer` and replace it with `gvainference`, `gvadetect` or
-    `gvaclassify` depending on the following use cases:
-    -   For doing detection on full frames and outputting a region of
-        interest, use
-        `gvadetect <../elements/gvadetect>`{.interpreted-text
-        role="doc"}. This replaces `nvinfer` when it is used in primary
-        mode.
-        -   Replace `config-file-path` property with `model` and
-            `model-proc`.
-        -   `gvadetect` generates GstVideoRegionOfInterestMeta.
-    -   For doing classification on previously detected objects, use
-        `gvaclassify <../elements/gvaclassify>`{.interpreted-text
-        role="doc"}. This replaces nvinfer when it is used in secondary
-        mode.
-        -   Replace `config-file-path` property with `model` and
-            `model-proc`.
-        -   `gvaclassify` requires GstVideoRegionOfInterestMeta as
-            input.
-    -   For doing generic full frame inference, use
-        `gvainference <../elements/gvainference>`{.interpreted-text
-        role="doc"}. This replaces `nvinfer` when used in primary mode.
-        -   `gvainference` generates GstGVATensorMeta.
+- Remove `nvinfer` and replace it with `gvainference`, `gvadetect` or
+  `gvaclassify` depending on the following use cases:
+  - For doing detection on full frames and outputting a region of
+    interest, use
+    [`gvadetect`](../elements/gvadetect.md).
+    This replaces `nvinfer` when it is used in primary
+    mode.
+    - Replace `config-file-path` property with `model` and
+      `model-proc`.
+    - `gvadetect` generates GstVideoRegionOfInterestMeta.
+  - For doing classification on previously detected objects, use
+    [`gvaclassify`](../elements/gvaclassify.md).
+    This replaces nvinfer when it is used in secondary
+    mode.
+    - Replace `config-file-path` property with `model` and
+      `model-proc`.
+    - `gvaclassify` requires GstVideoRegionOfInterestMeta as
+      input.
+  - For doing generic full frame inference, use
+    [`gvainference`](../elements/gvainference.md).
+    This replaces `nvinfer` when used in primary mode.
+    - `gvainference` generates GstGVATensorMeta.
 
-In this example we will use gvadetect to infer on the full frame and
+In this example we will use `gvadetect` to infer on the full frame and
 output region of interests. `batch-size` was also added for consistency
 with what was removed above (the default value is 1 so it is not
 needed). We replaced `config-file-path` property with `model` and
@@ -185,32 +184,29 @@ videoconvert ! avenc_mpeg4 bitrate=8000000 ! qtmux ! filesink location=output_fi
 
 ## Metadata Elements
 
--   Replace `nvtracker` with
-    `gvatrack <../elements/gvatrack>`{.interpreted-text role="doc"}
-    -   Remove `ll-lib-file` property. Optionally replace with
-        `tracking-type` if you want to specify the algorithm used. By
-        default it will use the 'short-term' tracker.
-    -   Remove all other properties.
--   Replace `nvdsosd` with
-    `gvawatermark <../elements/gvawatermark>`{.interpreted-text
-    role="doc"}
-    -   Remove all properties
--   Replace `nvmsgconv` with
-    `gvametaconvert <../elements/gvametaconvert>`{.interpreted-text
-    role="doc"}
-    -   `gvametaconvert` can be used to convert metadata from
-        inferencing elements to JSON and to output metadata to the
-        GST_DEBUG log.
-    -   It has optional properties to configure what information goes
-        into the JSON object including frame data for frames with no
-        detections found, tensor data, the source the inferences came
-        from, and tags, a user defined JSON object that is attached to
-        each output for additional custom data.
--   Replace `nvmsgbroker` with
-    `gvametapublish <../elements/gvametapublish>`{.interpreted-text
-    role="doc"}
-    -   `gvametapublish` can be used to output the JSON messages
-        generated by `gvametaconvert` to stdout, file, MQTT or Kafka.
+- Replace `nvtracker` with
+  [`gvatrack`](../elements/gvatrack.md)
+  - Remove `ll-lib-file` property. Optionally replace with
+    `tracking-type` if you want to specify the algorithm used. By
+    default it will use the 'short-term' tracker.
+  - Remove all other properties.
+- Replace `nvdsosd` with
+  [`gvawatermark`](../elements/gvawatermark.md)
+  - Remove all properties
+- Replace `nvmsgconv` with
+  [`gvametaconvert`](../elements/gvametaconvert.md)}
+  - `gvametaconvert` can be used to convert metadata from
+    inferencing elements to JSON and to output metadata to the
+    GST_DEBUG log.
+  - It has optional properties to configure what information goes
+    into the JSON object including frame data for frames with no
+    detections found, tensor data, the source the inferences came
+    from, and tags, a user defined JSON object that is attached to
+    each output for additional custom data.
+- Replace `nvmsgbroker` with
+  [`gvametapublish`](../elements/gvametapublish.md)
+  - `gvametapublish` can be used to output the JSON messages
+    generated by `gvametaconvert` to stdout, file, MQTT or Kafka.
 
 The only metadata processing that is done in this pipeline is to overlay
 the inferences on the video for which we use `gvawatermark`.

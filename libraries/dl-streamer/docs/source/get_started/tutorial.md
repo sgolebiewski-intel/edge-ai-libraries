@@ -131,55 +131,50 @@ The elements in the last two categories above are part of Pipeline
 Framework's GVA plugin and start with the prefix 'gva'. We will describe
 the 'gva' elements used in this tutorial with some important properties
 here. Refer to
-`Intel® DL Streamer elements <../elements/elements>`{.interpreted-text
-role="doc"} page for more details.
+[Intel® DL Streamer elements](../elements/elements.md) page for more details.
 
--   `gvadetect <../elements/gvadetect>`{.interpreted-text role="doc"}
+- [`gvadetect`](../elements/gvadetect.md)
 
-    \- Runs detection with the Inference Engine from OpenVINO™ Toolkit.
-    We will use it to detect vehicles in a frame and output their
-    bounding boxes aka Regions of Interest (ROI). `queue` element must
-    be put directly after `gvadetect` element in pipeline.
+  \- Runs detection with the Inference Engine from OpenVINO™ Toolkit.
+  We will use it to detect vehicles in a frame and output their
+  bounding boxes aka Regions of Interest (ROI). `queue` element must
+  be put directly after `gvadetect` element in pipeline.
 
-    -   model - path to the inference model network file
-    -   device - device to run inferencing on
-    -   inference-interval - interval between inference requests, the
-        bigger the value, the better the throughput. i.e. setting this
-        property to 1 would mean run detection on every frame while
-        setting it to 5 would run detection on every fifth frame.
+  - model - path to the inference model network file
+  - device - device to run inferencing on
+  - inference-interval - interval between inference requests, the
+    bigger the value, the better the throughput. i.e. setting this
+    property to 1 would mean run detection on every frame while
+    setting it to 5 would run detection on every fifth frame.
 
--   `gvaclassify <../elements/gvaclassify>`{.interpreted-text
-    role="doc"}
+- [`gvaclassify`](../elements/gvaclassify.md)
+  \- Runs classification with the Inference Engine from OpenVINO™
+  Toolkit. We will use it to label the bounding boxes that gvadetect
+  outputs, with the type and color of the vehicle. `queue` element
+  must be put directly after `gvaclassify` element in pipeline.
 
-    \- Runs classification with the Inference Engine from OpenVINO™
-    Toolkit. We will use it to label the bounding boxes that gvadetect
-    outputs, with the type and color of the vehicle. `queue` element
-    must be put directly after `gvaclassify` element in pipeline.
+  - model - path to the inference model network file
+  - model-proc - path to the model-proc file. A model-proc file
+    describes the model input and output layer format. The
+    model-proc file in this tutorial describes the output layer name
+    and labels (person and vehicle) of objects it detects. See
+    [`model-proc`](../dev_guide/model_proc_file.md)> for more information.
+  - device - device to run inferencing on
 
-    -   model - path to the inference model network file
-    -   model-proc - path to the model-proc file. A model-proc file
-        describes the model input and output layer format. The
-        model-proc file in this tutorial describes the output layer name
-        and labels (person and vehicle) of objects it detects. See
-        `model-proc <../dev_guide/model_proc_file>`{.interpreted-text
-        role="doc"} for more information.
-    -   device - device to run inferencing on
+- [`gvatrack](../elements/gvatrack.md)
 
--   `gvatrack <../elements/gvatrack>`{.interpreted-text role="doc"}
+  \- Identifies objects in frames where detection is skipped and
+  assigns unique ID to objects. This allows us to run object detection
+  on fewer frames and increases overall throughput while still
+  tracking the position and type of objects in every frame.
 
-    \- Identifies objects in frames where detection is skipped and
-    assigns unique ID to objects. This allows us to run object detection
-    on fewer frames and increases overall throughput while still
-    tracking the position and type of objects in every frame.
+- [`gvawatermark`](../elements/gvawatermark.md)
 
--   `gvawatermark <../elements/gvawatermark>`{.interpreted-text
-    role="doc"}
-
-    \- Overlays detection and classification results on top of video
-    data. We will do exactly that. Parse the detected vehicle results
-    metadata and create a video frame rendered with the bounding box
-    aligned to the vehicle position; parse the classified vehicle result
-    and label it on the bounding box.
+  \- Overlays detection and classification results on top of video
+  data. We will do exactly that. Parse the detected vehicle results
+  metadata and create a video frame rendered with the bounding box
+  aligned to the vehicle position; parse the classified vehicle result
+  and label it on the bounding box.
 
 In addition to `gvadetect` and `gvaclassify`, you can use `gvainference`
 for running inference with any CNN model not supported by gvadetect or
@@ -612,11 +607,9 @@ analytics pipeline with Intel® DL Streamer Pipeline Framework!
 
 ## Next Steps
 
-- [Samples
-  overview](https://github.com/open-edge-platform/edge-ai-libraries/tree/main/libraries/dl-streamer/samples/gstreamer/README.md)
-- `../elements/elements`{.interpreted-text role="doc"}
-- `../dev_guide/how_to_create_model_proc_file`{.interpreted-text
-  role="doc"}
+- [Samples overview](https://github.com/open-edge-platform/edge-ai-libraries/tree/main/libraries/dl-streamer/samples/gstreamer/README.md)
+- [Elements](../elements/elements.md)
+- [How to create model-proc file](../dev_guide/how_to_create_model_proc_file.md)
 
 ------------------------------------------------------------------------
 

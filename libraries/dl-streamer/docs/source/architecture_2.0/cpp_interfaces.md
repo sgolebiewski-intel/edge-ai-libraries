@@ -4,16 +4,16 @@ Intel® DL Streamer provides independent sub-component for zero-copy
 buffer sharing and memory interop between various frameworks and memory
 handles on CPU and GPU
 
--   CPU memory `void*`
--   FFmpeg `AVFrame`
--   GStreamer `GstBuffer` and `GstMemory`
--   Level-Zero `USM pointers`
--   OpenCL `cl_mem`
--   OpenCV `cv::Mat`
--   OpenCV `cv::UMat`
--   OpenVINO™ `ov::Tensor` and `ov::RemoteTensor`
--   SYCL `USM pointers`
--   VA-API `VASurfaceID`
+- CPU memory `void*`
+- FFmpeg `AVFrame`
+- GStreamer `GstBuffer` and `GstMemory`
+- Level-Zero `USM pointers`
+- OpenCL `cl_mem`
+- OpenCV `cv::Mat`
+- OpenCV `cv::UMat`
+- OpenVINO™ `ov::Tensor` and `ov::RemoteTensor`
+- SYCL `USM pointers`
+- VA-API `VASurfaceID`
 
 The memory interop sub-component is available via APT installation
 `sudo apt install intel-dlstreamer-cpp` and on [github

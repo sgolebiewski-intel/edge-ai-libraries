@@ -48,7 +48,7 @@ clocking, messaging, and state changes.
 
 Example with test video input:
 
-``` sh
+```bash
 gst-launch-1.0 videotestsrc ! ximagesink
 ```
 
@@ -94,7 +94,7 @@ specifies the file path for input.
 
 Example of filesrc element with its filesrc property:
 
-``` sh
+```bash
 filesrc location=cars_1900.mp4
 ```
 
@@ -197,7 +197,7 @@ Ubuntu.
 1.  Export `MODELS_PATH` to define where to download models. For
     example:
 
-    ``` sh
+    ```bash
     export MODELS_PATH=/home/${USER}/intel/models
     ```
 
@@ -205,26 +205,20 @@ Ubuntu.
     Zoo](https://github.com/openvinotoolkit/open_model_zoo) to
     `MODELS_PATH` directory:
 
-    ``` sh
+    ```bash
     python3 -m pip install --upgrade pip
     python3 -m pip install openvino-dev[onnx,tensorflow,pytorch]
     mkdir -p $MODELS_PATH
     omz_downloader --name person-vehicle-bike-detection-2004,vehicle-attributes-recognition-barrier-0039 -o $MODELS_PATH
     ```
 
-    ::: note
-    ::: title
-    Note
-    :::
-
-    Make sure your environment variable `$PATH` includes
-    `$HOME/.local/bin` - use `echo $PATH`.
-    :::
+    > **NOTE:** Make sure your environment variable `$PATH` includes
+    > `$HOME/.local/bin` - use `echo $PATH`.
 
 3.  Export variables to set paths for *model* and *model_proc* files. It
     will make pipelines definition easy later in examples:
 
-    ``` sh
+    ```bash
     export DETECTION_MODEL=${MODELS_PATH}/intel/person-vehicle-bike-detection-2004/FP16/person-vehicle-bike-detection-2004.xml
     export DETECTION_MODEL_PROC=/opt/intel/dlstreamer/samples/gstreamer/model_proc/intel/person-vehicle-bike-detection-2004.json
     export VEHICLE_CLASSIFICATION_MODEL=${MODELS_PATH}/intel/vehicle-attributes-recognition-barrier-0039/FP16/vehicle-attributes-recognition-barrier-0039.xml
@@ -245,7 +239,7 @@ Ubuntu.
     freely licensed content from the websites such as Pexels\*. Any
     video with cars, or pedestrians can be used with the exercise.
 
-    ``` sh
+    ```bash
     # This tutorial uses ~/path/to/video as the video path
     # and FILENAME as the placeholder for a video file name.
     # Change this information to fit your setup.
@@ -262,7 +256,7 @@ It is suitable if you chose Option #2 (Docker) in Install Guide Ubuntu.
 2.  Export `MODELS_PATH` to define where to download models. For
     example:
 
-    ``` sh
+    ```bash
     export MODELS_PATH=/home/${USER}/intel/models
     ```
 
@@ -270,21 +264,15 @@ It is suitable if you chose Option #2 (Docker) in Install Guide Ubuntu.
     Zoo](https://github.com/openvinotoolkit/open_model_zoo) to
     `MODELS_PATH` directory:
 
-    ``` sh
+    ```bash
     python3 -m pip install --upgrade pip
     python3 -m pip install openvino-dev[onnx,tensorflow,pytorch]
     mkdir -p $MODELS_PATH
     omz_downloader --name person-vehicle-bike-detection-2004,vehicle-attributes-recognition-barrier-0039 -o $MODELS_PATH
     ```
 
-    ::: note
-    ::: title
-    Note
-    :::
-
-    Make sure your environment variable `$PATH` includes
-    `$HOME/.local/bin` - use `echo $PATH`.
-    :::
+    > **NOTE:** Make sure your environment variable `$PATH` includes
+    > `$HOME/.local/bin` - use `echo $PATH`.
 
 4.  Run Intel® DL Streamer container.
 
@@ -293,23 +281,17 @@ It is suitable if you chose Option #2 (Docker) in Install Guide Ubuntu.
     command. Make sure your mounting parameter is specified as
     `-v <path_on_host>:<path_in_the_container>`:
 
-    ::: tabs
-    ::: tab
-    Ubuntu 22
+    **Ubuntu 22**
 
-    ``` sh
+    ```bash
     docker run -it --rm -v ${MODELS_PATH}:/home/dlstreamer/models --env MODELS_PATH=/home/dlstreamer/models intel/dlstreamer:2025.0.1.2-ubuntu22
     ```
-    :::
 
-    ::: tab
-    Ubuntu 24
+    **Ubuntu 24**
 
-    ``` sh
+    ```bash
     docker run -it --rm -v ${MODELS_PATH}:/home/dlstreamer/models --env MODELS_PATH=/home/dlstreamer/models intel/dlstreamer:latest
     ```
-    :::
-    :::
 
     Running Intel® DL Streamer in the Docker container with an inference
     on GPU or NPU devices requires the access as a non-root user to
@@ -321,7 +303,7 @@ It is suitable if you chose Option #2 (Docker) in Install Guide Ubuntu.
     the `render` group ID from your host. The full running command
     example:
 
-    ``` sh
+    ```bash
     docker run -it --rm -v ${MODELS_PATH}:/home/dlstreamer/models \
     --device /dev/dri \
     --group-add $(stat -c "%g" /dev/dri/render*) \
@@ -354,7 +336,7 @@ It is suitable if you chose Option #2 (Docker) in Install Guide Ubuntu.
     *model_proc* files. It will make pipelines definition easy later in
     examples:
 
-    ``` sh
+    ```bash
     export DETECTION_MODEL=/home/dlstreamer/models/intel/person-vehicle-bike-detection-2004/FP16/person-vehicle-bike-detection-2004.xml
     export DETECTION_MODEL_PROC=/opt/intel/dlstreamer/samples/gstreamer/model_proc/intel/person-vehicle-bike-detection-2004.json
     export VEHICLE_CLASSIFICATION_MODEL=/home/dlstreamer/models/intel/vehicle-attributes-recognition-barrier-0039/FP16/vehicle-attributes-recognition-barrier-0039.xml
@@ -375,7 +357,7 @@ It is suitable if you chose Option #2 (Docker) in Install Guide Ubuntu.
     freely licensed content from the websites such as Pexels\*. Any
     video with cars, or pedestrians can be used with the exercise.
 
-    ``` sh
+    ```bash
     # This tutorial uses ~/path/to/video as the video path
     # and FILENAME as the placeholder for a video file name.
     # Change this information to fit your setup.
@@ -393,8 +375,8 @@ and an RTSP URI.
 This exercise introduces you to using the following Pipeline Framework
 elements:
 
--   gvadetect
--   gvawatermark
+- gvadetect
+- gvawatermark
 
 ### Pipeline
 
@@ -405,7 +387,7 @@ the video frame and render the video to local device.
 
 Run the below pipeline at the command prompt and review the output:
 
-``` sh
+```bash
 gst-launch-1.0 \
 filesrc location=${VIDEO_EXAMPLE} ! decodebin3 ! \
 gvadetect model=${DETECTION_MODEL} model_proc=${DETECTION_MODEL_PROC} device=CPU ! queue ! \
@@ -427,14 +409,14 @@ means you use a web camera to perform real-time inference.
 
 In order to use web camera as an input, we will replace the `filesrc`
 element in the object detection pipeline with
-[\`v4l2src\`](https://gstreamer.freedesktop.org/documentation/video4linux2/v4l2src.html?gi-language=c)
+[`v4l2src`](https://gstreamer.freedesktop.org/documentation/video4linux2/v4l2src.html?gi-language=c)
 element, that is used for capturing video from webcams. Before running
 the below updated pipeline, check the web camera path and update it in
 the pipeline. The web camera stream is usually in the `/dev/` directory.
 
 Object detection pipeline using web camera:
 
-``` sh
+```bash
 # Change <path-to-device> below to your web camera device path
 gst-launch-1.0 \
 v4l2src device=<path-to-device> ! decodebin3 ! \
@@ -446,14 +428,14 @@ gvawatermark ! videoconvert ! autovideosink sync=false
 
 In order to use RTSP source as an input, we will replace the `filesrc`
 element in the object detection pipeline with
-[\`urisourcebin\`](https://gstreamer.freedesktop.org/documentation/playback/urisourcebin.html?gi-language=c)
+[`urisourcebin`](https://gstreamer.freedesktop.org/documentation/playback/urisourcebin.html?gi-language=c)
 to access URIs. Before running the below updated pipeline, replace
 '\<RTSP_uri\>' with your RTSP URI and verify it before running the
 command.
 
 Object detection pipeline using sample RTSP URI from Pexels:
 
-``` sh
+```bash
 gst-launch-1.0 \
 urisourcebin uri=https://videos.pexels.com/video-files/1192116/1192116-sd_640_360_30fps.mp4 ! decodebin3 ! \
 gvadetect model=${DETECTION_MODEL} model_proc=${DETECTION_MODEL_PROC} device=CPU ! queue ! \
@@ -469,9 +451,9 @@ object classification on the Regions of Interest (ROIs) detected by
 
 This exercise uses the following Pipeline Framework elements:
 
--   gvadetect
--   gvaclassify
--   gvawatermark
+- gvadetect
+- gvaclassify
+- gvawatermark
 
 ### Pipeline
 
@@ -481,7 +463,7 @@ attributes.
 
 Run the below pipeline at the command prompt and review the output:
 
-``` sh
+```bash
 gst-launch-1.0 \
 filesrc location=${VIDEO_EXAMPLE} ! decodebin3 ! \
 gvadetect model=${DETECTION_MODEL} model_proc=${DETECTION_MODEL_PROC} device=CPU ! queue ! \
@@ -533,7 +515,7 @@ to reduce frequency of detection and classification.
 
 Run the below pipeline at the command prompt and review the output:
 
-``` sh
+```bash
 gst-launch-1.0 \
 filesrc location=${VIDEO_EXAMPLE} ! decodebin3 ! \
 gvadetect model=${DETECTION_MODEL} model_proc=${DETECTION_MODEL_PROC} device=CPU inference-interval=10 ! queue ! \
@@ -585,7 +567,7 @@ This exercise uses the following Pipeline Framework elements:
 One additional setup step is required for this exercise, to export the
 output file path:
 
-``` sh
+```bash
 # Adjust the command below according to your needs
 export OUTFILE=~/pipeline_output.json
 ```
@@ -599,7 +581,7 @@ JSON format.
 
 Run the below pipeline at the command prompt and review the output:
 
-``` sh
+```bash
 gst-launch-1.0 \
 filesrc location=${VIDEO_EXAMPLE} ! decodebin3 ! \
 gvadetect model=${DETECTION_MODEL} model_proc=${DETECTION_MODEL_PROC} device=CPU ! queue ! \

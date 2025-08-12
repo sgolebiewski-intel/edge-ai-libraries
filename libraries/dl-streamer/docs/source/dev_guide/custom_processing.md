@@ -34,20 +34,20 @@ Next sections talk about these options in more details.
 
 This option works in most use cases except
 
--   Converted/parsed data required by downstream element (example,
-    object detection-\>classification chain)
--   Pipeline constructed and executed by gst-launch command-line
-    utility, not by C/C++/Python application
+- Converted/parsed data required by downstream element (example,
+  object detection-\>classification chain)
+- Pipeline constructed and executed by gst-launch command-line
+  utility, not by C/C++/Python application
 
 The C/C++ application can either
 
--   Set pad probe callback on one of element at the end of pipeline
-    (after all metadata attached to frame). The callback mechanism
-    documented [by GStreamer
-    framework](https://gstreamer.freedesktop.org/documentation/application-development/advanced/pipeline-manipulation.html#data-probes)
--   Insert **appsink** element at the end of pipeline and utilize
-    **appsink** functions and signals for GstBuffer and metadata
-    consumption
+- Set pad probe callback on one of element at the end of pipeline
+  (after all metadata attached to frame). The callback mechanism
+  documented [by GStreamer
+  framework](https://gstreamer.freedesktop.org/documentation/application-development/advanced/pipeline-manipulation.html#data-probes)
+- Insert **appsink** element at the end of pipeline and utilize
+  **appsink** functions and signals for GstBuffer and metadata
+  consumption
 
 The pad probe callback demonstrated in C++ sample
 [draw_face_attributes](https://github.com/open-edge-platform/edge-ai-libraries/tree/main/libraries/dl-streamer/samples/gstreamer/cpp/draw_face_attributes/main.cpp)
@@ -142,21 +142,21 @@ void Convert(GstTensorMeta *outputTensors,
 
 Where:
 
--   `outputTensors` - contains output tensor data from the model
-    inference
--   `network` - model metadata including labels, input dimensions
--   `params` - processing parameters like confidence thresholds
--   `relationMeta` - output structure for attaching results
+- `outputTensors` - contains output tensor data from the model
+  inference
+- `network` - model metadata including labels, input dimensions
+- `params` - processing parameters like confidence thresholds
+- `relationMeta` - output structure for attaching results
 
 **Important Notes:**
 
--   Each model output layer has a separate `GstTensor` contained within
-    one `GstTensorMeta`. Tensors from individual layers can be
-    identified by their `GstTensor` IDs.
--   Regardless of the `batch-size` setting in `gvadetect` or
-    `gvaclassify` elements, the output tensors from the model are always
-    passed to the `Convert` function in an **unbatched** format (i.e.,
-    with batch dimension equal to 1).
+- Each model output layer has a separate `GstTensor` contained within
+  one `GstTensorMeta`. Tensors from individual layers can be
+  identified by their `GstTensor` IDs.
+- Regardless of the `batch-size` setting in `gvadetect` or
+  `gvaclassify` elements, the output tensors from the model are always
+  passed to the `Convert` function in an **unbatched** format (i.e.,
+  with batch dimension equal to 1).
 
 **Usage in GStreamer Pipeline**
 

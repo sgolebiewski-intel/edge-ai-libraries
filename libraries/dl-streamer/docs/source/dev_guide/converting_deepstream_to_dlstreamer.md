@@ -11,15 +11,15 @@ section.
 
 ## Contents
 
--   [Preparing Your Model](#preparing-your-model)
--   [Configuring Model for Intel® DL Streamer](#configuring-model-for-intel-dl-streamer)
--   [GStreamer Pipeline Adjustments](#gstreamer-pipeline-adjustments)
--   [Mux and Demux Elements](#mux-and-demux-elements)
--   [Inferencing Elements](#inferencing-elements)
--   [Video Processing Elements](#video-processing-elements)
--   [Metadata Elements](#metadata-elements)
--   [Multiple Input Streams](#multiple-input-streams)
--   [DeepStream to DLStreamer Elements Mapping Cheetsheet](#deepstream-to-dlstreamer-elements-mapping-cheetsheet)
+- [Preparing Your Model](#preparing-your-model)
+- [Configuring Model for Intel® DL Streamer](#configuring-model-for-intel-dl-streamer)
+- [GStreamer Pipeline Adjustments](#gstreamer-pipeline-adjustments)
+- [Mux and Demux Elements](#mux-and-demux-elements)
+- [Inferencing Elements](#inferencing-elements)
+- [Video Processing Elements](#video-processing-elements)
+- [Metadata Elements](#metadata-elements)
+- [Multiple Input Streams](#multiple-input-streams)
+- [DeepStream to DLStreamer Elements Mapping Cheetsheet](#deepstream-to-dlstreamer-elements-mapping-cheetsheet)
 
 ## Preparing Your Model
 
@@ -238,7 +238,7 @@ element for two (muxed and batched) streams. The second line defines
 per-stream input operations prior to muxing. The third line defines
 per-stream output operations after de-muxing.
 
-``` shell
+```bash
 nvstreammux ! nvinfer batch-size=2 config-file-path=./config.txt ! nvstreamdemux \
 filesrc ! decode ! mux.sink_0 filesrc ! decode ! mux.sink_1 \
 demux.src_0 ! encode ! filesink demux.src_1 ! encode ! filesink

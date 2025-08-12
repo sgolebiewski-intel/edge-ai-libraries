@@ -18,7 +18,7 @@ By following this guide, you will learn how to:
 1. **Set Up Environment Variables**:
     - Download the setup script:
       ```bash
-      curl -L -o setup_env.sh "https://raw.githubusercontent.com/open-edge-platform/edge-ai-libraries/refs/heads/main/tools/visual-pipeline-and-platform-evaluation-tool/setup_env.sh"
+      curl -L -o setup_env.sh "https://raw.githubusercontent.com/open-edge-platform/edge-ai-libraries/refs/heads/release-1.2.0/tools/visual-pipeline-and-platform-evaluation-tool/setup_env.sh"
       ```
     - Execute the setup script with the desired device profile:
       ```bash
@@ -27,11 +27,11 @@ By following this guide, you will learn how to:
 
        # For GPU setup
        source setup_env.sh -d gpu
-     
+
        # For NPU setup
        source setup_env.sh -d npu
       ```
-      
+
 2. **Download the Compose File**:
     - Create and navigate to directory:
       ```bash
@@ -40,12 +40,12 @@ By following this guide, you will learn how to:
       ```
     - Download the Docker Compose file:
       ```bash
-        curl -L -o compose.yml "https://raw.githubusercontent.com/open-edge-platform/edge-ai-libraries/refs/heads/main/tools/visual-pipeline-and-platform-evaluation-tool/compose.yml"
+        curl -L -o compose.yml "https://raw.githubusercontent.com/open-edge-platform/edge-ai-libraries/refs/heads/release-1.2.0/tools/visual-pipeline-and-platform-evaluation-tool/compose.yml"
       ```
 
 3. **Download Makefile**:
       ```bash
-      curl -LO https://github.com/open-edge-platform/edge-ai-libraries/raw/refs/heads/main/tools/visual-pipeline-and-platform-evaluation-tool/Makefile
+      curl -LO https://github.com/open-edge-platform/edge-ai-libraries/raw/refs/heads/release-1.2.0/tools/visual-pipeline-and-platform-evaluation-tool/Makefile
       ```
 
 4. **Start the Application**:
@@ -76,7 +76,7 @@ By following this guide, you will learn how to:
       ```
 
     - **Update the compose.yaml File**:
-      Modify the `compose.yaml` file to specify the discrete GPU device by updating the `/dev/dri` path to the appropriate `renderXXXX` device as "/dev/dri/renderXXXX". Please note that usually the discrete GPU is mentioned as "renderD129". 
+      Modify the `compose.yaml` file to specify the discrete GPU device by updating the `/dev/dri` path to the appropriate `renderXXXX` device as "/dev/dri/renderXXXX". Please note that usually the discrete GPU is mentioned as "renderD129".
 
       Example:
       ```yaml

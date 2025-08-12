@@ -151,20 +151,20 @@ nvvideoconvert ! "video/x-raw, format=I420" ! videoconvert ! avenc_mpeg4 bitrate
 
 ## Video Processing Elements
 
--   Replace NVIDIA-specific video processing elements with native
-    GStreamer elements.
-    -   `nvvideoconvert` with `vapostproc` (GPU) or `videoconvert`
-        (CPU).
-        -   If the `nvvideoconvert` is being used to convert to/from
-            `memory:NVMM` it can just be removed.
-    -   `nvv4ldecoder` can be replaced with `va{CODEC}dec`, for example
-        `vah264dec` for decode only. Alternatively, the native GStreamer
-        element `decodebin3` can be used to automatically choose an
-        available decoder.
--   Some caps filters that follow an inferencing element may need to be
-    adjusted or removed. Pipeline Framework inferencing elements do not
-    support color space conversion in post-processing. You will need to
-    have a `vapostproc` or `videoconvert` element to handle this.
+- Replace NVIDIA-specific video processing elements with native
+  GStreamer elements.
+  - `nvvideoconvert` with `vapostproc` (GPU) or `videoconvert`
+    (CPU).
+    - If the `nvvideoconvert` is being used to convert to/from
+      `memory:NVMM` it can just be removed.
+  - `nvv4ldecoder` can be replaced with `va{CODEC}dec`, for example
+    `vah264dec` for decode only. Alternatively, the native GStreamer
+    element `decodebin3` can be used to automatically choose an
+    available decoder.
+- Some caps filters that follow an inferencing element may need to be
+  adjusted or removed. Pipeline Framework inferencing elements do not
+  support color space conversion in post-processing. You will need to
+  have a `vapostproc` or `videoconvert` element to handle this.
 
 Here we removed a few caps filters and instances of `nvvideoconvert`
 used for conversions from DeepStream's NVMM because Pipeline Framework

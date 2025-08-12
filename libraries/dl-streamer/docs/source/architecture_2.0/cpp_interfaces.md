@@ -16,11 +16,11 @@ handles on CPU and GPU
 - VA-API `VASurfaceID`
 
 The memory interop sub-component is available via APT installation
-`sudo apt install intel-dlstreamer-cpp` and on [github
-https://github.com/open-edge-platform/edge-ai-libraries/tree/main/libraries/dl-streamer/include/dlstreamer\>]{.title-ref}\_\_.
+`sudo apt install intel-dlstreamer-cpp` and on
+[github](https://github.com/open-edge-platform/edge-ai-libraries/tree/main/libraries/dl-streamer/include/dlstreamer).
 
 > **Note:** This sub-component implemented as C++ header-only library. Python
-bindings for this library coming in next releases.
+> bindings for this library coming in next releases.
 
 ## Why memory interop library?
 
@@ -30,15 +30,15 @@ allocation and task submission. Most frameworks also expose
 export/import interfaces to convert memory objects to/from other memory
 handles:
 
--   High-level media frameworks (FFmpeg, GStreamer) support conversion
-    to/from low-level media handles (VA-API and DirectX surfaces)
--   Low-level media interfaces (VA-API, DirectX) support conversion
-    to/from OS-specific general-purpose GPU memory handles such as DMA
-    buffers on Linux and NT handles on Windows
--   OpenCL 3.0 recently introduced extension for DMA buffers and NT
-    handles import and export
--   Intel® oneAPI Level Zero support conversion between USM device
-    pointers (accessible on GPU only) and DMA buffers / NT handles
+- High-level media frameworks (FFmpeg, GStreamer) support conversion
+  to/from low-level media handles (VA-API and DirectX surfaces)
+- Low-level media interfaces (VA-API, DirectX) support conversion
+  to/from OS-specific general-purpose GPU memory handles such as DMA
+  buffers on Linux and NT handles on Windows
+- OpenCL 3.0 recently introduced extension for DMA buffers and NT
+  handles import and export
+- Intel® oneAPI Level Zero support conversion between USM device
+  pointers (accessible on GPU only) and DMA buffers / NT handles
 
 Together these interfaces allow zero-copy memory sharing between media
 operations submitted via media frameworks and SYCL/OpenCL compute

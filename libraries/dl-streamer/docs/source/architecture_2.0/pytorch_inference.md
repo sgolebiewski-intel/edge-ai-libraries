@@ -11,57 +11,57 @@ Before using `pytorch_tensor_inference`, make sure that all of the
 following requirements are met. Visit
 [Install Guide](../get_started/install/install_guide_ubuntu) for more information about installing DLStreamer.
 
-1.  `intel-dlstreamer-gst-python3-plugin-loader` and
-    `intel-dlstreamer-gst-python3` packages are installed. If not, add
-    DLStreamer apt repository and install the following packages:
+1. `intel-dlstreamer-gst-python3-plugin-loader` and
+   `intel-dlstreamer-gst-python3` packages are installed. If not, add
+   DLStreamer apt repository and install the following packages:
 
-> ```bash
-> apt-get update
-> apt-get install -y python3-intel-dlstreamer
-> ```
+   ```bash
+   apt-get update
+   apt-get install -y python3-intel-dlstreamer
+   ```
 
-2.  Python requirements are installed. If not, install using
-    `reqirements.txt` file:
+2. Python requirements are installed. If not, install using
+   `reqirements.txt` file:
 
-> ```bash
-> python3 -m pip install --upgrade pip
-> python3 -m pip install -r requirements.txt
-> ```
+   ```bash
+   python3 -m pip install --upgrade pip
+   python3 -m pip install -r requirements.txt
+   ```
 
-3.  DLStreamer environment has been configured. If not:
+3. DLStreamer environment has been configured. If not:
 
-> ```bash
-> source /opt/intel/dlstreamer/setupvars.sh
-> ```
+   ```bash
+   source /opt/intel/dlstreamer/setupvars.sh
+   ```
 
-4.  Verify the GStreamer python loader plugin via:
+4. Verify the GStreamer python loader plugin via:
 
-> ```bash
-> gst-inspect-1.0 python
-> ```
->
-> There should be no errors in the output and the list of GStreamer
-> elements should contain `pytorch_tensor_inference`.
+   ```bash
+   gst-inspect-1.0 python
+   ```
+
+   There should be no errors in the output and the list of GStreamer
+   elements should contain `pytorch_tensor_inference`.
 
 ## Loading model and weights
 
 `pytorch_tensor_inference` supports several options for loading model
 and weights.
 
--   The easiest way to load model is to find the corresponding module in
-    `torchvision` library and specify its name in the `model`
-    property. You need to specify the full import path of the model, for
-    example:
-    `pytorch_tensor_inference model=torchvision.models.resnet50`. In
-    this case, if weights are not specified, `pytorch_tensor_inference`
-    takes the default weights from torchvision. In our example, these
-    will be the `ResNet50_Weights.DEFAULT` weights.
--   To use your custom weights for a model from `torchvision`, you need
-    to specify the path to it using `model-weights` property:
-    `pytorch_tensor_inference model=torchvision.models.resnet50 model-weights=/path/to/model-weights.pt`
--   It is also possible to specify the path to the saved file with the
-    model. In this case, this path must be specified using the same
-    property `model`: `pytorch_tensor_inference model=/path/to/model.pt`
+- The easiest way to load model is to find the corresponding module in
+  `torchvision` library and specify its name in the `model`
+  property. You need to specify the full import path of the model, for
+  example:
+  `pytorch_tensor_inference model=torchvision.models.resnet50`. In
+  this case, if weights are not specified, `pytorch_tensor_inference`
+  takes the default weights from torchvision. In our example, these
+  will be the `ResNet50_Weights.DEFAULT` weights.
+- To use your custom weights for a model from `torchvision`, you need
+  to specify the path to it using `model-weights` property:
+  `pytorch_tensor_inference model=torchvision.models.resnet50 model-weights=/path/to/model-weights.pt`
+- It is also possible to specify the path to the saved file with the
+  model. In this case, this path must be specified using the same
+  property `model`: `pytorch_tensor_inference model=/path/to/model.pt`
 
 ## Determining tensor shape
 

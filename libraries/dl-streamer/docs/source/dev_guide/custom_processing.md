@@ -20,13 +20,13 @@ If specific model pre-/post-processing not supported, there are several
 options to customize GStreamer pipeline or offload processing logic to
 application:
 
-1.  Consume tensor data and parse/convert/process it on application
-    side;
-2.  Set C/Python callback in the middle of GStreamer pipeline;
-3.  Insert gvapython element and provide Python callback function;
-4.  Insert new GStreamer element implemented on C/C++;
-5.  Modify source code of gvadetect/gvaclassify elements;
-6.  Create custom post-processing library.
+1. Consume tensor data and parse/convert/process it on application
+   side;
+2. Set C/Python callback in the middle of GStreamer pipeline;
+3. Insert gvapython element and provide Python callback function;
+4. Insert new GStreamer element implemented on C/C++;
+5. Modify source code of gvadetect/gvaclassify elements;
+6. Create custom post-processing library.
 
 Next sections talk about these options in more details.
 
@@ -123,10 +123,10 @@ Documentation](https://gstreamer.freedesktop.org/documentation/analytics/index.h
 At this time, support is available only for **detection** and
 **classification** tasks:
 
--   **Object Detection** (`GstAnalyticsODMtd`) - works only with
-    `gvadetect` element
--   **Classification** (`GstAnalyticsClsMtd`) - works with both
-    `gvadetect` and `gvaclassify` elements
+- **Object Detection** (`GstAnalyticsODMtd`) - works only with
+  `gvadetect` element
+- **Classification** (`GstAnalyticsClsMtd`) - works with both
+  `gvadetect` and `gvaclassify` elements
 
 **Implementation Requirements**
 

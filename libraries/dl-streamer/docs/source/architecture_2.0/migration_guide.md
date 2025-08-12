@@ -1,9 +1,9 @@
 # Migration to 2.0
 
 > **Note:** Architecture 2.0 currently available in preview mode as transition not
-completed yet. There is no strict backward compatibility in preview mode
-(some changes/renaming may occur). It could be used for evaluation and
-prototyping, it's not recommended for production usage yet.
+> completed yet. There is no strict backward compatibility in preview mode
+> (some changes/renaming may occur). It could be used for evaluation and
+> prototyping, it's not recommended for production usage yet.
 
 ## Multiple ways to program media analytics pipeline
 

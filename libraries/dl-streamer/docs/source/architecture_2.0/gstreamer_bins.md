@@ -7,24 +7,9 @@ tracking, etc. Internally such elements builds sub-pipeline using
 *low-level elements*. The diagram below shows high-level sub-pipeline
 inside Intel® DL Streamer bin elements.
 
-> **CAPTION:** High level bin elements architecture
+*High-level bin elements architecture:*
 
-```graphviz
-
-digraph {
-    rankdir="LR"
-    node[shape=box, style="rounded, filled", fillcolor=white]
-
-    tee[label="tee", fillcolor=gray95]
-    preproc[label="Pre-processing"]
-    processing[label="Processing"]
-    postproc[label="Post-processing"]
-    aggregate[label="Aggregate"]
-
-    tee -> preproc -> processing -> postproc -> aggregate
-    tee -> aggregate
-  }
-```
+![high-level-bin-elements-architecture](../_images/high-level-bin-elements-architecture.svg)
 
 The diagram shows two branches which are produced by `tee` element. The
 *upper branch* is used for data-processing. The *bottom branch* is used
@@ -82,21 +67,21 @@ run on CPU or GPU device depending on CPU or GPU device of inference and
 decode. Intel® Deep Learning Streamer (Intel® DL Streamer) has following
 pre-processing backends:
 
--   `gst-opencv`
--   `vaapi-opencl`
--   `vaapi-tensors`
--   `vaapi`
--   `vaapi-surface-sharing`
+- `gst-opencv`
+- `vaapi-opencl`
+- `vaapi-tensors`
+- `vaapi`
+- `vaapi-surface-sharing`
 
 Some of pre-processing backends follows schema *PRIMARY-SECONDARY*,
 where *PRIMARY* is used for as many operations as possible, and
 *SECONDARY* is used for all remaining operations if any:
 
--   `gst`: GStreamer standard elements
--   `opencv`: *low-level elements* based on OpenCV library
--   `vaapi`: GStreamer standard and Intel® DL Streamer **low-level
-    elements** based on media GPU-acceleration interface VA-API
--   `opencl`: *low-level elements* based on OpenCL library
+- `gst`: GStreamer standard elements
+- `opencv`: *low-level elements* based on OpenCV library
+- `vaapi`: GStreamer standard and Intel® DL Streamer **low-level
+  elements** based on media GPU-acceleration interface VA-API
+- `opencl`: *low-level elements* based on OpenCL library
 
 The following table summarizes default preprocessing backend depending
 on decode or inference device. Note that preprocessing elements
@@ -143,33 +128,17 @@ buffer as number objects on frame require inference operation.
 
 The graph below high-level representation of per-ROI inference:
 
-> **CAPTION:** Per-ROI inference
+*Per-ROI inference:*
 
-```graphviz
-
-digraph {
-    rankdir="LR"
-    node[shape=box, style="rounded, filled", fillcolor=white]
-
-    tee[label="tee", fillcolor=gray95]
-    preproc[label="Pre-processing"]
-    infer[label="Inference"]
-    postproc[label="Post-processing"]
-    aggregate[label="meta_aggregate", fillcolor=lightskyblue1]
-    roisplit[label="roi_split", fillcolor=lightskyblue1]
-
-    tee -> roisplit -> preproc -> infer -> postproc -> aggregate
-    tee -> aggregate
-  }
-```
+![per-roi-inference](../_images/per-roi-inference.svg)
 
 ### Batched Pre-processing
 
 The following elements support batched pre-processing for better
 parallelization and performance:
 
-1.  `batch_create`
-2.  `vaapi_batch_proc`
+1. `batch_create`
+2. `vaapi_batch_proc`
 
 If `batch_size` property specified in bin element (and passed to
 inference element), one of these elements negotiate caps with inference
@@ -256,130 +225,30 @@ pre-processing backend, inference device, inference region, etc. The
 elements `tee` and `aggregate` are omitted for simplicity, but in
 reality they are present in every pipeline.
 
-> **CAPTION:** The *gst-opencv* pre-processing and full-frame inference on *CPU* or *GPU*
+*The "gst-opencv" pre-processing and full-frame inference on CPU or GPU:*
 
-```graphviz
+![gst-opencv-pre-processing-and-inference](../_images/gst-opencv-pre-processing-and-inference.svg)
 
-digraph cpu_cpu {
-    rankdir="LR"
-    node[shape=box, style="rounded, filled", fillcolor=lightskyblue1]
+*The "vaapi" pre-processing and full-frame inference on CPU:*
 
-    subgraph cluster_pre {
-        style="rounded, dotted"
-        label = "Pre-processing stage";
-        node[fillcolor=gray95]
-        preproc_in[label="videoscale", fillcolor=gray95]
-        preproc_out[label="tensor_convert", fillcolor=lightskyblue1]
-        preproc_in -> videoconvert -> preproc_out;
-    }
+![vaapi-pre-processing-and-inference](../_images/vaapi-pre-processing-and-inference.svg)
 
-    infer[label="openvino_tensor_inference"]
-    postproc[label=<tensor_postproc_<i>xxx</i>>]
+*The "vaapi-opencl" pre-processing and full-frame inference on GPU:*
 
-    preproc_out -> infer -> postproc;
-  }
-```
+![vaapi-opencl-pre-processing-and-inference](../_images/vaapi-opencl-pre-processing-and-inference.svg)
 
-> **CAPTION:** The *vaapi* pre-processing and full-frame inference on *CPU*
+*The "vaapi-surface-sharing" pre-processing and full-frame inference on GPU:*
 
-```graphviz
-
-digraph gpu_cpu {
-    rankdir="LR"
-    node[shape=box, style="rounded, filled", fillcolor=lightskyblue1]
-
-    subgraph cluster_pre {
-        style="rounded, dotted"
-		    label = "Pre-processing stage";
-        node[fillcolor=gray95]
-        preproc_in[label="vaapipostproc", fillcolor=gray95]
-        preproc_out[label="tensor_convert", fillcolor=lightskyblue1]
-        preproc_in -> videoconvert
-        videoconvert -> preproc_out [label="system"];
-    }
-
-    infer[label="openvino_tensor_inference"]
-    postproc[label=<tensor_postproc_<i>xxx</i>>]
-
-    preproc_out -> infer -> postproc;
-  }
-```
-
-> **CAPTION:** The *vaapi-opencl* pre-processing and full-frame inference on *GPU*
-
-```graphviz
-
-digraph gpu_gpu {
-    rankdir="LR"
-    node[shape=box, style="rounded, filled", fillcolor=lightskyblue1]
-
-    subgraph cluster_pre {
-        style="rounded, dotted"
-		label = "Pre-processing stage";
-        preproc_in[label="vaapipostproc", fillcolor=gray95]
-        vaapi_ocl[label="vaapi_to_opencl"]
-        preproc_out[label="opencl_tensor_normalize"]
-
-        preproc_in -> vaapi_ocl;
-        vaapi_ocl -> preproc_out [label="OpenCL"];
-    }
-
-    infer[label="openvino_tensor_inference"]
-    postproc[label=<tensor_postproc_<i>xxx</i>>]
-
-    preproc_out -> infer -> postproc
-  }
-```
-
-> **CAPTION:** The *vaapi-surface-sharing* pre-processing and full-frame inference on *GPU*
-
-```graphviz
-
-digraph vasharing {
-    rankdir="LR"
-    node[shape=box, style="rounded, filled", fillcolor=lightskyblue1]
-
-    subgraph cluster_pre {
-        style="rounded, dotted"
-		label = "Pre-processing stage";
-        preproc_out[label="vaapipostproc", fillcolor=gray95];
-    }
-
-    infer[label="openvino_tensor_inference"]
-    postproc[label=<tensor_postproc_<i>xxx</i>>]
-
-    preproc_out -> infer -> postproc
-  }
-```
+![vaapi-surface-sharing-pre-processing-and-inference](../_images/vaapi-surface-sharing-pre-processing-and-inference.svg)
 
 The `queue` element can be inserted after inference element to enable
 parallel inference execution if number of inference requests (`nireq`)
 is greater than one.
 
-> **CAPTION:** The ``queue`` after inference
+*The ``queue`` after inference*
 
-```graphviz
+![the-queue-after-inference](../_images/the-queue-after-inference.svg)
 
-digraph queue {
-    rankdir="LR"
-    node[shape=box, style="rounded, filled", fillcolor=lightskyblue1]
-
-    subgraph cluster_pre {
-        style="rounded, dotted"
-		    label = "Pre-processing stage";
-        node[fillcolor=gray95]
-        preproc_in[label="vaapipostproc", fillcolor=gray95]
-        preproc_out[label="tensor_convert", fillcolor=lightskyblue1]
-        preproc_in -> preproc_out [label="system"];
-    }
-
-    q[label="queue", fillcolor=gray95]
-    infer[label="openvino_tensor_inference"]
-    postproc[label=<tensor_postproc_<i>xxx</i>>]
-
-    preproc_out -> infer -> q -> postproc
-  }
-```
 
 ### "Object_detect" Element
 

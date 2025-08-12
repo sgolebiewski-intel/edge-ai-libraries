@@ -10,54 +10,19 @@ The C++ elements implementation typically inherit one of base classes
 which partially implement some functions in corresponding abstract
 interfaces:
 
--   [BaseSource](./api_ref/class_dlstreamer_BaseSource) partially implements
-    [Source](./api_ref/class_dlstreamer_Source)
--   [BaseTransform](./api_ref/class_dlstreamer_BaseTransform) partially implements
-    [Transform](./api_ref/class_dlstreamer_Transform)
--   [BaseTransformInplace](./api_ref/class_dlstreamer_BaseTransformInplace) partially implements
-    [Transform](./api_ref/class_dlstreamer_Transform)
--   [BaseSink](./api_ref/class_dlstreamer_BaseSink) partially implements
-    [Sink](./api_ref/class_dlstreamer_Sink) so that C++ element implements only remaining virtual functions (mostly `read`, `process` and `write` functions) as shown in diagram below
+- [BaseSource](./api_ref/class_dlstreamer_BaseSource) partially implements
+  [Source](./api_ref/class_dlstreamer_Source)
+- [BaseTransform](./api_ref/class_dlstreamer_BaseTransform) partially implements
+  [Transform](./api_ref/class_dlstreamer_Transform)
+- [BaseTransformInplace](./api_ref/class_dlstreamer_BaseTransformInplace) partially implements
+  [Transform](./api_ref/class_dlstreamer_Transform)
+- [BaseSink](./api_ref/class_dlstreamer_BaseSink) partially implements
+  [Sink](./api_ref/class_dlstreamer_Sink) so that C++ element implements only remaining virtual functions (mostly `read`, `process` and `write` functions) as shown in diagram below
 
-> **CAPTION:** C++ interfaces and base classes
+⠀
+*C++ interfaces and base classes*
 
-```graphviz
-
-digraph {
-    node[shape=record,style=filled,fillcolor=lightskyblue1]
-    edge[dir=back, arrowtail=empty]
-
-    Desc[label = "{ElementDesc|+name\l+description\l+author\l+params\l+input_info\l+output_info\l+flags\l+create\l}"]
-    Element[label = "{«interface»\nElement|+ init()\l+ get_context(...)\l}"]
-
-    Source[label = "{«interface»\Source|+ set_output_info(...)\l+ get_output_info(...)\l+ read()\l}"]
-    Transform[label = "{«interface»\nTransform|+ set_input_info(...)\l+ set_output_info(...)\l+ get_input_info(...)\l+ get_output_info(...)\l+ process(TensorPtr, TensorPtr)\l+ process(FramePtr, FramePtr)\l}"]
-    TransformInplace[label = "{«interface»\nTransformInplace|+ set_info(const FrameInfo&)\l+ process(TensorPtr)\l+ process(FramePtr)\l}"]
-    Sink[label = "{«interface»\Sink|+ set_input_info(...)\l+ get_input_info(...)\l+ write(FramePtr)\l}"]
-
-    BaseESource[label = "{BaseElement\<Source\>|+ init_once()\l+ init()\l+ get_context(...)\l}"]
-    BaseT1[label = "{BaseElement\<Transform\>|+ init_once()\l+ init()\l+ get_context(...)\l}"]
-    BaseT2[label = "{BaseElement\<TransformInplace\>|+ init_once()\l+ init()\l+ get_context(...)\l}"]
-    BaseESink[label = "{BaseElement\<Sink\>|+ init_once()\l+ init()\l+ get_context(...)\l}"]
-
-    BaseSource[label = "BaseSource"]
-    BaseTransform[label = "BaseTransform"]
-    BaseInplace[label = "BaseTransformInplace"]
-    BaseSink[label = "BaseSink"]
-
-    Element->{Source Transform TransformInplace Sink}
-
-    Source->BaseESource
-    Transform->BaseT1
-    TransformInplace->BaseT2
-    Sink->BaseESink
-
-    BaseESource->BaseSource
-    BaseT1->BaseTransform
-    BaseT2->BaseInplace
-    BaseESink->BaseSink
-  }
-```
+![c++-interfaces-and-base-classes](../_images/c++-interfaces-and-base-classes.svg)
 
 Many examples how to create C++ elements can be found on github
 repository in [folder
@@ -71,23 +36,23 @@ The
 capabilities and supported parameters, and provide instance creation
 function. The most important are the following fields:
 
--   `name` - Name of element. Same name is used for both GStreamer and
-    direct programming applications.
--   `params` - Array of parameters supported by element. In case of
-    GStreamer, those will be translated to GStreamer properties.
--   `input_info` - Types of input [Frames]{.title-ref} that element
-    can consume. In case of GStreamer interop, it will be represented as
-    sink capabilities.
--   `output_info` - Types of output [Frames]{.title-ref} that element
-    can produce. In case of GStreamer interop, it will be represented as
-    source (src) capabilities.
--   `create` - Pointer to a function that creates an instance of an
-    element.
+- `name` - Name of element. Same name is used for both GStreamer and
+  direct programming applications.
+- `params` - Array of parameters supported by element. In case of
+  GStreamer, those will be translated to GStreamer properties.
+- `input_info` - Types of input [Frames]{.title-ref} that element
+  can consume. In case of GStreamer interop, it will be represented as
+  sink capabilities.
+- `output_info` - Types of output [Frames]{.title-ref} that element
+  can produce. In case of GStreamer interop, it will be represented as
+  source (src) capabilities.
+- `create` - Pointer to a function that creates an instance of an
+  element.
 
 Here's example of
 [ElementDesc](api_ref/struct_dlstreamer_ElementDesc) structure for simple post-processing element:
 
-``` cpp
+```cpp
 // Element parameters
 ParamDescVector params_desc = {
   {"method", "Method used to post-process tensor data", "max", {"max", "softmax", "compound", "index"}},

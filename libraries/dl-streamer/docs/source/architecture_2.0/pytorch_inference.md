@@ -107,24 +107,9 @@ autovideosink
 
 Below is a graph showing how the `object_detect` bin will be built.
 
-> **CAPTION:** object_detect internal pipeline
+*object_detect internal pipeline:*
 
-```graphviz
-
-digraph {
-    rankdir="LR"
-    node[shape=box, style="rounded, filled", fillcolor=white]
-
-    tee[label="tee", fillcolor=gray95]
-    preproc[label="preprocess=videoscale ! videoconvert ! video/x-raw,format=RGBP ! tensor_convert ! opencv_tensor_normalize range=<0,1>"]
-    processing[label="process=pytorch_tensor_inference model=torchvision.models.detection.ssdlite320_mobilenet_v3_large"]
-    postproc[label="postprocess=tensor_postproc_detection labels-file=coco_91cl_bkgr.txt"]
-    aggregate[label="aggregate=meta_aggregate"]
-
-    tee -> preproc -> processing -> postproc -> aggregate
-    tee -> aggregate
-  }
-```
+![object_detect-internal-pipeline](../_images/object-detect-internal-pipeline.svg)
 
 By default, preprocessing will include color conversion to `RGB`,
 resizing to `resize_size` if it can be obtained from the model's
@@ -133,4 +118,4 @@ requires additional operations during preprocessing, it can be described
 using the model-proc file, which can then be specified in the bin
 element. As described in the model-proc file, the bin element will build
 the pre-processing pipeline. Visit
-[How to Create Model-proc File](../dev_guide/model_preparation>) for more information on creating a model-proc file.
+[How to Create Model-proc File](../dev_guide/model_preparation.md) for more information on creating a model-proc file.

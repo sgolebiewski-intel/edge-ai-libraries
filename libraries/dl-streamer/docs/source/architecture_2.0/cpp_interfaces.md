@@ -70,35 +70,7 @@ and greatly simplifies memory interop by defining abstract interfaces
 and providing header-only implementation of the `Tensor` interface for various frameworks and
 `MemoryMapper` implementation for all technically feasible zero-copy mappings on CPU and GPU and mappings between CPU and GPU:
 
-> **CAPTION:** Memory interop diagram
-
-```graphviz
-
-digraph {
-    node[shape=record,style=filled,fillcolor=lightskyblue1]
-
-    Gst->CPU
-    Gst->DMA
-    Gst->OpenCL
-    Gst->VAAPI
-    DMA->USM
-    USM->DMA
-    DMA->OpenCL
-    OpenCL->CPU
-    OpenCL->DMA
-    CPU->OpenCV
-    OpenCL->OpenCV_UMat
-    CPU->OpenVino
-    OpenCL->OpenVino
-    OpenVino->CPU
-    VAAPI->OpenVino
-    USM->CPU
-    DMA->VAAPI
-    VAAPI->DMA
-    FFmpeg->VAAPI
-    FFmpeg->CPU
-  }
-```
+![memory_interop](../_images/memory-interop.svg)
 
 All memory mappers implemented under unified interface
 [MemoryMapper](./api_ref/class_dlstreamer_MemoryMapper) with
@@ -138,38 +110,13 @@ and almost every C++ element.
 There is special mapper
 [MemoryMapperChain](./api_ref/class_dlstreamer_MemoryMapperChain) implementing unified interface
 [MemoryMapper](./api_ref/class_dlstreamer_MemoryMapper) as arbitrary chain of multiple mappers. As examples, FFmpeg
-to DPC++/USM is chain of the following mappers
+to DPC++/USM is chain of the following mappers:
 
-> **CAPTION:** FFmpeg to USM memory mappers chain
+![ffmpeg-to-usm-memory-mappers-chain](../_images/c++-interfaces-and-classes.svg)
 
-```graphviz
+and GStreamer to OpenCV UMat is chain of the following mappers:
 
-digraph {
-    rankdir="LR"
-    node[shape=record,style=filled,fillcolor=lightskyblue1]
-
-    USM0[label="USM (Level-zero)"]
-    USM1[label="USM (DPC++)"]
-
-    FFmpeg->VAAPI->DMA->USM0->USM1
-  }
-```
-
-and GStreamer to OpenCV UMat is chain of the following mappers
-
-> **CAPTION:** Gst to USM memory mappers chain
-
-```graphviz
-
-digraph {
-    rankdir="LR"
-    node[shape=record,style=filled,fillcolor=lightskyblue1]
-
-    UMat[label="OpenCV cv::UMat"]
-
-    Gst->VAAPI->DMA->OpenCL->UMat
-  }
-```
+![gst-to-usm-memory-mappers-chain](../_images/gst-to-usm-memory-mappers-chain.svg)
 
 ## Abstract interfaces for C++ elements
 

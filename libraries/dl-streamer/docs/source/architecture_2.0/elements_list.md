@@ -83,7 +83,6 @@ input and outputs classification results with metadata.
 | repeat-metadata | If true and inference-interval > 1,<br>metadata with last inference results<br>will be attached to frames if inference<br>skipped. If true and<br>roi-inference-interval > 1, it requires<br>object-id for each roi, so requires<br>object tracking element inserted before<br>this element.<br>*Default: `False`*<br> |
 | reclassify-interval | Determines how often to reclassify<br>tracked objects. Only valid when used in<br>conjunction with gvatrack.<br>The following values are acceptable:<br><br>0 - Do not reclassify tracked<br>objects<br>1 - Always reclassify tracked<br>objects<br>2:N - Tracked objects will be<br>reclassified every N frames. Note<br>the inference-interval is applied<br>before determining if an object is<br>to be reclassified (i.e.<br>classification only occurs at a<br>multiple of the inference interval)<br><br>*Default: `1`*<br> |
 
-
 ## object_detect
 
 Performs inference-based object detection
@@ -131,7 +130,6 @@ Performs inference-based object detection
 | threshold | Threshold for detection results. Only<br>regions of interest with confidence<br>values above the threshold will be added<br>to the frame. Zero means default<br>(auto-selected) threshold<br>*Default: `0.0`*<br> |
 | scale-method | Scale method to use in pre-preprocessing<br>before inference<br>Default: <enum Default of type<br>VideoInferenceScaleMethod><br> |
 | repeat-metadata | If true and inference-interval > 1,<br>metadata with last inference results<br>will be attached to frames if inference<br>skipped. If true and<br>roi-inference-interval > 1, it requires<br>object-id for each roi, so requires<br>object tracking element inserted before<br>this element.<br>*Default: `False`*<br> |
-
 
 ## object_track
 

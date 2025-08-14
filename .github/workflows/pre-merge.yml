@@ -151,7 +151,7 @@ jobs:
       DOC_AWS_SECRET_ACCESS_KEY: ${{ secrets.DOC_AWS_SECRET_ACCESS_KEY }}
     with:
       docs_directory: microservices/time-series-analytics
-      branch_pattern: '^main$'  # TimeSeries Analytics Microservice only exists on 'main' branch
+      branch_pattern: '(?!release-1\.0\.0)(^(main|release-.*)$)'  # Does not exist on release-1.0.0 branch - Exclude it
   build_plcopen-motion-control:
     permissions:
       contents: read          # needed for actions/checkout
@@ -164,4 +164,4 @@ jobs:
       DOC_AWS_SECRET_ACCESS_KEY: ${{ secrets.DOC_AWS_SECRET_ACCESS_KEY }}
     with:
       docs_directory: libraries/edge-control-libraries/plcopen-motion-control
-      branch_pattern: '^main$'  # PLCopen Motion Control only exists on 'main' branch
+      branch_pattern: '(?!release-1\.0\.0)(^(main|release-.*)$)'  # Does not exist on release-1.0.0 branch - Exclude it

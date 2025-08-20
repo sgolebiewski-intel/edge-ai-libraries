@@ -16,17 +16,20 @@ By following this guide, you will learn how to:
 ## Set up and First Use
 
 1. **Set Up Environment Variables**:
-   - Create and navigate to the directory:
-     ```bash
-     mkdir visual-pipeline-and-platform-evaluation-tool
-     cd visual-pipeline-and-platform-evaluation-tool
-     ```
-    - Download all required files:
+    - Create and navigate to the directory:
+
       ```bash
-      curl -LO "https://github.com/open-edge-platform/edge-ai-libraries/raw/refs/heads/main/tools/visual-pipeline-and-platform-evaluation-tool/setup_env.sh"
-      curl -LO "https://github.com/open-edge-platform/edge-ai-libraries/raw/refs/heads/main/tools/visual-pipeline-and-platform-evaluation-tool/compose.yml"
-      curl -LO "https://github.com/open-edge-platform/edge-ai-libraries/raw/refs/heads/main/tools/visual-pipeline-and-platform-evaluation-tool/Makefile"
-      curl -LO "https://github.com/open-edge-platform/edge-ai-libraries/raw/refs/heads/main/tools/visual-pipeline-and-platform-evaluation-tool/models.sh"
+      mkdir visual-pipeline-and-platform-evaluation-tool
+      cd visual-pipeline-and-platform-evaluation-tool
+      ```
+
+    - Download all required files:
+
+      ```bash
+      curl -LO "https://github.com/open-edge-platform/edge-ai-libraries/raw/refs/heads/release-1.2.0/tools/visual-pipeline-and-platform-evaluation-tool/setup_env.sh"
+      curl -LO "https://github.com/open-edge-platform/edge-ai-libraries/raw/refs/heads/release-1.2.0/tools/visual-pipeline-and-platform-evaluation-tool/compose.yml"
+      curl -LO "https://github.com/open-edge-platform/edge-ai-libraries/raw/refs/heads/release-1.2.0/tools/visual-pipeline-and-platform-evaluation-tool/Makefile"
+      curl -LO "https://github.com/open-edge-platform/edge-ai-libraries/raw/refs/heads/release-1.2.0/tools/visual-pipeline-and-platform-evaluation-tool/models.sh"
       chmod +x models.sh
       ```
 
@@ -47,8 +50,8 @@ By following this guide, you will learn how to:
 
     - **Expected Results**:
       - The microservice’s UI loads successfully.
-      - The Smart NVR or Simple VS pipeline is automatically executed when the "Run" button is clicked, and the output video is shown with device metrics.
-
+      - The Smart NVR or Simple VS pipeline is automatically executed when the "Run" button is clicked, and the
+        output video is shown with device metrics.
 
 ## Validation
 

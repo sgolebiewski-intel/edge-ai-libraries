@@ -61,6 +61,11 @@ sudo dnf install -y wget libva-utils xz python3-pip python3-gobject gcc gcc-c++ 
     libssh2-devel cmake git valgrind numactl libvpx-devel opus-devel libsrtp-devel libXv-devel paho-c-devel \
     kernel-headers pmix pmix-devel hwloc hwloc-libs hwloc-devel libxcb-devel libX11-devel libatomic intel-media-driver
 ```
+### EMT 3.x
+
+```bash
+sudo dnf install -y uuid libuuid-devel openssl-devel gcc gcc-c++ make curl ca-certificates librdkafka-devel libva-devel alsa-lib-devel unzip glibc libstdc++ libgcc cmake sudo pkgconf pkgconf-pkg-config ocl-icd-devel libva-intel-media-driver python3-devel libXaw-devel ncurses-devel libva2 intel-compute-runtime intel-opencl intel-level-zero-gpu intel-ocloc-devel nasm
+```
 
 ## Step 3: Set up a Python environment
 
@@ -99,7 +104,7 @@ sudo apt-get install --reinstall ffmpeg libpostproc-dev libavfilter-dev libavdev
             libswscale-dev libswresample-dev libavutil-dev libavformat-dev libavcodec-dev
 ```
 
-### Fedora
+### Fedora/EMT
 
 You can uninstall it with the following command (if installed from
 source):
@@ -140,7 +145,7 @@ git clone https://gitlab.freedesktop.org/gstreamer/gstreamer.git
 
 cd ~/gstreamer
 git switch -c "1.26.4" "tags/1.26.4"
-export PKG_CONFIG_PATH=/usr/lib/x86_64-linux-gnu/pkgconfig/:/usr/local/lib/pkgconfig:$PKG_CONFIG_PATH
+export PKG_CONFIG_PATH=/usr/lib/x86_64-linux-gnu/pkgconfig/:/usr/local/lib/pkgconfig:/usr/lib/pkgconfig:$PKG_CONFIG_PATH
 sudo ldconfig
 meson setup -Dexamples=disabled -Dtests=disabled -Dvaapi=enabled -Dgst-examples=disabled --buildtype=release --prefix=/opt/intel/dlstreamer/gstreamer --libdir=lib/ --libexecdir=bin/ build/
 ninja -C build
@@ -159,7 +164,7 @@ cd ${HOME}/opencv/build # Change to the directory where OpenCV was built
 sudo ninja uninstall
 ```
 
-### Ubuntu 24
+### For Ubuntu 24
 
 After uninstalling OpenCV, reinstall it with the following command:
 
@@ -167,8 +172,7 @@ After uninstalling OpenCV, reinstall it with the following command:
 sudo apt-get install --reinstall libopencv-dev
 ```
 
-
-### Ubuntu 22
+### For Ubuntu 22
 
 NOTE: If you have installed different version of OpenCV using apt-get,
 you can uninstall it with the command below instead:
@@ -195,7 +199,7 @@ ninja -j "$(nproc)"
 sudo env PATH=~/python3venv/bin:$PATH ninja install
 ```
 
-### Fedora 41
+### For Fedora 41
 
 NOTE: If you have installed different version of OpenCV using dnf, it is
 recommended to uninstall it first. You can uninstall it with the command
@@ -227,12 +231,14 @@ sudo env PATH=~/python3venv/bin:$PATH ninja install
 
 ```bash
 cd ~
-git clone https://github.com/open-edge-platform/edge-ai-libraries.git
+git clone https://github.com/open-edge-platform/edge-ai-libraries.git -b release-1.2.0
 cd edge-ai-libraries
 git submodule update --init libraries/dl-streamer/thirdparty/spdlog
 ```
 
 ## Step 8: Install OpenVINO™ Toolkit
+
+### Ubuntu/Fedora
 
 Download and install OpenVINO™ Toolkit:
 
@@ -260,60 +266,75 @@ sudo -E /opt/intel/openvino_2025/install_dependencies/install_openvino_dependenc
 source /opt/intel/openvino_2025/setupvars.sh
 ```
 
+### EMT
+
+```bash
+wget https://storage.openvinotoolkit.org/repositories/openvino/packages/2025.2/linux/openvino_toolkit_ubuntu24_2025.2.0.19140.c01cd93e24d_x86_64.tgz
+tar -xvzf openvino_toolkit_ubuntu24_2025.2.0.19140.c01cd93e24d_x86_64.tgz 
+sudo mv openvino_toolkit_ubuntu24_2025.2.0.19140.c01cd93e24d_x86_64 /opt/intel/openvino_2025.2.0
+cd /opt/intel/openvino_2025.2.0/
+sudo -E python3 -m pip install -r ./python/requirements.txt
+cd /opt/intel
+sudo ln -s openvino_2025.2.0 openvino_2025
+```
+
 ## Step 9: Build Intel DLStreamer
 
-### Ubuntu 24
+- **Ubuntu 24**
 
-```bash
-cd ~/edge-ai-libraries/libraries/dl-streamer
+  ```bash
+  cd ~/edge-ai-libraries/libraries/dl-streamer
 
-mkdir build
-cd build
+  mkdir build
+  cd build
 
-export PKG_CONFIG_PATH="/opt/intel/dlstreamer/gstreamer/lib/pkgconfig:${PKG_CONFIG_PATH}"
-source /opt/intel/openvino_2025/setupvars.sh
+  export PKG_CONFIG_PATH="/opt/intel/dlstreamer/gstreamer/lib/pkgconfig:${PKG_CONFIG_PATH}"
+  source /opt/intel/openvino_2025/setupvars.sh
 
-cmake -DENABLE_PAHO_INSTALLATION=ON -DENABLE_RDKAFKA_INSTALLATION=ON -DENABLE_VAAPI=ON -DENABLE_SAMPLES=ON ..
-make -j "$(nproc)"
-```
+  cmake -DENABLE_PAHO_INSTALLATION=ON -DENABLE_RDKAFKA_INSTALLATION=ON -DENABLE_VAAPI=ON -DENABLE_SAMPLES=ON ..
+  make -j "$(nproc)"
+  ```
 
-### Ubuntu 22
+- **Ubuntu 22**
 
-```bash
-cd ~/edge-ai-libraries/libraries/dl-streamer
+  ```bash
+  cd ~/edge-ai-libraries/libraries/dl-streamer
 
-curl -sSL https://github.com/edenhill/librdkafka/archive/v2.3.0.tar.gz | tar -xz
-cd /librdkafka-2.3.0
-./configure && make && make install
+  curl -sSL https://github.com/edenhill/librdkafka/archive/v2.3.0.tar.gz | tar -xz
+  cd /librdkafka-2.3.0
+  ./configure && make && make install
 
-mkdir build
-cd build
+  mkdir build
+  cd build
 
-export PKG_CONFIG_PATH="/opt/intel/dlstreamer/gstreamer/lib/pkgconfig:${PKG_CONFIG_PATH}"
-source /opt/intel/openvino_2025/setupvars.sh
+  export PKG_CONFIG_PATH="/opt/intel/dlstreamer/gstreamer/lib/pkgconfig:${PKG_CONFIG_PATH}"
+  source /opt/intel/openvino_2025/setupvars.sh
 
-cmake -DENABLE_PAHO_INSTALLATION=ON -DENABLE_RDKAFKA_INSTALLATION=ON -DENABLE_VAAPI=ON -DENABLE_SAMPLES=ON ..
-make -j "$(nproc)"
-```
+  cmake -DENABLE_PAHO_INSTALLATION=ON -DENABLE_RDKAFKA_INSTALLATION=ON -DENABLE_VAAPI=ON -DENABLE_SAMPLES=ON ..
+  make -j "$(nproc)"
+  ```
 
-### Fedora
+- **Fedora/EMT**
 
-```bash
-cd ~/edge-ai-libraries/libraries/dl-streamer
+  ```bash
+  cd ~/edge-ai-libraries/libraries/dl-streamer
 
-curl -sSL https://github.com/edenhill/librdkafka/archive/v2.3.0.tar.gz | tar -xz
-cd ./librdkafka-2.3.0
-./configure && make && make INSTALL=install install
 
-mkdir build
-cd build
+  # Download, compile and install `librdkafka`. This step is not required on EMT, because `librdkafka`
+  # is installed as part of build dependencies, in the steps above. 
+  curl -sSL https://github.com/edenhill/librdkafka/archive/v2.3.0.tar.gz | tar -xz
+  cd ./librdkafka-2.3.0
+  ./configure && make && make INSTALL=install install
 
-export PKG_CONFIG_PATH="/opt/intel/dlstreamer/gstreamer/lib/pkgconfig:${PKG_CONFIG_PATH}"
-source /opt/intel/openvino_2025/setupvars.sh
+  mkdir build
+  cd build
 
-cmake -DENABLE_PAHO_INSTALLATION=ON -DENABLE_RDKAFKA_INSTALLATION=ON -DENABLE_VAAPI=ON -DENABLE_SAMPLES=ON ..
-make -j "$(nproc)"
-```
+  export PKG_CONFIG_PATH="/opt/intel/dlstreamer/gstreamer/lib/pkgconfig:${PKG_CONFIG_PATH}"
+  source /opt/intel/openvino_2025/setupvars.sh
+
+  cmake -DENABLE_PAHO_INSTALLATION=ON -DENABLE_RDKAFKA_INSTALLATION=ON -DENABLE_VAAPI=ON -DENABLE_SAMPLES=ON ..
+  make -j "$(nproc)"
+  ```
 
 ## Step 10: Set up environment
 
@@ -340,6 +361,29 @@ export LIBVA_DRIVER_NAME=iHD
 export GST_PLUGIN_PATH="$HOME/edge-ai-libraries/libraries/dl-streamer/build/intel64/Release/lib:/opt/intel/dlstreamer/gstreamer/lib/gstreamer-1.0:/usr/lib64/gstreamer-1.0"
 export LD_LIBRARY_PATH="/opt/intel/dlstreamer/gstreamer/lib:$HOME/edge-ai-libraries/libraries/dl-streamer/build/intel64/Release/lib:/usr/lib:/usr/local/lib:$LD_LIBRARY_PATH"
 export LIBVA_DRIVERS_PATH="/usr/lib64/dri-nonfree"
+export GST_VA_ALL_DRIVERS="1"
+export PATH="/opt/intel/dlstreamer/gstreamer/bin:$HOME/edge-ai-libraries/libraries/dl-streamer/build/intel64/Release/bin:$HOME/.local/bin:$HOME/python3venv/bin:$PATH"
+export PKG_CONFIG_PATH="/usr/local/lib/pkgconfig:$HOME/edge-ai-libraries/libraries/dl-streamer/build/intel64/Release/lib/pkgconfig:/usr/lib64/pkgconfig:/opt/intel/dlstreamer/gstreamer/lib/pkgconfig:$PKG_CONFIG_PATH"
+export GST_PLUGIN_FEATURE_RANK=${GST_PLUGIN_FEATURE_RANK},ximagesink:MAX
+```
+
+### EMT
+
+Follow the steps below to enable `i915` graphics driver in the system.
+
+```bash
+sudo vim /etc/default/grub
+### Extend the GRUB_CMDLINE_LINUX with i915.force_probe=* ###
+sudo grub2-mkconfig -o /boot/grub2/grub.cfg "$@"
+sudo reboot
+```
+
+After reboot set the following environment variables before trying the DL Streamer pipelines from the terminal.
+```bash
+export LIBVA_DRIVER_NAME=iHD
+export GST_PLUGIN_PATH="$HOME/edge-ai-libraries/libraries/dl-streamer/build/intel64/Release/lib:/opt/intel/dlstreamer/gstreamer/lib/gstreamer-1.0:/usr/lib64/gstreamer-1.0"
+export LD_LIBRARY_PATH="/opt/intel/dlstreamer/gstreamer/lib:$HOME/edge-ai-libraries/libraries/dl-streamer/build/intel64/Release/lib:/usr/lib:/usr/local/lib:$LD_LIBRARY_PATH"
+export LIBVA_DRIVERS_PATH="/usr/lib/dri"
 export GST_VA_ALL_DRIVERS="1"
 export PATH="/opt/intel/dlstreamer/gstreamer/bin:$HOME/edge-ai-libraries/libraries/dl-streamer/build/intel64/Release/bin:$HOME/.local/bin:$HOME/python3venv/bin:$PATH"
 export PKG_CONFIG_PATH="/usr/local/lib/pkgconfig:$HOME/edge-ai-libraries/libraries/dl-streamer/build/intel64/Release/lib/pkgconfig:/usr/lib64/pkgconfig:/opt/intel/dlstreamer/gstreamer/lib/pkgconfig:$PKG_CONFIG_PATH"

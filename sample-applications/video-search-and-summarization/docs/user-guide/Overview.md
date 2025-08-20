@@ -12,3 +12,17 @@ Details on the system architecture and customizable options are available [here]
 Detailed hardware and software requirements are available [here](./system-requirements.md).
 
 To get started with the application, please refer to the [Get Started](./get-started.md) page.
+
+:::{toctree}
+:hidden:
+
+overview-architecture
+system-requirements
+get-started
+build-from-source
+deploy-with-helm
+deploy-with-edge-orchestrator
+how-to-performance
+api-reference
+release-notes
+:::

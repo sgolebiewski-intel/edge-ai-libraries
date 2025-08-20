@@ -32,3 +32,17 @@ advanced language models (LLMs) to deliver high-quality summaries.
 - **LLM inference microservice**: Intel's optimized [OpenVINO™ Model Server](https://github.com/openvinotoolkit/model_server) runs LLMs on Intel® hardware efficiently. Developers have other model serving options if required.
 - **Document Summary API Service**: A FastAPI service that exposes the API to summarize the uploaded document. The service ingests each document and uses a LLM to generate the summary. It splits the file into text chunks (nodes). The summary and nodes are stored within the Document Store abstraction. The application maintains the mapping from the summary to the source document.
 - **Document Summary UI Service**: A Gradio UI that enables you to upload a file and generate a summary with the summary API. The application supports the txt, docs, and pdf formats currently.
+
+:::{toctree}
+:hidden:
+
+overview-architecture
+system-requirements
+get-started
+build-from-source
+deploy-with-helm
+how-to-performance
+api-reference
+release-notes
+faq
+:::

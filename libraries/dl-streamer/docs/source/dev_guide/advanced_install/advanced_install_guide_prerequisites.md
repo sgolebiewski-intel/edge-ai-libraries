@@ -60,7 +60,7 @@ Spinning.
 For a temporary workaround, use the following setting:
 
 ```bash
-export ZE_ENABLE_ALT_DRIVERS=libze_intel_vpu.so
+export ZE_ENABLE_ALT_DRIVERS=libze_intel_npu.so
 ```
 
 The issue should be fixed with newer versions of Intel® NPU drivers and

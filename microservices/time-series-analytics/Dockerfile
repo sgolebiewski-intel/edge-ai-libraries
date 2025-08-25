@@ -11,10 +11,10 @@ FROM kapacitor:$KAPACITOR_VERSION
 # Install Python and necessary packages in a single layer, minimize image size
 RUN apt-get update && \
     apt-get install -y --no-install-recommends \
-        python3 python3-pip git ca-certificates && \
+        python3 python3-pip git ca-certificates intel-gpu-tools && \
     python3 -m pip install --no-cache-dir --upgrade pip && \
     apt-get purge -y --auto-remove && \
-    rm -rf /var/lib/apt/lists/*
+    rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/* /root/.cache/pip
 
 WORKDIR /app
 
@@ -26,6 +26,7 @@ RUN git clone --depth 1 --filter=blob:none --sparse --branch v${KAPACITOR_VERSIO
     mv /tmp/kapacitor/udf/agent/py /app/kapacitor_python && \
     rm -rf /tmp/kapacitor
 
+# Install Intel GPU tools and clean up
 RUN apt-get update && apt-get install -y --no-install-recommends intel-gpu-tools
 
 RUN export no_proxy= && \
@@ -46,12 +47,6 @@ RUN export no_proxy= && \
     va-driver-all=\* vainfo=\* hwinfo=\* clinfo=\* && \
     apt-get clean && \
     rm -rf /var/lib/apt/lists/*
-
-RUN wget https://registrationcenter-download.intel.com/akdlm/IRC_NAS/cca951e1-31e7-485e-b300-fe7627cb8c08/intel-oneapi-base-toolkit-2025.1.0.651_offline.sh
-
-RUN sh ./intel-oneapi-base-toolkit-2025.1.0.651_offline.sh -a --silent --cli --eula accept
-
-RUN  apt update && apt install -y cmake pkg-config build-essential
 
 ARG TIMESERIES_UID
 ARG TIMESERIES_USER_NAME
@@ -100,7 +95,7 @@ RUN if [ "$COPYLEFT_SOURCES" = "true" ]; then \
         # Get source code for installed Python packages with copyleft licenses \
         mkdir -p /copyleft_sources/python && \
         cd /copyleft_sources/python && \
-        apt-get update && apt-get install -y --no-install-recommends gcc build-essential libffi-dev python3-dev && \
+        apt-get update && apt-get install -y --no-install-recommends gcc libffi-dev python3-dev && \
         # Download python package sources with relevant licenses \
         pip3 freeze | cut -d= -f1 | while read pkg; do \
             meta=$(pip3 show $pkg 2>/dev/null); \
@@ -110,7 +105,7 @@ RUN if [ "$COPYLEFT_SOURCES" = "true" ]; then \
                 pip3 download --no-binary :all: $pkg || true; \
             fi; \
         done; \
-        apt-get remove --purge -y gcc build-essential libffi-dev python3-dev; \
+        apt-get remove --purge -y gcc libffi-dev python3-dev; \
     fi
 
 WORKDIR /app
@@ -124,4 +119,4 @@ USER $TIMESERIES_USER_NAME
 # Simple healthcheck to verify container is running
 HEALTHCHECK --interval=5m CMD exit 0
 
-ENTRYPOINT ["bash", "-c", "source /opt/intel/oneapi/setvars.sh && python3 main.py"]
+ENTRYPOINT ["python3", "main.py"]

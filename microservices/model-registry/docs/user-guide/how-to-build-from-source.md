@@ -29,38 +29,34 @@ This guide assumes basic familiarity with Git commands, Python virtual environme
 
 1. **Clone the Repository**:
     ```bash
-    git clone https://github.com/{{repo-path}}.git  -b release-1.2.0
-    cd {{repo-name}}
+    git clone https://github.com/open-edge-platform/edge-ai-libraries.git edge-ai-libraries -b release-1.2.0
+    cd edge-ai-libraries/
     ```
 
 2. **Install Python 3.10**
     ```bash
     sudo apt-get install python3.10
     ```
-1. **Rename the `.env.template` file to `.env`**
+3. **Rename the `.env.template` file to `.env`**
     ```bash
-    # Replace `{{path_to}}` with the actual path to the directory
-    cd {{path_to}}/docker
-
+    cd microservices/model-registry/docker
     mv .env.template .env
     ```
-1. **Create the directories to be used as persistent storage for the `PostgreSQL` and `MinIO` containers**
+4. **Create the directories to be used as persistent storage for the `PostgreSQL` and `MinIO` containers**
     ```bash
-    # Replace `{{path_to}}` with the actual path to the directory
-    cd {{path_to}}/scripts
-
+    # Note: The path below is relative to the path specified in step 3.
+    cd ../scripts
     sudo ./init_mr_data_dirs.sh
     ```
 
-1. **Define the desired values for the REQUIRED environment variables in the `.env` file in the `docker` directory:**
+5. **Define the desired values for the REQUIRED environment variables in the `.env` file in the `docker` directory:**
     1. `MR_MINIO_ACCESS_KEY`
     2. `MR_MINIO_SECRET_KEY`
     3. `MR_PSQL_PASSWORD`
 
     ```bash
-    # Replace `{{path_to}}` with the actual path to the directory
-    cd {{path_to}}/docker
-
+    # Note: The path below is relative to the path specified in step 4.
+    cd ../docker
     vi .env
     ```
 
@@ -80,7 +76,6 @@ This guide assumes basic familiarity with Git commands, Python virtual environme
 1. **Build the model registry and start the containers**
     ```bash
     docker compose build
-
     docker compose up -d
     ```
 

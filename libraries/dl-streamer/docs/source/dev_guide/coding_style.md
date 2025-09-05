@@ -1,6 +1,6 @@
 # Coding Style
 
-We use Clang formatter for our code. Code style checker is being run
+Because Clang formatter is used, style checker executed 
 through CI, ensure correct code formatting before merging it to `master`.
 There is a configuration file for ``clang-format-7`` 
 (`.clang-format` in the root folder of this project).

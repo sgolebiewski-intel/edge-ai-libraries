@@ -11,7 +11,7 @@ script to download the following models:
 
 The script downloads the models from their respective sources, handles the
 necessary conversions, and places the model files in a directory
-which you need to specify as `MODELS_PATH` environment variable:
+which you need to specify in the `MODELS_PATH` environment variable:
 
 ```bash
 export MODELS_PATH=/path/to/models

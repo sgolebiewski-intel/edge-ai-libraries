@@ -5,7 +5,7 @@ Deep Learning Streamer and GStreamer
 elements using Intel VTune™ tool.
 
 > **NOTE:**  Intel VTune™ uses ITT interface to capture custom tasks and visualize
-> them on Profile tab. ITT instrumentation is enabled in the default builds of
+> them on the Profile tab. ITT instrumentation is enabled in the default builds of
 > Deep Learning Streamer, oneTBB, OpenCL intercept-layer, and some other
 > libraries, but disabled by default in binary releases of OpenVINO™
 > toolkit. Refer to the
@@ -71,7 +71,7 @@ Choose the Online Installer option.
 
 ## 3. Results Analysis
 
-When results are ready, you can check the **Bottom-UP** tab (Grouping "Task Type
+When the results are ready, you can check the **Bottom-UP** tab (Grouping "Task Type
 Function Call stack") to check how much time each task took and
 how many times it was called.
 

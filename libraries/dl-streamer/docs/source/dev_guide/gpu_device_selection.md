@@ -6,11 +6,11 @@ This article describes how to select a GPU device on a multi-GPU system.
 
 [GStreamer](https://github.com/GStreamer/gstreamer-vaapi)
 [VAAPI plugin][https://gstreamer.freedesktop.org/documentation/vaapi/index.html]
-supports the **GST_VAAPI_DRM_DEVICE** environment variable, which allows
+supports the `GST_VAAPI_DRM_DEVICE` environment variable, which allows
 selecting GPU device for VAAPI elements (and `decodebin3` element in case
 it internally works on VAAPI elements).
 
-The **GST_VAAPI_DRM_DEVICE** environment variable expects the GPU device
+The `GST_VAAPI_DRM_DEVICE` environment variable expects the GPU device
 driver path. The `/dev/dri/renderD128` path typically represents the first
 GPU device on the system. `/dev/dri/renderD129` represents the second, etc.
 
@@ -43,7 +43,7 @@ setting `device=GPU` for all inference elements. It will enable inference
 elements to query VAAPI context from VAAPI decode element and
 automatically run inference and pre-processing on the same GPU device as
 video decode (GPU device affinity). For example, to select the second GPU
-device for decode and inference:
+device for decoding and inference:
 
 ```bash
 export GST_VAAPI_DRM_DEVICE=/dev/dri/renderD129
@@ -87,7 +87,7 @@ va:  varenderD130postproc: VA-API Video Postprocessor in Intel(R) Gen Graphics i
 ```
 
 Use the example below for **GPU.0** and the corresponding VA codec elements, e.g.
-**vah264dec** and **vapostproc**:
+`vah264dec` and `vapostproc`:
 
 ```bash
 gst-launch-1.0 filesrc location=${VIDEO_FILE} ! parsebin ! vah264dec ! vapostproc ! "video/x-raw(memory:VAMemory)" ! \
@@ -101,7 +101,7 @@ For GPU devices other than the default one, that is GPU or GPU.0, the
 - `GPU.2 -> varenderD130h264dec, varenderD130postproc`
 
 Use the example below for **GPU.1** and the corresponding VA codec elements, e.g.
-**varenderD129h264dec** and **varenderD129postproc**.
+`varenderD129h264dec` and `varenderD129postproc`.
 
 ```bash
 gst-launch-1.0 filesrc location=${VIDEO_FILE} ! parsebin ! varenderD129h264dec ! varenderD129postproc ! "video/x-raw(memory:VAMemory)" ! \

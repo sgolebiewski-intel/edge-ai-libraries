@@ -104,7 +104,7 @@ gvadetect model=${MODEL_FILE} device=GPU pre-process-backend=va model-instance-i
 Similarly to multi-stage scenarios, an aggregated inference device
 can be used with `device=MULTI:GPU,NPU,CPU`.
 
-Note that a single DL Streamer command line with multiple input
+Note that a single Deep Learning Streamer command line with multiple input
 streams yields higher performance than running multiple DL Streamer
 command lines per each processing of a single single stream. The reason is
 multiple command lines cannot benefit from sharing one AI model instance
@@ -143,7 +143,7 @@ element to aggregate the results from multiple branches of the pipeline.
 The aggregated results are published as a single JSON metadata output.
 
 The following example shows how to use the `gvametaaggregate` element to
-aggregate the results from two streams pipelines:
+aggregate the results from two stream pipelines:
 
 ```bash
 gst-launch-1.0 filesrc location=${VIDEO_FILE_1} ! decodebin3 ! videoconvert ! \

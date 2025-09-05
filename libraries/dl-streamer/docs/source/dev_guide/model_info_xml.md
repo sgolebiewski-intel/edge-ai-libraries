@@ -1,10 +1,10 @@
 # Model Info Section
 
 OpenVINO™ Intermediate Representation (IR) includes an XML file with
-the description of a network topology as well as conversion and runtime
+the description of network topology as well as conversion and runtime
 metadata.
 
-If a "model_proc" file is not present, Deep Learning Streamer
+If a `model_proc` file is not present, Deep Learning Streamer
 parses the "model_info" section located at the end of the XML model file.
 
 An example is shown in the code snippet below:

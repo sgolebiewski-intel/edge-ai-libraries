@@ -97,10 +97,10 @@ presented in the table below.
 | params | padding | <br>{<br><br>"stride_x": 8,<br>"stride_y": 8<br><br>}<br><br> | A JSON object with stride in pixels from image boundaries (also can be set with `stride_x` and `stride_y`) | <br>opencv,<br>va,<br>va-surface-sharing<br><br> |
 
 These operations will be performed in the order listed above, regardless
-of how they are listed in the model-proc file. If no operation is specified,
+of how they are listed in the `model-proc` file. If no operation is specified,
 it will not be performed.
 
-For the best performance of "normalize" and "color convert" operation (BGR ->
+For the best performance of "normalize" and "color convert" operations (BGR ->
 RGB), it is worth excluding and adding the corresponding layers in the IR
 model, using the appropriate model optimizer parameters.
 
@@ -177,7 +177,7 @@ model-proc can be ignored.
 | `gvainference` | raw_data_copy                                                 |
 
 The table below contains currently supported converters. Values in the
-*Converter* column contain a link to a model-proc file with this
+*Converter* column contain a link to a `model-proc` file with this
 converter. The last column contains a link to a model for which this
 converter can be applied.
 
@@ -202,7 +202,7 @@ converter can be applied.
 
 ### Example of Output Post-processing
 
-Below is the example of `output_postproc` and its parameters:
+Below is an example of `output_postproc` and its parameters:
 
 > **NOTE:** This configuration cannot be used for any model.
 

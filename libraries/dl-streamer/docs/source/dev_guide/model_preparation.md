@@ -19,7 +19,7 @@ Learning Streamer pipelines that carry out these functions, refer to the
 
 If you are interested in designing custom pipelines, make sure to review the
 [Supported Models](../supported_models.md) table for
-guidance on whether DL Streamer elements require specific
+guidance on whether Deep Learning Streamer elements require specific
 configurations (defined by the model-proc or labels files) for your
 selected model.
 
@@ -34,7 +34,7 @@ optimized for inference on the target device. The model format used by
 OpenVINO™ Toolkit is called Intermediate Representation (IR) and
 consists of two files:
 
-- xml - a file with the description of a network topology
+- xml - a file with the description of network topology
 - bin: - a binary file (potentially big) with model weights
 
 You can either:
@@ -67,12 +67,12 @@ before/after inference.
 
 Pre- and post-processing can be configured using:
 
-- The "model-proc" file (mostly applicable to models from Open Model
-  Zoo).Its format and all possible pre- and post-processing
-  configuration parameters are described on the
+- The `model-proc` file (mostly applicable to models from Open Model
+  Zoo). Its format and all possible pre- and post-processing
+  configuration parameters are described in the
   [model-proc description](./model_proc_file.md) page.
-- The "model_info" inside the .xml file of OpenVINO™ Intermediate Representation
-  with network topology, described on the
+- The "model_info" section inside the .xml file of OpenVINO™ Intermediate Representation
+  with network topology, is described on the
   [model_info description](./model_info_xml.md) page.
 
 Both methods yield the same results, but the "model_info" is recommended as
@@ -100,10 +100,10 @@ memory (VAMemory and DMABuf).
 | <br>va-surface-sharing<br><br> | Should be used in pipelines with GPU memory and GPU inference device. Doesn’t perform mapping to the system memory. As a pre-processor, it performs image resize, crop, and sets color format to NV12. | <br>VAMemory<br><br> | Partially |
 
 **Post-processing** uses so called converters to process raw inference results.
-The converters just transform the results from the raw output
+The converters transform the results from raw output
 tensors to a GStreamer representation attached to a frame as metadata.
 
-If there is no suitable pre- and/or post-processing implementation in DL Streamer,
+If there is no suitable pre- and/or post-processing implementation in the Deep Learning Streamer,
 [Custom Processing](./custom_processing.md) can be used.
 
 ## 3. Specify model files in GStreamer elements

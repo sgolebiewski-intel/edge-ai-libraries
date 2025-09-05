@@ -15,11 +15,11 @@ and define two custom metadata types:
 - [GstGVAJSONMeta](https://github.com/open-edge-platform/edge-ai-libraries/tree/main/libraries/dl-streamer/include/dlstreamer/gst/metadata/gva_json_meta.h)
 
   For output of the [gvametaconvert](../elements/gvametaconvert.md) element performing
-  conversion of **GstVideoRegionOfInterestMeta** into the JSON format
+  conversion of `GstVideoRegionOfInterestMeta` into the JSON format
 
 The `gvadetect` element supports only object detection models and
 checks whether the model output layer has a known format convertible into a
-bounding boxes list. The `gvadetect` element creates and attaches to the
+list of bounding boxes. The `gvadetect` element creates and attaches to the
 output `GstBuffer` as many instances of `GstVideoRegionOfInterestMeta` as
 objects detected on the frame. The object bounding-box position and
 object label are stored directly in `GstVideoRegionOfInterestMeta` fields

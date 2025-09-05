@@ -37,8 +37,8 @@ If at least one question from the list above is answered in the
 negative, you have to determine the model-proc file.
 
 If the answer is negative only for questions 1-2, you need to define the
-*"input_preproc"* field. Refer to the
-[How to define pre-processing](#how-to-define-pre-processing) section.
+*"input_preproc"* field. Refer to the section
+[How to define pre-processing](#how-to-define-pre-processing).
 
 If the answer is negative only for questions 3-5, you need to define the
 *"output_postproc"* field. Refer to the
@@ -49,7 +49,7 @@ If the answer is negative only for questions 3-5, you need to define the
 ### Model has several input layers
 
 The general case when the model has two or more input layers is **not
-supported** by Pipeline Framework, however, there is an **exception**:
+supported** by Pipeline Framework. However, there is an **exception**:
 
 1. The model requires an image as input for only one layer;
 2. The second layer is a layer of the following formats:
@@ -60,7 +60,7 @@ supported** by Pipeline Framework, however, there is an **exception**:
         image height, *W* for image width, and *S* for the image
         scale factor (usually 1).
 
-      You can specify only *S* parameter.
+      You can specify only the *S* parameter.
 
    2. *"sequence_index"* - Set a blob for this layer to *[1, 1, 1,..., 1]*.
 
@@ -76,7 +76,7 @@ formats described above:
 
 In the simplest case, one resize is enough for the model inference to be
 successful. However, if the goal is to get the highest possible accuracy, this may not be
-enough, as the model requires more advance image pre-processing algorithm than resize
+enough, as the model requires a more advanced image pre-processing algorithm than resize
 without aspect-ratio preservation.
 
 *OpenCV pre-process-backend* supports the following operations:
@@ -139,7 +139,7 @@ the [documentation](./model_proc_file.md).
 ### Need to have information about *labels*
 
 The information about labels can be provided in two ways: via the *"labels"* property of
-inference elements, or via a *model-proc* file.
+inference elements, or via a `model-proc` file.
 
 The use of *"labels"* is a convenient way to provide information about the
 labels. It takes the path to a file with each label per line.
@@ -148,7 +148,7 @@ To specify labels in a model-proc file, you need to define the converter
 and specify the *"labels"* field as a list or a path to a file with labels.
 
 > **NOTE:** The *"labels"* property takes precedence over labels specified in a
-> model-proc file.
+> `model-proc` file.
 
 Examples of labels in model-proc files:
 
@@ -162,7 +162,7 @@ Examples of labels in model-proc files:
 
 ### Build model-proc for classification model with advanced pre-processing
 
-In this section, you will learn how to build a model-proc file for the
+In this section, you will learn how to build a `model-proc` file for the
 [SqueezeNet v1.1](https://docs.openvino.ai/2023.3/omz_models_model_squeezenet1_1.html)
 model.
 
@@ -249,7 +249,7 @@ Alternatively, you can specify labels using the *labels* property of
 inference elements. In this case, you do not need to add the
 *"labels"* field to the model-proc file.
 
-> **NOTE:** Because the ImageNet model contains 1000 labels, part of them are omitted.
+> **NOTE:** Because the ImageNet model contains 1000 labels, some of them are omitted.
 
 ```javascript
 "output_postproc": [
@@ -307,7 +307,7 @@ inference elements. In this case, you do not need to add the
 
 ### Build model-proc for detection model with advanced post-processing
 
-In this section, you will learn how to build a model-proc file for the
+In this section, you will learn how to build a `model-proc` file for the
 [YOLO v4 Tiny](https://github.com/openvinotoolkit/open_model_zoo/tree/master/models/public/yolo-v4-tiny-tf)
 model. Let's start with an empty template:
 
@@ -322,7 +322,7 @@ model. Let's start with an empty template:
 
 #### Define "input_preproc"
 
-The selected model has one input layer and it does not require a special
+The selected model has one input layer and does not require a special
 pre-processing algorithm, *resize without aspect-ratio preservation* is
 enough. Therefore, you can leave the `"input_preproc": []` field empty.
 However, you are free to experiment and configure pre-processing
@@ -330,7 +330,7 @@ as you wish.
 
 #### Define "output_postproc"
 
-To begin with, you need to determine which layers are the output ones.
+To begin with, you need to determine which layers are output layers.
 Let's turn to the description of
 [Output of converted model](https://github.com/openvinotoolkit/open_model_zoo/blob/master/models/public/yolo-v4-tiny-tf/README.md#converted-model-1).
 
@@ -372,7 +372,7 @@ as follows:
   `class_1\_confidence, .., class_N\_confidence`, where `N = classes` are
   predicted.
 
-Thus, the size of the **one** output layer should be equal to
+Thus, the size of **one** output layer should be equal to
 `cells_number \* cells_number \* bbox_number_on_cell \* (5 + classes)`.
 Note that the `anchors` values are compiled as
 `\[x_coordinate_bbox_size_multiplier_1,
@@ -401,9 +401,9 @@ where, `anchors: [x_1, y_1]` is for the first output layer, and
 **Resume:**
 
 - `classes` - the number of detection object classes (*optional if you set
-  "labels" correctly*). You can get it from the description of a model;
-- `anchors` - a one-dimensional array of anchors. See the description of a
-  model to get this parameter;
+  "labels" correctly*). You can get it from the model description;
+- `anchors` - a one-dimensional array of anchors. You can get this parameter from
+  the model description;
 - `masks` - a one-dimensional array that contains subsets of anchors which
   correspond to output layers. Usually provided with the documentation or
   architecture config as a two-dimensional array. Still, you can define
@@ -428,7 +428,7 @@ with the `"output_sigmoid_activation": true` and
 `"do_cls_softmax": true` fields.
 
 Next, to run the NMS algorithm, you need to set the `"iou_threshold": 0.4` parameter.
-You can experiment with it to get a better result in your task.
+You can experiment with it to get better results in your task.
 
 **You have defined all the fields necessary for the *yolo_v3* converter.**
 

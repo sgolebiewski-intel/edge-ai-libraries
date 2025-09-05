@@ -66,7 +66,7 @@ Sample Output:
 
 ### Settings interval
 
-The interval value can be set. The value must be set in milliseconds,
+The interval value can be configured. The value must be set in milliseconds,
 the default equals `1000`.
 
 ## Setting interval example

@@ -27,7 +27,7 @@ pip install ultralytics
 ## 2. YOLOv8, YOLOv9, YOLOv10, YOLO11
 
 Below is a Python script that you can use to convert the recent Ultralytics
-models to Intel® OpenVINO™ format. Make sure to replace `model_name` and
+models to the Intel® OpenVINO™ format. Make sure to replace `model_name` and
 `model_type` with the relevant models and types values.
 
 Example for YOLO11 model:

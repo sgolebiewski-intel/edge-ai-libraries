@@ -47,8 +47,8 @@ The C/C++ application can either:
   (after all metadata is attached to the frame). Refer to the callback
   mechanism documented
   [by GStreamer framework](https://gstreamer.freedesktop.org/documentation/application-development/advanced/pipeline-manipulation.html#data-probes)
-- Insert the **appsink** element at the end of the pipeline and utilize
-  the **appsink** functions and signals for GstBuffer and metadata
+- Insert the `appsink` element at the end of the pipeline and utilize
+  the appsink functions and signals for GstBuffer and metadata
   consumption
 
 The pad probe callback is demonstrated in the
@@ -89,7 +89,7 @@ The callback function can attach/modify metadata as demonstrated in the
 
 Refer to the
 [GStreamer documentation](https://gstreamer.freedesktop.org/documentation/application-development/basics/elements.html?gi-language=c) and samples to learn how to implement a new GStreamer element and register
-GStreamer plugin.
+a GStreamer plugin.
 
 If the frame processing function is implemented in C++, it can utilize the
 [GVA::Tensor](https://github.com/open-edge-platform/edge-ai-libraries/tree/main/libraries/dl-streamer/include/dlstreamer/gst/videoanalytics/tensor.h#L38)
@@ -109,7 +109,7 @@ modifying the DL Streamer source code. This approach provides
 flexibility and modularity while maintaining clean separation between
 the core framework and custom processing logic.
 
-A practical example implementations are demonstrated in the
+Practical examples of implementations are demonstrated in the
 [sample](https://github.com/open-edge-platform/edge-ai-libraries/tree/main/libraries/dl-streamer/samples/gstreamer/gst_launch/custom_postproc).
 
 **Important Requirements**

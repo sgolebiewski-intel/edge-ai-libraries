@@ -28,7 +28,7 @@ Python library -
 in this repository is complimentary to *pygst* and additionally provides
 Python bindings for GVA specific types such as *GstGVATensorMeta* and
 *GstGVAJSONMeta* and access to inference specific fields in
-*GstVideoRegionOfInterestMeta*.
+`GstVideoRegionOfInterestMeta`.
 
 Unlike *gstpy*, C to Python wrappers in
 *gstgva* are implemented via Python *ctypes* mechanism and designed with the
@@ -53,7 +53,7 @@ function example on the [Metadata page](./metadata.md).
 
 ## 3. gvapython element
 
-Beside Python bindings for standard GStreamer and GVA plugin interfaces,
+In addition to Python bindings for standard GStreamer and GVA plugin interfaces,
 the [gvapython](../elements/gvapython.md) GStreamer element from this repository
 could be used for pipeline customization with the code in Python language.
 The *gvapython* can be inserted at any place of the pipeline. It uses reference to

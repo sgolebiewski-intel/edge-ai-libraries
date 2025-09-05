@@ -1,11 +1,10 @@
 # Coding Style
 
-Because Clang formatter is used, style checker executed 
-through CI, ensure correct code formatting before merging it to `master`.
-There is a configuration file for ``clang-format-7`` 
-(`.clang-format` in the root folder of this project).
+Before merging changes to `master`, make sure the code is formatted properly.
+Use the Clang formatter, executed through CI, for this purpose.
 You will need to install it locally and configure your IDE to format
-your code with it.
+your code with it. You can use a configuration file for ``clang-format-7``  
+from the root of this project (`.clang-format`).
 
 ## Install clang formatter
 

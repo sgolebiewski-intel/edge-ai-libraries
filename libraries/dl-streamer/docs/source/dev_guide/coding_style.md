@@ -51,5 +51,5 @@ from the root of this project (`.clang-format`).
 
   For different IDEs or text editors, refer to
   their respective documentation. If you would like to contribute
-  instructions for your preferred IDE or editor suggest an update for
+  instructions for your preferred IDE or editor, suggest an update for
   this guide. Your contribution is very welcome.

@@ -236,7 +236,7 @@ Unlike DeepStream, where all sources need to be linked to the sink
 pads of the `nvstreammux` element, Pipeline Framework uses existing
 GStreamer mechanisms to define multiple parallel video processing
 streams. This approach allows reusing native GStreamer elements within
-the pipeline. The input streams can share thes same Inference Engine if they
+the pipeline. The input streams can share the same Inference Engine if they
 have the same `model-instance-id` property. This enables creating inference
 batching across streams.
 

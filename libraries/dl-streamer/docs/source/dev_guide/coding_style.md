@@ -1,7 +1,7 @@
 # Coding Style
 
 We use Clang formatter for our code. Code style checker is being run
-through CI, so it is essential to format your code before you can
+through CI, so it is essential to format your code correctly, before you can
 actually merge it to `master`. There is a configuration file for
 ``clang-format-7`` (`.clang-format` in the root folder of this project).
 You will need to install it locally and configure your IDE to format

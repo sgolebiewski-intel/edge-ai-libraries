@@ -23,7 +23,7 @@ sudo apt install libgstreamer1.0-dev libgstreamer-plugins-base1.0-dev libgstream
 
 ## 2. Update GStreamer plugin(s) settings
 
-After installation, update the *GST_PLUGIN_PATH* environment variable
+After installation, update the `GST_PLUGIN_PATH` environment variable
 with the path to the installation directory of GStreamer custom plugin(s).
 
 For example, to update `GST_PLUGIN_PATH` with the `/usr/lib/x86_64-linux-gnu/gstreamer-1.0`

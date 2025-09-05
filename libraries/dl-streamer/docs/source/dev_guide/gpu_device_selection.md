@@ -38,7 +38,7 @@ gst-launch-1.0 "... ! decodebin3 ! gvadetect device=GPU.1 ! ..."
 ### Automatic selection
 
 For running both video decode and inference on GPU, select the GPU
-device by setting environment variable for VAAPI decode element, and
+device by setting the environment variable for VAAPI decode element, and
 setting `device=GPU` for all inference elements. It will enable inference
 elements to query VAAPI context from VAAPI decode element and
 automatically run inference and pre-processing on the same GPU device as

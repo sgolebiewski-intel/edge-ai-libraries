@@ -24,7 +24,7 @@ a working example is described at each step, to help understand the applied modi
 
 > **Note:** To use Deep Learning Streamer Pipeline Framework and OpenVINO™ Toolkit the
 > model needs to be in Intermediate Representation (IR) format. To convert
-> your model to this format, please follow the steps in [model preparation](./model_preparation.md).
+> your model to this format, follow the steps in [model preparation](./model_preparation.md).
 >
 
 ## Configuring Model for Deep Learning Streamer

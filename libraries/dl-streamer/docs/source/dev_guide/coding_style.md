@@ -47,7 +47,7 @@ from the root of this project (`.clang-format`).
       It basically calls `clang-format` and does in-place formatting
       using the style define in the first `.clang-format` file
       found in a parent directory.
-- **Other IDE**
+- **Other IDEs**
 
   For different IDEs or text editors, refer to
   their respective documentation. If you would like to contribute

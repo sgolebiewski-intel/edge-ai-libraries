@@ -1,6 +1,7 @@
-```{eval-rst}
+<!--hide_directive```{eval-rst}
 :orphan:
-```
+```hide_directive-->
+
 # How to Build from Source
 
 Build the Model Registry from source to customize, debug, or extend its functionality. In this guide, you will:
@@ -72,7 +73,7 @@ This guide assumes basic familiarity with Git commands, Python virtual environme
     ```bash
     source .env
     ```
-    
+
 1. **Build the model registry and start the containers**
     ```bash
     docker compose build
@@ -90,7 +91,7 @@ This guide assumes basic familiarity with Git commands, Python virtual environme
      http://localhost:{{port}}/docs
      ```
    - Expected result: The microservice’s API documentation page loads successfully.
-   
+
    For more example requests and their responses, refer to the [Get Started Guide](./get-started.md#storing-a-model-in-the-registry).
 
 ## Troubleshooting
@@ -112,4 +113,4 @@ This guide assumes basic familiarity with Git commands, Python virtual environme
 * [Overview](Overview.md)
 * [System Requirements](system-requirements.md)
 * [API Reference](api-reference.md)
-* 
+*

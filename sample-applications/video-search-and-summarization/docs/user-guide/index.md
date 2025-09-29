@@ -16,23 +16,23 @@ in which its capabilities can be utilized:
 * [Detailed hardware and software requirements](./system-requirements.md).
 
 
-<!-- hide_directive
+<!--hide_directive
 :::{toctree}
 :maxdepth: 2
 :hidden:
 
-Get Started <get-started.md>
-overview-search.md
-overview-summary.md
-overview-search-and-summary.md
-overview-architecture-search.md
-overview-architecture-summary.md
-overview-architecture-search-summary.md
-build-from-source.md
-deploy-with-helm.md
-./directory-watcher-guide.md
-api-reference.md
-system-requirements.md
-release-notes.md
+Get Started <get-started>
+overview-search
+overview-summary
+overview-search-and-summary
+overview-architecture-search
+overview-architecture-summary
+overview-architecture-search-and-summary
+build-from-source
+deploy-with-helm
+./directory-watcher-guide
+api-reference
+system-requirements
+release-notes
 :::
-hide_directive -->
+hide_directive-->

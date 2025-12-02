@@ -149,5 +149,5 @@ ov.save_model(ov_model, MODEL + ".xml")
 
 ## 3. Model usage
 
-See the [generate_frame_embeddings.sh](https://github.com/open-edge-platform/edge-ai-libraries/blob/main/libraries/dl-streamer/samples/gstreamer/gst_launch/lvm/generate_frame_embeddings.sh) sample for detailed
+See the [generate_frame_embeddings.sh](https://github.com/open-edge-platform/edge-ai-libraries/blob/release-2025.2.0/libraries/dl-streamer/samples/gstreamer/gst_launch/lvm/generate_frame_embeddings.sh) sample for detailed
 examples of Deep Learning Streamer pipelines using the model.

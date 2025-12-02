@@ -29,7 +29,7 @@ Please refer to [Install Guide](./docs/source/get_started/install/install_guide_
 To see the full list of installed components check the [dockerfile content for Ubuntu24](https://github.com/open-edge-platform/edge-ai-libraries/blob/main/libraries/dl-streamer/docker/ubuntu/ubuntu24.Dockerfile)
 
 ## Samples
-[Samples](https://github.com/open-edge-platform/edge-ai-libraries/tree/main/libraries/dl-streamer/samples) available for C/C++ and Python programming, and as gst-launch command lines and scripts.
+[Samples](https://github.com/open-edge-platform/edge-ai-libraries/tree/release-2025.2.0/libraries/dl-streamer/samples) available for C/C++ and Python programming, and as gst-launch command lines and scripts.
 
 ## NN models
 DL Streamer supports NN models in OpenVINO™ IR and ONNX* formats.

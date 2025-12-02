@@ -6,11 +6,11 @@ The overall high-level design is shown as below:
 ![Multi-level Video Understanding High-level Design](high-level_design.png)
 <center>Figure 1: Multi-level Video Understanding High-level Design</center>
 
-Among all the components, the `Multi-level Video Understanding` refers to this microservice. The `Video Chunking` is a liabraries implemented in this open-edge-platform(OEP) suites: [video-chunking-utils](https://github.com/open-edge-platform/edge-ai-libraries/tree/main/libraries/video-chunking-utils). The `Vision-Language Model Serving` and `Large Language Model Serving` are the dependent services that required by this microservice, running on OpenAI-compatibale APIs.
+Among all the components, the `Multi-level Video Understanding` refers to this microservice. The `Video Chunking` is a liabraries implemented in this open-edge-platform(OEP) suites: [video-chunking-utils](https://github.com/open-edge-platform/edge-ai-libraries/tree/release-2025.2.0/libraries/video-chunking-utils). The `Vision-Language Model Serving` and `Large Language Model Serving` are the dependent services that required by this microservice, running on OpenAI-compatibale APIs.
 
 ## Overview
 
-To handle long video summarization, we design a multi-level framework where each level operates via a recurrent approach, effectively control the context length to improve computational efficiency and comply with model constraints or GPU memory constraints. 
+To handle long video summarization, we design a multi-level framework where each level operates via a recurrent approach, effectively control the context length to improve computational efficiency and comply with model constraints or GPU memory constraints.
 This framework operates in three stages: (1) Detect scene-swicth boundaries to segment the long video into chunks. (2) Use VLM to generate captions for each of these short video clips. (3) Use LLM hierarchically and recurrently aggregates the textual captions to a coherent global summary. A dedicated temporal enhancement component is employed at each level to strengthen the connections between units.
 **Features**
 * **Feature 1**: Process video from local files or http(s) links.

@@ -79,7 +79,7 @@ Visit https://huggingface.co/settings/tokens to get your token.
    # Clone the latest on mainline
    git clone https://github.com/open-edge-platform/edge-ai-libraries.git edge-ai-libraries
    # Alternatively, Clone a specific release branch
-   git clone https://github.com/open-edge-platform/edge-ai-libraries.git edge-ai-libraries -b <release-tag>
+   git clone https://github.com/open-edge-platform/edge-ai-libraries.git edge-ai-libraries -b release-2025.2.0
    ```
    Note: Adjust the repo link appropriately in case of forked repo.
 

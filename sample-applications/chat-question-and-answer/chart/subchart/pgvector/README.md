@@ -13,10 +13,8 @@ This Helm chart deploys pgVector, a PostgreSQL extension for vector similarity s
     Clone the repository containing the Helm chart to your local machine.
 
     ```sh
-    # Clone the latest on mainline
-    git clone https://github.com/open-edge-platform/edge-ai-libraries.git edge-ai-libraries
-    # Alternatively, Clone a specific release branch
-    git clone https://github.com/open-edge-platform/edge-ai-libraries.git edge-ai-libraries -b release-2025.2.0
+    # Clone the release branch
+    git clone https://github.com/open-edge-platform/edge-ai-libraries.git -b release-2025.2.0
 
     cd edge-ai-libraries/sample-applications/chat-question-and-answer/chart/subchart/pgvector
     ```

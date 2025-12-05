@@ -35,7 +35,7 @@ If variables are not set, in that case, the `TAG` will have default value as _la
 
 1. **Clone the Repository**:
 ```bash
-git clone https://github.com/open-edge-platform/edge-ai-libraries.git -b release-2025.2.0 edge-ai-libraries
+git clone https://github.com/open-edge-platform/edge-ai-libraries.git -b release-2025.2.0
 cd edge-ai-libraries/microservices/multimodal-embedding-service
 ```
 

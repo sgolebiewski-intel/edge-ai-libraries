@@ -219,11 +219,8 @@ Follow these steps to run the application:
 1. Clone the repository and navigate to the project directory:
 
     ```bash
-    # Clone the latest on mainline
-    git clone https://github.com/open-edge-platform/edge-ai-libraries.git edge-ai-libraries
-    # Alternatively, Clone a specific release branch
-    git clone https://github.com/open-edge-platform/edge-ai-libraries.git edge-ai-libraries -b release-2025.2.0
-
+    # Clone the release branch
+    git clone https://github.com/open-edge-platform/edge-ai-libraries.git -b release-2025.2.0
     cd edge-ai-libraries/sample-applications/video-search-and-summarization
     ```
 

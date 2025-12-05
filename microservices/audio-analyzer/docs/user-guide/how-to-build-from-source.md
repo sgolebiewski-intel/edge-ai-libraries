@@ -28,10 +28,7 @@ Following options are provided to build the microservice.
 
 1. Clone the repository:
     ```bash
-    # Clone the latest on mainline
-    git clone https://github.com/open-edge-platform/edge-ai-libraries.git edge-ai-libraries
-    # Alternatively, Clone a specific release branch
-    git clone https://github.com/open-edge-platform/edge-ai-libraries.git edge-ai-libraries -b release-2025.2.0
+    git clone https://github.com/open-edge-platform/edge-ai-libraries.git -b release-2025.2.0
     ```
 
 2. Default storage backend used in the Docker script based setup is `minio`. We need to set following required environment variables for Minio on shell:
@@ -121,10 +118,8 @@ The production environment uses:
 
 1. Clone the repository:
     ```bash
-    # Clone the latest on mainline
-    git clone https://github.com/open-edge-platform/edge-ai-libraries.git edge-ai-libraries
-    # Alternatively, Clone a specific release branch
-    git clone https://github.com/open-edge-platform/edge-ai-libraries.git edge-ai-libraries -b release-2025.2.0
+    # Clone the release branch
+    git clone https://github.com/open-edge-platform/edge-ai-libraries.git -b release-2025.2.0
     ```
 
 2. Run the setup script with desired options:

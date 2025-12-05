@@ -187,10 +187,8 @@ The service uses **pywhispercpp** with the following optimizations for CPU trans
 
 1. Clone the repository and change directory to the audio-analyzer microservice:
     ```bash
-    # Clone the latest on mainline
-    git clone https://github.com/open-edge-platform/edge-ai-libraries.git -b release-2025.2.0 edge-ai-libraries
-    # Alternatively, Clone a specific release branch
-    git clone https://github.com/open-edge-platform/edge-ai-libraries.git -b release-2025.2.0edge-ai-libraries -b <release-tag>
+    # Clone the release branch
+    git clone https://github.com/open-edge-platform/edge-ai-libraries.git -b release-2025.2.0
     # Access the code
     cd edge-ai-libraries/microservices/audio-analyzer
     ```

@@ -25,9 +25,7 @@ Following options are provided to build the microservice.
 1. Clone the repository and change to project directory:
 ```bash
 # Clone the latest on mainline
-git clone https://github.com/open-edge-platform/edge-ai-libraries.git edge-ai-libraries
-# Alternatively, Clone a specific release branch
-git clone https://github.com/open-edge-platform/edge-ai-libraries.git edge-ai-libraries -b <release-tag>
+git clone https://github.com/open-edge-platform/edge-ai-libraries.git
 
 cd edge-ai-libraries/microservices/visual-data-preparation-for-retrieval/vdms
 ```

@@ -31,10 +31,7 @@ This guide assumes basic familiarity with Git commands, Python virtual environme
 1. **Clone the Repository**:
     ```bash
     # Clone the latest on mainline
-    git clone https://github.com/open-edge-platform/edge-ai-libraries.git edge-ai-libraries
-    # Alternatively, Clone a specific release branch
-    git clone https://github.com/open-edge-platform/edge-ai-libraries.git edge-ai-libraries -b <release-tag>
-
+    git clone https://github.com/open-edge-platform/edge-ai-libraries.git
     cd edge-ai-libraries/microservices/model-registry
     ```
 

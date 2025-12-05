@@ -60,15 +60,12 @@ If you prefer to run the tests in a virtual environment, please follow these ste
 
    ```bash
    # Clone the latest on mainline
-   git clone https://github.com/open-edge-platform/edge-ai-libraries.git edge-ai-libraries
-   # Alternatively, Clone a specific release branch
-   git clone https://github.com/open-edge-platform/edge-ai-libraries.git edge-ai-libraries -b <release-tag>
-   
+   git clone https://github.com/open-edge-platform/edge-ai-libraries.git
    cd edge-ai-libraries/sample-applications/document-summarization
    ```
 
 5. **Install Dependencies with Poetry**
-    
+
     Install application dependencies packages using Poetry in the virtualenv created by setup.sh
 
     ```bash

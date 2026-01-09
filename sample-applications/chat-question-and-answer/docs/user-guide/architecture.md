@@ -1,4 +1,4 @@
-# ChatQ&A Overview
+# Architecture
 
 The ChatQ&A sample application is a RAG based chatbot pipeline that allows developers to customize and deploy the sample application in an on-prem environment and on their private documents without compromising on the accuracy of the responses. The application is built on a modular microservices approach using popular [LangChain framework](https://www.langchain.com/). This page provides a technical overview of the application’s architecture, components, and extensibility.
 
@@ -11,7 +11,7 @@ The ChatQ&A sample application is designed to:
 - Showcase the competitiveness of Intel Edge AI systems to address varied deployment scenario requirements (edge to cloud).
 - Provide reference sample microservices for capabilities like document ingestion and UI front end that reduces the effort to customize the application.
 
-## Detailed Architecture Overview
+## Detailed Architecture
 <!--
 **User Stories Addressed**:
 - **US-7: Understanding the Architecture**
@@ -36,7 +36,7 @@ ChatQ&A application is a combination of the core LangChain application logic tha
    - **Documents**: The document ingestion microservice supports processing files in multiple formats, including .pdf, .txt, and .docx.
 
    - **Web pages (PoC)**: Contents of accessible web pages can also be parsed and used as input for the RAG pipeline.
-     
+
      > **Note**: URL-based ingestion is currently implemented as a proof of concept (PoC). This application works best with non–JavaScript-heavy pages (e.g., Wikipedia, blogs, news sites) that render most of their content directly in HTML. JavaScript-heavy pages (e.g., social media platforms, single-page applications) load content dynamically via JavaScript, so their raw HTML often lacks useful text. The current implementation only parses raw HTML and does not execute JavaScript, so such pages may return incomplete or inaccurate results and should be avoided or handled separately.
 
      > Sometimes, even certain static Wikipedia pages may not yield meaningful content, as the current HTML-to-text conversion can extract navigation menus or metadata instead of the main article body. Since URL processing is primarily a proof of concept, it can be extended based on specific use cases by enhancing the document-ingestion microservice capabilities.

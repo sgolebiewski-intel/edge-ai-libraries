@@ -45,6 +45,7 @@ along with the required microservices are as follows.
 :maxdepth: 2
 :hidden:
 
+system-requirements
 Get Started <get-started>
 overview-search
 overview-summary
@@ -54,9 +55,9 @@ overview-architecture-summary
 overview-architecture-search-and-summary
 build-from-source
 deploy-with-helm
-./directory-watcher-guide
+Directory Watcher Service <directory-watcher-guide>
 api-reference
-system-requirements
 release-notes
+
 :::
 hide_directive-->

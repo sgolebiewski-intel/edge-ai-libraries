@@ -112,21 +112,20 @@ response from the final set of documents. It is possible to use any supported mo
 the applications. Detailed documentation provides full information on validated models and
 models supported overall.
 
-Detailed hardware and software requirements are available [here](./system-requirements).
+Refer to the [detailed hardware and software requirements](./system-requirements).
 
 This sample application is ready for deployment with Edge Orchestrator. Download the
 [deployment package](./deploy-with-edge-orchestrator) and follow the instructions.
 
 ## Benchmark Results
 
-Detailed metrics and analysis can be found in the benchmark report [here](./benchmarks).
+Detailed metrics and analysis can be found in [the benchmark report](./benchmarks).
 
 <!--hide_directive
 :::{toctree}
 :hidden:
 
-overview-architecture
-system-requirements
+architecture
 get-started
 build-from-source
 deploy-with-helm

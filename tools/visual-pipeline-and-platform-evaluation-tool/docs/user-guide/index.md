@@ -46,6 +46,13 @@ inference engines can be adjusted to create tailored performance tests.
 **Automated Video Generation**: Synthetic test videos can be generated to evaluate system
 performance under controlled conditions.
 
+## How It Works
+
+The Visual Pipeline and Platform Evaluation Tool integrates with AI-based video processing pipelines to support
+hardware performance evaluation.
+
+![System Architecture Diagram](_assets/architecture.png)
+
 ### **Workflow Overview**
 
 **Data Ingestion**: Video streams from live cameras or recorded files are provided and pipeline
@@ -62,7 +69,7 @@ enable comparison of configurations and optimization of settings.
 
 ## Learn More
 
-- [System Requirements](./system-requirements)
+- [System Requirements](./get-started.md#system-requirements)
 - [Get Started](./get-started)
 - [How to Build Source](./how-to-build-source)
 - [How to use Video Generator](./how-to-use-video-generator)
@@ -72,15 +79,14 @@ enable comparison of configurations and optimization of settings.
 :::{toctree}
 :hidden:
 
-system-requirements
 get-started
-release-notes
 how-to-build-source
 using-vippet
 how-to-use-video-generator
-api-reference
-disclaimers
 known-issues
+api-reference
+release-notes
+disclaimers
 GitHub <https://github.com/open-edge-platform/edge-ai-libraries/tree/main/tools/visual-pipeline-and-platform-evaluation-tool>
 
 :::

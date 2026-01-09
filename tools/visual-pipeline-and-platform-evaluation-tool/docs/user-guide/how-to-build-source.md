@@ -13,7 +13,7 @@ This guide is intended for developers working directly with the source code.
 
 Before starting, ensure the following:
 
-- **System requirements**: The system meets the [minimum requirements](./system-requirements.md).
+- **System requirements**: The system meets the [minimum requirements](./get-started.md#system-requirements).
 - **Docker platform**: Docker is installed. For details, see the [Docker installation guide](https://docs.docker.com/get-docker/).
 - **Dependencies installed**:
   - **Git**: [Install Git](https://git-scm.com/book/en/v2/Getting-Started-Installing-Git).

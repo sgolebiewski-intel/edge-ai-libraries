@@ -67,7 +67,7 @@ configurations and optimization of settings.
 
 ## Learn More
 
-- [System Requirements](docs/user-guide/system-requirements.md)
+- [System Requirements](docs/user-guide/get-started/system-requirements.md)
 - [Get Started](docs/user-guide/get-started.md)
 - [How to Build Source](docs/user-guide/how-to-build-source.md)
 - [How to Use ViPPET](docs/user-guide/using-vippet.md)

@@ -15,8 +15,6 @@ Assess Intel® hardware options, benchmark performance, and analyze key metrics 
 
 ![demonstration of the UI in use](./_assets/ViPPET-README.gif)
 
-## Overview
-
 The Visual Pipeline and Platform Evaluation Tool simplifies hardware selection for AI workloads
 by enabling configuration of workload parameters, performance benchmarking, and analysis of key
 metrics such as throughput, CPU usage, and GPU usage. With its intuitive interface, the tool
@@ -46,7 +44,14 @@ inference engines can be adjusted to create tailored performance tests.
 **Automated Video Generation**: Synthetic test videos can be generated to evaluate system
 performance under controlled conditions.
 
-### **Workflow Overview**
+## How It Works
+
+The Visual Pipeline and Platform Evaluation Tool integrates with AI-based video processing
+pipelines to support hardware performance evaluation.
+
+![System Architecture Diagram](_assets/architecture.png)
+
+## Workflow
 
 **Data Ingestion**: Video streams from live cameras or recorded files are provided and pipeline
 parameters are configured to match evaluation needs.
@@ -62,7 +67,7 @@ enable comparison of configurations and optimization of settings.
 
 ## Learn More
 
-- [System Requirements](./system-requirements)
+- [System Requirements](./get-started/system-requirements)
 - [Get Started](./get-started)
 - [How to Build Source](./how-to-build-source)
 - [How to use Video Generator](./how-to-use-video-generator)
@@ -72,16 +77,14 @@ enable comparison of configurations and optimization of settings.
 :::{toctree}
 :hidden:
 
-system-requirements
 get-started
-release-notes
 how-to-build-source
-using-vippet
 how-to-use-video-generator
+using-vippet
 api-reference
 disclaimers
-known-issues
-GitHub <https://github.com/open-edge-platform/edge-ai-libraries/tree/main/tools/visual-pipeline-and-platform-evaluation-tool>
+troubleshooting
+release-notes
 
 :::
 hide_directive-->

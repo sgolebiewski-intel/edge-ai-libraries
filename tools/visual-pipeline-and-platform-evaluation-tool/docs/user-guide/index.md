@@ -81,7 +81,6 @@ using-vippet
 how-to-use-gvapython-scripts
 how-to-use-video-generator
 api-reference
-disclaimers
 known-issues
 GitHub <https://github.com/open-edge-platform/edge-ai-libraries/tree/main/tools/visual-pipeline-and-platform-evaluation-tool>
 

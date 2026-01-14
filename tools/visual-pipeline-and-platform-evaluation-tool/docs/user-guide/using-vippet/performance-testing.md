@@ -13,7 +13,7 @@ configured, click *Run performance test*. While testing, real-time system metric
 The application reports both *Total FPS* and *Per Stream FPS* metrics, and provides the output video from the test
 if Save output was enabled.
 
-![Performance Testing](./media/performance-testing-p1.gif)
+![Performance Testing](../_assets/performance-testing-p1.gif)
 *Figure 1: Performance testing of a single pipeline*
 
 ## Test multiple pipelines
@@ -25,5 +25,5 @@ click *Run performance test*. While testing, real-time system metrics are displa
 As in the previous case, the application reports *Total FPS* and *Per Stream FPS* metrics, and provides the output
 videos from the test if *Save output* was enabled.
 
-![Performance Testing](./media/performance-testing-p2.gif)
+![Performance Testing](../_assets/performance-testing-p2.gif)
 *Figure 2: Performance testing of multiple pipelines*

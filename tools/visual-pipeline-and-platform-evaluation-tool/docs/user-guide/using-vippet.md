@@ -1,5 +1,4 @@
-How to use ViPPET
-============================================
+# How to use ViPPET
 
 The [pipeline configuration article](./using-vippet/configuring-pipelines.md) explains step-by-step how to configure
 and test AI pipelines using ViPPET's Pipeline Builder, from creating a new pipeline, editing the pipeline elements,

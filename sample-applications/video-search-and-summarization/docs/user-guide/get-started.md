@@ -1,4 +1,4 @@
-# 🚀 Get Started
+# Get Started
 
 <!--
 **Sample Description**: Provide a brief overview of the application and its purpose.
@@ -14,14 +14,14 @@ This guide shows how to:
 - **Run different application modes**: Execute different application modes available in the application to perform video search and summarization.
 - **Modify application parameters**: Customize settings like inference models and deployment configurations to adapt the application to your specific requirements.
 
-## ✅ Prerequisites
+## Prerequisites
 
 - Verify that your system meets the [minimum requirements](./system-requirements.md).
 - Install Docker tool: [Installation Guide](https://docs.docker.com/get-docker/).
 - Install Docker Compose tool: [Installation Guide](https://docs.docker.com/compose/install/).
 - Install Python programming language v3.11
 
-## 📂 Project Structure
+## Project Structure
 
 The repository is organized as follows:
 
@@ -45,9 +45,7 @@ sample-applications/video-search-and-summarization/
 └── README.md                  # Project documentation
 ```
 
-## ⚙️ Set Required Environment Variables
-
-<a name="required-env"></a>
+## Set Required Environment Variables
 
 Before running the application, you need to set several environment variables:
 
@@ -117,7 +115,7 @@ Before running the application, you need to set several environment variables:
     export VS_WATCHER_DIR="/path/to/your/video/directory"
     ```
 
-    > **📁 Directory Watcher**: For complete setup instructions, configuration options, and usage details, see the [Directory Watcher Service Guide](./directory-watcher-guide.md). This service only works with the `--search` mode.
+    > **Directory Watcher**: For complete setup instructions, configuration options, and usage details, see the [Directory Watcher Service Guide](./directory-watcher-guide.md). This service only works with the `--search` mode.
 
 5. **Control the frame extraction interval (Video Search Mode)**:
 
@@ -147,7 +145,7 @@ Before running the application, you need to set several environment variables:
     > For a complete list of OpenVINO configuration options, refer to the [OpenVINO Documentation](https://docs.openvino.ai/2025/openvino-workflow/running-inference/inference-devices-and-modes.html).
     > **Note**: If OV_CONFIG is not set, the default configuration `{"PERFORMANCE_HINT": "LATENCY"}` will be used.
 
-**🔐 Work with Gated Models**
+**Work with Gated Models**
 
    To run a **GATED MODEL** like Llama models, you will need to pass your [huggingface token](https://huggingface.co/docs/hub/security-tokens#user-access-tokens). You will need to request for an access to a specific model by going to the respective model page on Hugging Face website.
 
@@ -160,7 +158,7 @@ Before running the application, you need to set several environment variables:
 
 Once exported, run the setup script as mentioned [here](#running-the-application). Switch off the `GATED_MODEL` flag by running `export GATED_MODEL=false`, once you no longer use gated models. This avoids unnecessary authentication step during setup.
 
-## 📊 Application Mode Overview
+## Application Mode Overview
 
 The Video Summarization application offers multiple modes and deployment options:
 
@@ -170,9 +168,9 @@ The Video Summarization application offers multiple modes and deployment options
 | Video Search | Video indexing and semantic search | `--search` |
 | Video Search + Summarization | Both search and summarization capabilities | `--all` |
 
-> **📁 Automated Video Ingestion**: The Video Search mode includes an optional Directory Watcher service for automated video processing. See the [Directory Watcher Service Guide](./directory-watcher-guide.md) for details on setting up automatic video monitoring and ingestion.
+> **Automated Video Ingestion**: The Video Search mode includes an optional Directory Watcher service for automated video processing. See the [Directory Watcher Service Guide](./directory-watcher-guide.md) for details on setting up automatic video monitoring and ingestion.
 
-### 🧩 Deployment Options for Video Summarization
+### Deployment Options for Video Summarization
 
 | Deployment Option | Chunk-Wise Summary<sup>(1)</sup> Configuration | Final Summary<sup>2</sup> Configuration | Environment Variables to Set | Recommended Models | Recommended Usage Model |
 |--------|--------------------|---------------------|-----------------------|----------------|----------------|
@@ -188,7 +186,7 @@ The Video Summarization application offers multiple modes and deployment options
 > 2) Final Summary is a method of summarization where it summarizes the whole video.
 > 3) If both VLM and LLM is configured for GPU, VLM will be prioritized for GPU and LLM reset to CPU.
 
-## ℹ️ Using Edge Microvisor Toolkit
+## Using Edge Microvisor Toolkit
 
 If you are running the VSS application on an OS image built with **Edge Microvisor Toolkit** — an Azure Linux-based build pipeline for Intel® platforms — follow the below listed guidelines. The guidelines vary based on the flavor of Edge Microvisor Toolkit used and the user is encouraged to refer to detailed documentation for [EMT-D](https://github.com/open-edge-platform/edge-microvisor-toolkit/blob/3.0/docs/developer-guide/emt-architecture-overview.md#developer-node-mutable-iso-image) and [EMT-S](https://github.com/open-edge-platform/edge-microvisor-toolkit-standalone-node). A few specific dependencies are called out below.
 
@@ -210,9 +208,7 @@ For `EMT-S`,
 
 Additional tools and packages that should be installed includes `git` and `wget`. The instructions for the same is available in the detailed `EMT-S` and `EMT-D` documentations. The instructions work for any other required packages too.
 
-## ▶️ Run the Application
-
-<a name="running-app"></a>
+## Run the Application
 
 Follow these steps to run the application:
 
@@ -227,7 +223,7 @@ Follow these steps to run the application:
     cd edge-ai-libraries/sample-applications/video-search-and-summarization
     ```
 
-2. Set the required environment variables as described [here](#required-env).
+2. Set the required environment variables as described [here](#️-set-required-environment-variables).
 
 3. Run the setup script with the appropriate flag, depending on your use case.
 
@@ -251,7 +247,7 @@ Follow these steps to run the application:
     source setup.sh --search
     ```
 
-    > **📁 Directory Watcher**: For automated video ingestion and processing in search mode, see the [Directory Watcher Service Guide](./directory-watcher-guide.md) to learn how to set up automatic monitoring and processing of video files from a specified directory.
+    > **Directory Watcher**: For automated video ingestion and processing in search mode, see the [Directory Watcher Service Guide](./directory-watcher-guide.md) to learn how to set up automatic monitoring and processing of video files from a specified directory.
 
 - **To run a unified Video Search and Summarization :**
 
@@ -284,7 +280,7 @@ Follow these steps to run the application:
     ENABLE_OVMS_LLM_SUMMARY=true source setup.sh --summary config
     ```
 
-### ⚡ Use GPU Acceleration
+### Use GPU Acceleration
 
 To use GPU acceleration for VLM inference:
 
@@ -329,25 +325,25 @@ ENABLE_EMBEDDING_GPU=true source setup.sh --search config
 
 > Note: Avoid setting the `ENABLE_VLM_GPU`, `ENABLE_OVMS_LLM_SUMMARY_GPU`, or `ENABLE_EMBEDDING_GPU` flags explicitly on the shell using `export`, because you need to switch these flags off as well, to return to the CPU configuration.
 
-## 🌐 Access the Application
+## Access the Application
 
 After successfully starting the application, open a browser and go to `http://<host-ip>:12345` to access the application dashboard.
 
-## 💻 CLI Usage
+## CLI Usage
 
 Refer to [CLI Usage](../../cli/README.md) for details on using the application from a text user interface (terminal-based UI).
 
-## ☸️ Running in Kubernetes Cluster
+## Running in Kubernetes Cluster
 
 Refer to [Deploy with Helm](./deploy-with-helm.md) for the details. Ensure the prerequisites mentioned on this page are addressed before proceeding to deploy with Helm chart.
 
-## 🔍 Advanced Setup Options
+## Advanced Setup Options
 
 For alternative ways to set up the sample application, see:
 
 - [How to Build from Source](./build-from-source.md)
 
-## 📚 Supporting Resources
+## Supporting Resources
 
 - [Docker Compose Documentation](https://docs.docker.com/compose/)
 
@@ -456,3 +452,12 @@ Try using a larger, more capable VLM model by updating the `VLM_MODEL_NAME` envi
 - For GPU: Consider other supported VLM models with higher parameter counts
 
 > Note: Larger models will require more system resources (RAM or VRAM) and may have longer inference times, but typically provide more accurate and coherent summaries.
+
+<!--hide_directive
+:::{toctree}
+:hidden:
+
+system-requirements
+
+:::
+hide_directive-->

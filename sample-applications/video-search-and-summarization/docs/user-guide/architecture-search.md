@@ -1,10 +1,6 @@
-# Video Search Architecture Overview
+# Video Search Architecture
 
 The application is built on a modular microservices approach using the [LangChain framework](https://www.langchain.com/).
-
-## Architecture
-
-The following figure shows the system architecture:
 
 ![System architecture](./images/TEAI_VideoSearch.drawio.svg)
 
@@ -24,7 +20,7 @@ The following are the Video Search pipeline's components:
 
 Note: Although the reranker is shown in the figure, support for the reranker depends on the vector database used. The default Video Search pipeline uses the VDMS vector database, where there is no support for the reranker.
 
-See details on the system architecture and customizable options [here](./overview-architecture-search.md).
+See details on the system architecture and customizable options [here](./architecture-search.md).
 
 ## Detailed Architecture Overview
 <!--
@@ -38,7 +34,7 @@ See details on the system architecture and customizable options [here](./overvie
 3. How components interact and support extensibility.
 -->
 
-The Video Search pipeline combines core LangChain application logic and a set of microservices. The following figures show the architecture. 
+The Video Search pipeline combines core LangChain application logic and a set of microservices. The following figures show the architecture.
 
 ### Video Ingestion Technical Architecture
 ![Video ingestion technical architecture](./images/TEAI_VideoSearch_Arch-ingest.drawio.svg)
@@ -57,26 +53,26 @@ The Visual Data Prep. microservice ingests common video formats, converts them i
 
 1. **Input Sources**:
    - **Videos**: The Visual Data Prep. microservice ingests common video formats. Currently, the ingestion only supports video files; it does not support live-streaming inputs.
-   
+
 2. **Create Context**
 
    - **Upload input videos**: The UI microservice allows you to interact with the application through the defined application API, and provides an interface for you to upload videos. The application stores the videos in the MinIO database. Videos can be ingested continuously from pre-configured folder locations, for surveillance scenarios.
-   
+
    - **Convert to embeddings space**: The Video Ingestion microservice creates the embeddings from the uploaded videos using the embedded microservice. The application stores the embeddings in Visual Data Management System (VDMS).
-   
+
 3. **Query Flow**
 
    - **Input a query**: The UI microservice provides a prompt window for user queries that can be saved. You can enable up to eight queries to run in the background continuously on any new video being ingested. This is a critical capability for agentic reasoning.
-   
+
    - **Execute the Video Search pipeline**: The Video Search backend microservice does the following to generate the output response:
       - Converts the query into an embedding space using the Embeddings microservice.
-	  
+
       - Does a semantic retrieval to fetch the relevant videos from the vector database. Currently, the top-k (with k being configurable) video is used. Does not use a reranker microservice currently.
-	  
+
 4. **Generate the Output**:
    - **Response**: The application sends the search results, including the retrieved video from object store, to the UI.
-   
-   - **Observability dashboard**: If set up, the dashboard displays real-time logs, metrics, and traces, which shows the application's performance, accuracy, and resource consumption.  
+
+   - **Observability dashboard**: If set up, the dashboard displays real-time logs, metrics, and traces, which shows the application's performance, accuracy, and resource consumption.
 
 The following figure shows the application flow, including the APIs and data sharing protocols:
 ![Data flow figure](./images/VideoSearch-request.png)
@@ -93,7 +89,7 @@ The following figure shows the application flow, including the APIs and data sha
 The key components of the Video Search mode are as follows:
 
 1. **Intel's Edge AI Inference microservices**:
-   - **What it is**: Inference microservices are the embeddings and reranker microservices that run the chosen models on the hardware, optimally. 
+   - **What it is**: Inference microservices are the embeddings and reranker microservices that run the chosen models on the hardware, optimally.
    - **How it is used**: Each microservice uses OpenAI APIs to support their functionality. The microservices are configured to use the required models and are ready. The Video Search backend accesses these microservices in the LangChain application, which creates a chain out of these microservices.
    - **Benefits**: Intel guarantees that the sample application's default microservices configuration is optimal for the chosen models and the target deployment hardware. Standard OpenAI APIs ensure easy portability of different inference microservices.
 
@@ -121,15 +117,15 @@ The Video Search mode is modular and allows you to:
    - The default option is OpenVINO™ model server. You can use other model servers, for example the Virtual Large Language Model (vLLM) with OpenVINO model server as backend, and the Text Generation Inference (TGI) toolkit to host Embedding and Vision-Language Models (VLMs) but Intel has not validated this method.
 
    - The compulsory requirement is OpenAI API compliance. Intel does not guarantee that other model servers can provide the same performance compared to the default options.
-   
+
 2. **Load different embedding and reranker models**:
 
    - Use models from Hugging Face Hub that integrate with OpenVINO toolkit, or from vLLM model hub. The models are passed as parameters to the corresponding model servers.
-   
+
 3. **Use other generative AI frameworks like the Haystack framework and LlamaIndex tool**:
 
    - Integrate the inference microservices into an application backend developed on other frameworks similar to the LangChain framework integration provided in this sample application.
-   
+
 4. **Deploy on diverse target Intel® hardware and deployment scenarios**:
 
    - Follow the system requirements guidelines on the options available.

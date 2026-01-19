@@ -2,7 +2,7 @@
 
 The Video Summarization mode enables concise and informative summaries of long-form videos. It uses Generative AI Vision Language Models (VLMs), which leverages advanced AI techniques to combine visual, audio, and textual data to understand and extract relevant content from videos, thereby, enabling efficient content review and improved searchability.
 
-The Video Summarization mode provides a rich response by using Intel's AI systems and Intel's Edge AI microservices catalog. 
+The Video Summarization mode provides a rich response by using Intel's AI systems and Intel's Edge AI microservices catalog.
 
 You can develop, customize, and deploy Video Summarization solutions in diverse deployment scenarios with out-of-the-box support for on-premise and edge environments.
 
@@ -31,8 +31,8 @@ To create a summary with the best possible accuracy for a given compute, the Vid
 ### Key Features
 
  - User-Friendly and Intuitive: You can use natural language through the easy-to-use interface to search.
-	
- - Richer contextual and perceptual understanding: The Video Summarization mode provides a richer contextual and perceptual understanding of the video through multimodal embedding. For example, you can use an object detector to enrich the quality of input to Vision-Language Model (VLM) captioning. See the [architecture overview](./overview-architecture-summary.md).
+
+ - Richer contextual and perceptual understanding: The Video Summarization mode provides a richer contextual and perceptual understanding of the video through multimodal embedding. For example, you can use an object detector to enrich the quality of input to Vision-Language Model (VLM) captioning. See the [architecture overview](./architecture-summary.md).
 
  - Optimized systems: The pipeline runs on Intel’s Edge AI systems, ensuring high performance, reliability, and low cost of ownership.
 
@@ -56,16 +56,16 @@ To create a summary with the best possible accuracy for a given compute, the Vid
 
 ## How to Use the Application Effectively
 
-The Video Summarization pipeline offers features to improve accuracy for complex, long-form videos. 
+The Video Summarization pipeline offers features to improve accuracy for complex, long-form videos.
 Choosing which features to use involves balancing accuracy and performance. You can configure the pipeline based on answers to the following key questions, to determine the trade-off between accuracy and compute:
 
-	1. How complex is the video?
-	2. What is the pipeline's accuracy target, as measured by key qualitative metrics like the BERT score and by manual inspection?
-	3. What are the available compute resources for running the pipeline?
-	4. What are the key performance metrics, for example, throughput and latency, that the pipeline needs to achieve?
+1. How complex is the video?
+2. What is the pipeline's accuracy target, as measured by key qualitative metrics like the BERT score and by manual inspection?
+3. What are the available compute resources for running the pipeline?
+4. What are the key performance metrics, for example, throughput and latency, that the pipeline needs to achieve?
 
 After configuring the pipeline, you can deploy the application, upload the video to be summarized, set parameters like chunk duration and frame count, and then submit the request. The application updates you on the progress and provides the final summary. The API specification outlines how to access the application’s features.
 
-Detailed hardware and software requirements are available [here](./system-requirements.md).
+Refer to the detailed [hardware and software requirements](./get-started/system-requirements.md).
 
 To get started with the application, see the [Get Started](./get-started.md) page.

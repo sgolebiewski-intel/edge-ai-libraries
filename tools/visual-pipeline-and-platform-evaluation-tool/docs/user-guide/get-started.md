@@ -29,7 +29,12 @@ script, which detects available devices and installs the required drivers. Follo
 This guide assumes basic familiarity with Git commands and terminal usage. For more information, see
 [Git Documentation](https://git-scm.com/doc).
 
-## Set up and First Use
+## Setup
+
+Follow the steps below to quickly set up the environment and start
+the Visual Pipeline and Platform Evaluation Tool.
+For alternative ways to set up the sample application, refer to
+[How to Build from Source](./get-started/build-from-source.md)
 
 1. **Set up the working directory**:
 
@@ -78,11 +83,6 @@ This guide assumes basic familiarity with Git commands and terminal usage. For m
 **Verify build success**:
 Check the logs and look for confirmation messages indicating that the microservice has started successfully.
 
-## Advanced Setup Options
-
-For alternative ways to set up the sample application, refer to
-[How to Build from Source](./how-to-build-source.md)
-
 ### Model Installation and Management
 
 When the Visual Pipeline and Platform Evaluation Tool is launched for the first time,
@@ -95,6 +95,12 @@ To manage the installed models again, run the following command:
 make install-models-force
 ```
 
+### Video Generation
+
+The Visual Pipeline and Platform Evaluation Tool enables you to create
+composite videos from multiple images stored in subdirectories. For more details, refer to
+[the guide](./how-to-guides/use-video-generator.md).
+
 ## Supporting Resources
 
 - [Docker Compose Documentation](https://docs.docker.com/compose/)
@@ -104,7 +110,8 @@ make install-models-force
 :::{toctree}
 :hidden:
 
-get-started/system-requirements
+./get-started/system-requirements
+./get-started/build-from-source
 
 :::
 hide_directive-->

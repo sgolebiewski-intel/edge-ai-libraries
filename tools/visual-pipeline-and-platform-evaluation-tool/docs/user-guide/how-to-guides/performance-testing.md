@@ -1,4 +1,4 @@
-# Performance testing
+# Test Performance
 
 This article covers performance testing in ViPPET. Users can test single pipelines as well as multiple pipelines
 running concurrently. Both testing modes provide the same metrics and optional output videos, allowing users to

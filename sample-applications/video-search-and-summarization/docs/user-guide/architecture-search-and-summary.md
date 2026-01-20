@@ -2,7 +2,7 @@
 
 The Video Search and Summarization architecture is built on top of the Video Search and Video Summary architectures. This sections show how the components are reused to realize the combined mode.
 
-![System Architecture Diagram](./images/TEAI_VideoSearchSumm.drawio.svg)
+![System Architecture Diagram](./_assets/TEAI_VideoSearchSumm.drawio.svg)
 
 *Figure 1: Architecture of Video Search and Summarization sample application
 
@@ -43,7 +43,7 @@ Note: Although the reranker is shown in the figure, support for the reranker dep
 The following figure shows the architecture:
 
 ### Architecture Diagram
-![Video Search and Summarization technical architecture](./images/TEAI_VideoSearchSumm_Arch.png)
+![Video Search and Summarization technical architecture](./_assets/TEAI_VideoSearchSumm_Arch.png)
 
 *Video Search and Summarization technical architecture
 
@@ -95,7 +95,7 @@ The application flow involves the following steps for both search indexing and s
    - If set up, the dashboard displays real-time logs, metrics, and traces that provide a view of the application's performance, accuracy, and resource consumption.
 
 <!-- The application flow is illustrated in the following flow diagram. The diagram shows the API used and the data sharing protocol for both Video Search and Video Summarization capabilities.
-![Data flow diagram](./images/VideoSummary-request.jpg)
+![Data flow diagram](./_assets/VideoSummary-request.jpg)
 *Figure 3: Dataflow for Video Search and Summarization sample application
 -->
 

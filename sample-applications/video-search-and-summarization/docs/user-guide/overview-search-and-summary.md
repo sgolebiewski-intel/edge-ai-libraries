@@ -6,7 +6,7 @@ You can develop, customize, and deploy Video Summarization solutions in diverse 
 
 The following is the Video Search and Summarization mode UI:
 
-![Video Summary web interface](./images/VideoSearch_Summary_Webpage.png)
+![Video Summary web interface](./_assets/VideoSearch_Summary_Webpage.png)
 
 ## Purpose
 
@@ -64,7 +64,7 @@ The following are the key features, see the combined Video Search and Summarizat
 
 The combined Video Search and Summarization mode uses all the components of the Video Search and Summarization application. The following figure shows the high-level architecture of the combined mode:
 
-![System Architecture Diagram](./images/TEAI_VideoSearchSumm.drawio.svg)
+![System Architecture Diagram](./_assets/TEAI_VideoSearchSumm.drawio.svg)
 
 The combined sample application:
 

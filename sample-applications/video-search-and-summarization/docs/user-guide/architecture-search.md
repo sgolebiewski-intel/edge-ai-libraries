@@ -2,7 +2,7 @@
 
 The application is built on a modular microservices approach using the [LangChain framework](https://www.langchain.com/).
 
-![System architecture](./images/TEAI_VideoSearch.drawio.svg)
+![System architecture](./_assets/TEAI_VideoSearch.drawio.svg)
 
 *Figure 1: Video Search mode system architecture
 
@@ -37,11 +37,11 @@ See details on the system architecture and customizable options [here](./archite
 The Video Search pipeline combines core LangChain application logic and a set of microservices. The following figures show the architecture.
 
 ### Video Ingestion Technical Architecture
-![Video ingestion technical architecture](./images/TEAI_VideoSearch_Arch-ingest.drawio.svg)
+![Video ingestion technical architecture](./_assets/TEAI_VideoSearch_Arch-ingest.drawio.svg)
 
 *Video ingestion technical architecture
 
-![Video query technical architecture](./images/TEAI_VideoSearch_Arch-query.drawio.svg)
+![Video query technical architecture](./_assets/TEAI_VideoSearch_Arch-query.drawio.svg)
 
 *Video query technical architecture
 
@@ -75,7 +75,7 @@ The Visual Data Prep. microservice ingests common video formats, converts them i
    - **Observability dashboard**: If set up, the dashboard displays real-time logs, metrics, and traces, which shows the application's performance, accuracy, and resource consumption.
 
 The following figure shows the application flow, including the APIs and data sharing protocols:
-![Data flow figure](./images/VideoSearch-request.png)
+![Data flow figure](./_assets/VideoSearch-request.png)
 
 *Data flow for Video Search mode
 

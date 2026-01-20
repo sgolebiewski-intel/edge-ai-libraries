@@ -8,7 +8,7 @@ You can develop, customize, and deploy Video Summarization solutions in diverse 
 
 The following is the Video Search mode UI:
 
-![Video Search web interface](./images/VideoSearch_Webpage.png)
+![Video Search web interface](./_assets/VideoSearch_Webpage.png)
 
 ## Purpose
 

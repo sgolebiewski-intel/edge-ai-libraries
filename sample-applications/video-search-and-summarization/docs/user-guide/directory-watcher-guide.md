@@ -137,7 +137,7 @@ The Directory Watcher provides upload status information that can be monitored t
 
 ## File Processing Flow
 
-![File Processing Flow](./images/file-processing-flow.drawio.svg)
+![File Processing Flow](./_assets/file-processing-flow.drawio.svg)
 
 ## Best Practices
 

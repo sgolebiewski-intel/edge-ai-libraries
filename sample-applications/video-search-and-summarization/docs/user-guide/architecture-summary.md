@@ -2,7 +2,7 @@
 
 The application is built on a modular microservices approach.
 
-![System architecture](./images/TEAI_VideoSumm.drawio.svg)
+![System architecture](./_assets/TEAI_VideoSumm.drawio.svg)
 
 *Figure 1: Video Summarization system architecture
 
@@ -35,7 +35,7 @@ The following are the Video Summarization pipeline's components:
 The following figure shows the architecture:
 
 ### Architecture Diagram
-![Video Summarization technical architecture](./images/TEAI_VideoSumm_Arch.png)
+![Video Summarization technical architecture](./_assets/TEAI_VideoSumm_Arch.png)
 
 *Video summarization technical architecture
 
@@ -84,7 +84,7 @@ The following are steps in the application flow:
    - If set up, the dashboard displays real-time logs, metrics, and traces that provide a view of the application's performance, accuracy, and resource consumption.
 
 The following figure shows the application flow, including the APIs and data sharing protocols:
-![Data flow diagram](./images/VideoSummary-request.jpg)
+![Data flow diagram](./_assets/VideoSummary-request.jpg)
 
 *Figure 3: Data flow for Video Summarization mode
 

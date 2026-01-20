@@ -7,7 +7,7 @@ The Video Summarization mode provides a rich response by using Intel's AI system
 You can develop, customize, and deploy Video Summarization solutions in diverse deployment scenarios with out-of-the-box support for on-premise and edge environments.
 
 The following is the Video Summarization mode UI:
-![Video Summary web interface](./images/VideoSumm_Webpage.png)
+![Video Summary web interface](./_assets/VideoSumm_Webpage.png)
 
 ## Purpose
 
@@ -15,7 +15,7 @@ The Video Summarization mode allows you to customize the accuracy-performance tr
 
 The following figure shows sample Video Summarization pipeline configurations:
 
-![Sample Video Summarization pipeline configurations](./images/TEAI_VideoPipelines.png)
+![Sample Video Summarization pipeline configurations](./_assets/TEAI_VideoPipelines.png)
 *Sample Video Summarization pipeline configurations
 
 To create a summary with the best possible accuracy for a given compute, the Video Summarization mode:

@@ -339,8 +339,10 @@ For alternative ways to set up the sample application, see [How to Build from So
 
 ## Supporting Resources
 
-- [Docker Compose Documentation](https://docs.docker.com/compose/)
+- [How it works](./how-it-works.md)
 - [Troubleshooting](./troubleshooting.md)
+- [Docker Compose Documentation](https://docs.docker.com/compose/)
+
 <!--hide_directive
 :::{toctree}
 :hidden:

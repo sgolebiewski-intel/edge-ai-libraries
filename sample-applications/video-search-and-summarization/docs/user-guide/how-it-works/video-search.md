@@ -1,10 +1,11 @@
-# Video Search Architecture
+# Video Search
 
 The application is built on a modular microservices approach using the [LangChain framework](https://www.langchain.com/).
 
-![System architecture](./_assets/TEAI_VideoSearch.drawio.svg)
+![System architecture](../_assets/TEAI_VideoSearch.drawio.svg)\
+\*Figure 1: Video Search mode system architecture
 
-*Figure 1: Video Search mode system architecture
+## Pipeline Components
 
 The following are the Video Search pipeline's components:
 
@@ -18,11 +19,9 @@ The following are the Video Search pipeline's components:
 
 - **Reranking inference microservice**: Though an option, the reranker is currently not used in the pipeline. The OpenVINO™ model server runs the reranker models.
 
-Note: Although the reranker is shown in the figure, support for the reranker depends on the vector database used. The default Video Search pipeline uses the VDMS vector database, where there is no support for the reranker.
+Note: Although the reranker is shown in the figure, support for the reranker depends on the vector database used. The default Video Search pipeline uses the VDMS vector database, where there is no support for the reranker. See details on the system architecture below.
 
-See details on the system architecture and customizable options [here](./architecture-search.md).
-
-## Detailed Architecture Overview
+## Detailed Architecture
 <!--
 **User Stories Addressed**:
 - **US-7: Understanding the Architecture**
@@ -36,14 +35,13 @@ See details on the system architecture and customizable options [here](./archite
 
 The Video Search pipeline combines core LangChain application logic and a set of microservices. The following figures show the architecture.
 
-### Video Ingestion Technical Architecture
-![Video ingestion technical architecture](./_assets/TEAI_VideoSearch_Arch-ingest.drawio.svg)
+### Video Ingestion Architecture
 
-*Video ingestion technical architecture
+![Video ingestion technical architecture](../_assets/TEAI_VideoSearch_Arch-ingest.drawio.svg)
 
-![Video query technical architecture](./_assets/TEAI_VideoSearch_Arch-query.drawio.svg)
+### Video Query Architecture
 
-*Video query technical architecture
+![Video query technical architecture](../_assets/TEAI_VideoSearch_Arch-query.drawio.svg)
 
 The Video Search UI communicates with the Video Search backend microservice. The Embedding microservice is provided as part of Intel's Edge AI inference microservices catalog, supporting open-source models that can be downloaded from model hubs, for example [Hugging Face Hub models that integrate with OpenVINO™ toolkit](https://huggingface.co/OpenVINO).
 
@@ -75,8 +73,7 @@ The Visual Data Prep. microservice ingests common video formats, converts them i
    - **Observability dashboard**: If set up, the dashboard displays real-time logs, metrics, and traces, which shows the application's performance, accuracy, and resource consumption.
 
 The following figure shows the application flow, including the APIs and data sharing protocols:
-![Data flow figure](./_assets/VideoSearch-request.png)
-
+![Data flow figure](../_assets/VideoSearch-request.png)\
 *Data flow for Video Search mode
 
 ## Key Components and Their Roles
@@ -131,4 +128,6 @@ The Video Search mode is modular and allows you to:
    - Follow the system requirements guidelines on the options available.
 
 ## Next Steps
-- [Get Started](./get-started.md)
+
+- [System requirements](../get-started/system-requirements.md)
+- [Get Started](../get-started.md)

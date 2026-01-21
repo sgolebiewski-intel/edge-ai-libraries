@@ -1,10 +1,11 @@
-# Video Summarization Architecture
+# Video Summarization
 
 The application is built on a modular microservices approach.
 
-![System architecture](./_assets/TEAI_VideoSumm.drawio.svg)
+![System architecture](../_assets/TEAI_VideoSumm.drawio.svg)\
+\*Figure 1: Video Summarization system architecture
 
-*Figure 1: Video Summarization system architecture
+## Pipeline Components
 
 The following are the Video Summarization pipeline's components:
 
@@ -20,7 +21,7 @@ The following are the Video Summarization pipeline's components:
 
 6. **Audio transcription**: The Audio transcription microservice transcribes the audio channel in the given video. The extracted audio transcription serves as another source of metadata that can be used as an input to VLM, and separately as text data, to enrich the summary.
 
-## Detailed Architecture Overview
+## Detailed Architecture
 <!--
 **User Stories Addressed**:
 - **US-7: Understanding the Architecture**
@@ -32,12 +33,8 @@ The following are the Video Summarization pipeline's components:
 3. How components interact and support extensibility.
 -->
 
-The following figure shows the architecture:
-
-### Architecture Diagram
-![Video Summarization technical architecture](./_assets/TEAI_VideoSumm_Arch.png)
-
-*Video summarization technical architecture
+![Video Summarization technical architecture](../_assets/TEAI_VideoSumm_Arch.png)\
+\*Video summarization technical architecture
 
 The Video Summarization UI feeds videos to the Video Summarization Pipeline Manager microservice and provides continuous updates throughout the Video Summarization process.
 
@@ -84,7 +81,7 @@ The following are steps in the application flow:
    - If set up, the dashboard displays real-time logs, metrics, and traces that provide a view of the application's performance, accuracy, and resource consumption.
 
 The following figure shows the application flow, including the APIs and data sharing protocols:
-![Data flow diagram](./_assets/VideoSummary-request.jpg)
+![Data flow diagram](../_assets/VideoSummary-request.jpg)
 
 *Figure 3: Data flow for Video Summarization mode
 
@@ -122,15 +119,15 @@ The key components of the Video Summarization mode are as follows:
 
    **Inference microservices**:
 
-   - [Multimodal Embedding](../../../../microservices/multimodal-embedding-serving/)
+   - [Multimodal Embedding](../../../../../microservices/multimodal-embedding-serving/)
 
-   - [Audio Analyzer](../../../../microservices/audio-analyzer/)
+   - [Audio Analyzer](../../../../../microservices/audio-analyzer/)
 
-   - [VLM microservice](../../../../microservices/vlm-openvino-serving/)
+   - [VLM microservice](../../../../../microservices/vlm-openvino-serving/)
 
     **Data-handling microservices**
 
-   - [VDMS-based data preparation](../../../../microservices/visual-data-preparation-for-retrieval/vdms/)
+   - [VDMS-based data preparation](../../../../../microservices/visual-data-preparation-for-retrieval/vdms/)
 
    See the respective documentation for details.
 
@@ -159,4 +156,6 @@ The Video Summarization mode is modular and allows you to:
    - Follow the system requirements guidelines on the options available.
 
 ## Next Steps
-- [Get Started](./get-started.md)
+
+- [System requirements](../get-started/system-requirements.md)
+- [Get Started](../get-started.md)

@@ -27,7 +27,7 @@ The complete solution leverages:
   | [gvamotiondetect](./docs/source/elements/gvamotiondetect.md) | Performs lightweight motion detection on NV12 video frames and emits motion regions of interest (ROIs) as analytics metadata. |
   | [gvapython](./docs/source/elements/gvapython.md) | Provides a callback to execute user-defined Python functions on every   frame. Can be used for metadata conversion, inference post-processing, and other tasks. |
   | [gvarealsense](./docs/source/elements/gvarealsense.md) | Provides integration with Intel RealSense cameras, enabling video and depth stream capture for use in GStreamer pipelines. |
-  | [gvatrack](./docs/source/elements/gvatrack.md) | Performs object tracking using zero-term, or imageless tracking algorithms.   Assigns unique object IDs to the tracked objects. | 
+  | [gvatrack](./docs/source/elements/gvatrack.md) | Performs object tracking using zero-term, or imageless tracking algorithms.   Assigns unique object IDs to the tracked objects. |
   | [gvawatermark](./docs/source/elements/gvawatermark.md) | Overlays the metadata on the video frame to visualize the inference   results. |
 
 For the details on supported platforms, please refer to [System Requirements](./docs/source/get_started/system_requirements.md).
@@ -445,7 +445,7 @@ For more detailed instructions please refer to [DL Streamer Pipeline Framework i
 
 ## Samples
 
-The [samples](https://github.com/open-edge-platform/edge-ai-libraries/tree/main/libraries/dl-streamer/samples) folder in DL Streamer Pipeline Framework repository contains command line, C++ and Python examples.
+The [samples](https://github.com/open-edge-platform/edge-ai-libraries/tree/release-2025.2.0/libraries/dl-streamer/samples) folder in DL Streamer Pipeline Framework repository contains command line, C++ and Python examples.
 
 ## Legal Information
 

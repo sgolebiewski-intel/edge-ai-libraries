@@ -74,7 +74,7 @@ cd GenAIComps
    docker compose up lvm-vllm-ipex-service -d
    ```
 
-   Then, check existence of serving:
+   Then, verify the service:
 
    ```bash
    docker logs -f lvm-vllm-ipex-service
@@ -87,7 +87,7 @@ cd GenAIComps
    INFO:     Application startup complete.
    ```
 
-> **Note:** Please wait for a while since it takes some time to load models, especially for the first time deploying a new model. Resources will be downloaded from huggingface endpoint.
+> **Note:** It may take some time to load the models, especially when deploying a new model for the first time. The resources will be downloaded from a Hugging Face endpoint.
 
 If you would like to uninstall the model serving, run the following command in the same environment where you performed the installation:
 
@@ -144,7 +144,7 @@ More details can be found in [LVM Microservice with vLLM on Intel XPU](https://o
    docker compose -f compose_text-generation.yaml up textgen-vllm-ipex-service -d
    ```
 
-   Then, check existence of serving:
+   Then, verify the service:
 
    ```bash
    docker logs -f textgen-vllm-ipex-service
@@ -155,7 +155,7 @@ More details can be found in [LVM Microservice with vLLM on Intel XPU](https://o
    INFO:     Application startup complete.
    ```
 
-> **Note:** Please refer to [validated models](./index.md#validated-models) for the list of models that can has been verified in video summarization.
+> **Note:** Please refer to [validated models](./index.md#validated-models) for the list of models that has been verified in video summarization.
 
 If you would like to uninstall the model serving, run the following command in the same environment where you performed the installation:
 
@@ -334,7 +334,7 @@ http://localhost:8192/docs
    poetry install
    ```
 
-   > **Note:** sometimes the `poetry install` may take long time, in this case, another option to install packages could be:
+   > **Note:** sometimes `poetry install` may take a long time; in that case, an alternative option to install packages could be:
    >
    > ```bash
    > poetry export -f requirements.txt > requirements.txt

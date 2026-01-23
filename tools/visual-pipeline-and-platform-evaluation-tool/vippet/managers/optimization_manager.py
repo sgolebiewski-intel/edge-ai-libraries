@@ -110,7 +110,7 @@ class OptimizationRunner:
         string for the caller.
         """
         # Import from /opt/intel/dlstreamer/scripts/optimizer/optimizer.py provided in DLStreamer image
-        # https://github.com/open-edge-platform/edge-ai-libraries/tree/main/libraries/dl-streamer/scripts/optimizer
+        # https://github.com/open-edge-platform/edge-ai-libraries/tree/release-2025.2.0/libraries/dl-streamer/scripts/optimizer
         import optimizer  # pyright: ignore[reportMissingImports]
 
         optimized_pipeline = optimizer.preprocess_pipeline(pipeline_description)
@@ -128,7 +128,7 @@ class OptimizationRunner:
         total FPS value.
         """
         # Import from /opt/intel/dlstreamer/scripts/optimizer/optimizer.py provided in DLStreamer image
-        # https://github.com/open-edge-platform/edge-ai-libraries/tree/main/libraries/dl-streamer/scripts/optimizer
+        # https://github.com/open-edge-platform/edge-ai-libraries/tree/release-2025.2.0/libraries/dl-streamer/scripts/optimizer
         import optimizer  # pyright: ignore[reportMissingImports]
 
         optimized_pipeline, total_fps = optimizer.get_optimized_pipeline(

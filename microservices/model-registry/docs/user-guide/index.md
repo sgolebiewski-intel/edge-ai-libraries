@@ -105,9 +105,8 @@ hosted within a remote Geti platform.
 :::{toctree}
 :hidden:
 
-how-it-works
 get-started
-environment-variables
+how-it-works
 how-to-interface-with-intel-geti-platform
 api-reference
 troubleshooting

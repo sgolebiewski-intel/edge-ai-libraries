@@ -364,10 +364,10 @@ For alternative ways to set up the microservice, see:
 :::{toctree}
 :hidden:
 
-.get-started/system-requirements
+./get-started/system-requirements
 ./get-started/environment-variables
-.get-started/build-from-source
-.get-started/deploy-with-helm
+./get-started/build-from-source
+./get-started/deploy-with-helm
 
 :::
 hide_directive-->

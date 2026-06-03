@@ -6,7 +6,7 @@ Details about the changes, improvements, and known issues in this release of the
 
 **Release Date**: [2026-06-17]
 
-**New**
+**New**:
 
 - **New predefined pipelines**: New pipelines for showcasing Video Summarization,
   Motion Detection, Instance Segmentation and Pose Estimation.
@@ -20,7 +20,7 @@ Details about the changes, improvements, and known issues in this release of the
 - **Custom Model Upload Support**: Users can now upload OpenVINO models,
   including models trained using Intel Geti platform.
 
-**Improved**
+**Improved**:
 
 - Model management via the Model Download microservice - a centralized model
   management system that downloads AI or machine learning models from various

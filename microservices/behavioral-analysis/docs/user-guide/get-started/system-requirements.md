@@ -79,4 +79,4 @@ The service requires a YOLO26n-pose model in OpenVINO IR format (`.xml` + `.bin`
 - [Get Started](../get-started.md) — Step-by-step run instructions
 - [API Reference](../api-reference.md) — HTTP and MQTT endpoint schemas
 - [Configuration](./configuration.md) — Full environment variable reference
-- [Troubleshooting](../troubleshooting.md) — Common issues and resolutions
+- [Troubleshooting](../troubleshooting.md) — Common issues and resolution paths

@@ -275,4 +275,4 @@ For feature overview, see [Key Features: Entity Deduplication & Backpressure](./
 - [Get Started](./get-started.md) — Step-by-step run instructions
 - [API Reference](./api-reference.md) — HTTP and MQTT endpoint schemas
 - [Configuration](./get-started/configuration.md) — Full environment variable reference
-- [Troubleshooting](./troubleshooting.md) — Common issues and resolutions
+- [Troubleshooting](./troubleshooting.md) — Common issues and resolution paths

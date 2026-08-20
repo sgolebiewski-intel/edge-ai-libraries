@@ -348,7 +348,7 @@ Restart the service; new patterns activate immediately.
 - [How It Works](./how-it-works.md) — Detailed architecture and request flows
 - [API Reference](./api-reference.md) — HTTP and MQTT endpoint schemas
 - [Configuration](./get-started/configuration.md) — Full environment variable reference
-- [Troubleshooting](./troubleshooting.md) — Common issues and resolutions
+- [Troubleshooting](./troubleshooting.md) — Common issues and resolution paths
 
 <!--hide_directive
 :::{toctree}

@@ -210,13 +210,13 @@ docker exec metrics-manager supervisorctl -c /etc/supervisor/supervisord.conf st
 
 **Solutions:**
 
-| Issue                         | Fix                                                                           |
-| ----------------------------- | ----------------------------------------------------------------------------- |
-| `intel_vpu` driver not loaded | Load it: `sudo modprobe intel_vpu` (host)                                     |
-| Container not privileged      | Run with `privileged: true` (Docker) or `docker run --privileged`             |
-| `/sys` not accessible         | Mount with `--privileged` or `-v /sys:/sys:ro`                                |
-| Old hardware (pre-PTL)        | `npu_memory_mb` returns `-1` — expected on MTL/ARL                            |
-| No NPU hardware               | Expected. Reader logs warning, then enters idle mode. Other metrics continue. |
+| Issue | Fix |
+| --- | --- |
+| `intel_vpu` driver not loaded | Load it: `sudo modprobe intel_vpu` (host) |
+| Container not privileged | Run with `privileged: true` (Docker) or `docker run --privileged` |
+| `/sys` not accessible | Mount with `--privileged` or `-v /sys:/sys:ro` |
+| Old, pre-Panther Lake (pre-PTL) hardware | `npu_memory_mb` returns `-1` — expected on Meteor Lake (MTL)/Arrow Lake (ARL) |
+| No NPU hardware | Expected. Reader logs warning, then enters idle mode. Other metrics continue. |
 
 ---
 

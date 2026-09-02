@@ -19,7 +19,7 @@ This guide assumes basic familiarity with Docker commands and terminal usage. If
 
 ## On-device AI Services
 
-In the reference deployment, both the model serving and this microservice run **locally on a single Intel® Core™ Ultra (Panther Lake, PTL) host**, with the integrated GPU sharing system RAM — no discrete accelerator or remote inference cluster is required.
+In the reference deployment, both the model serving and this microservice run **locally on a single Intel® Core™ Ultra "Panther Lake" (PTL) host**, with the integrated GPU sharing system RAM — no discrete accelerator or remote inference cluster is required.
 
 This microservice is designed to work effortlessly with GenAI model servings that provide OpenAI-compatible APIs. We recommend take **vLLM-IPEX** as an example. A single Mixture-of-Experts model, **Qwen3.5-35B-A3B** (35B total / 3B active), serves both the **VLM** role (per-chunk captioning) and the **LLM** role (hierarchical aggregation) from one endpoint.
 

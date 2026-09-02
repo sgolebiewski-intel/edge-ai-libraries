@@ -29,7 +29,7 @@
 **Release Date:** WW09 2026
 
 - Upgrade Ollama binary to latest version 0.17.0.
-- Upgrade GPU drivers for PTL support.
+- Upgrade GPU drivers for Panther Lake (PTL) support.
 - Dependency Upgrades. Upgraded application dependencies flagged by Dependabot for known vulnerabilities.
 
 <!--hide_directive

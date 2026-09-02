@@ -37,7 +37,7 @@ This release introduces **updated Intel GPU driver support**, **removed Model Re
 - The base Kapacitor Docker image is replaced by a Debian-based Python slim
   image with Kapacitor installed via `.deb`, reducing image size and improving
   flexibility.
-- Updated Intel® GPU drivers to support WCL (compute-runtime/IGC version `26.14.37833`).
+- Updated Intel® GPU drivers to support Wildcat Lake (WCL) (compute-runtime/IGC version `26.14.37833`).
 - Updated the Kapacitor and Python library dependency versions.
 
 ## Version 2026.0

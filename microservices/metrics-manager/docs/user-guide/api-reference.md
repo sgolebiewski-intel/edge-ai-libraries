@@ -486,7 +486,7 @@ Filtered to `coretemp_package_id_*` (CPU package temperature). Tag: `sensor`.
 | `npu_bandwidth`   | `bandwidth`   | NoC memory bandwidth delta in MB/s                                              |
 | `npu_tile_config` | `tile_config` | Active tile configuration                                                       |
 | `npu_utilization` | `utilization` | % NPU utilization over the last interval (0–100)                                |
-| `npu_memory_mb`   | `memory_mb`   | NPU memory usage in MB (`-1` on platforms without the sysfs node, e.g. MTL/ARL) |
+| `npu_memory_mb`   | `memory_mb`   | NPU memory usage in MB (`-1` on platforms without the sysfs node, e.g. Meteor Lake (MTL)/Arrow Lake (ARL)) |
 
 **Requirements:**
 

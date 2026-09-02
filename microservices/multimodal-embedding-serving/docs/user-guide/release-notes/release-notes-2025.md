@@ -2,22 +2,22 @@
 
 ## Version 1.3.1
 
-**Release Date:** 20 Nov 2025
+**Release Date**: 20 Nov 2025
 
-**Improved:**
+**Improved**:
 
 - Fixed dependent package vulnerabilities.
 
-**Validated configuration:**
+**Validated configuration**:
 
 - Intel® Xeon® 5 + Intel® Arc™ B580 GPU
 - Vanilla Kubernetes Cluster
 
 ## Version 1.3.0
 
-**Release Date:** 14 Nov 2025
+**Release Date**: 14 Nov 2025
 
-**New:**
+**New**:
 
 - Implemented CLIP, CN-CLIP, MobileCLIP, SigLIP2, and BLIP2 model handlers to support by OpenVINO™ support.
 - Added model registry and factory pattern for creating model handlers based on configuration.
@@ -26,7 +26,7 @@
 - Implemented utility functions for embedding text and images with support for base64 and URL inputs.
 - Created application-level EmbeddingModel class for high-level functionality, including video processing.
 
-**Improved:**
+**Improved**:
 
 - Enabled dual runtime support: models can run using native PyTorch or OpenVINO runtime.
 

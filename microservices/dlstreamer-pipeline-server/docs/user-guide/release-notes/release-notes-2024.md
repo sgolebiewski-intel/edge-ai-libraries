@@ -2,9 +2,9 @@
 
 ## v2.1.0
 
-**Release Date:** November 2024
+**Release Date**: November 2024
 
-**Added:**
+**Added**:
 
 - Annotation overlay support for clients.
 - Support for mTLS and configurable gRPC in EVAM.
@@ -14,7 +14,7 @@
 - Standalone EVAM Helm chart.
 - Optimizations to Dockerfile for lean Docker image size.
 
-**Fixed:**
+**Fixed**:
 
 - Bug where missing UDFs would cause task key errors.
 - Issue where multiple pipeline instances would not refer to their own data.
@@ -25,7 +25,7 @@
 - Overlay persistence bug for classification UDFs.
 - Removed encoded Geti™ prediction from metadata.
 
-**Updated:**
+**Updated**:
 
 - DL Streamer updated to 2024.2.0.
 - Removed deprecated pipeline size checks for client list size.
@@ -33,9 +33,9 @@
 
 ## v2.0.0
 
-**Release Date:** November 2024
+**Release Date**: November 2024
 
-**Added:**
+**Added**:
 
 - Support for image file ingestor and RGB frame format in UDF plugin.
 - Capability to load models from the Model Registry Microservice during EVAM startup.
@@ -45,13 +45,13 @@
 - Restructured the repository and refactored code for ease of maintenance.
 - Enabled API to get pipeline instance summary.
 
-**Fixed:**
+**Fixed**:
 
 - Updated exception handling across the code base.
 - Issues with Model Registry integration.
 - Improved error handling for self-signed TLS certificate generation script.
 
-**Updated:**
+**Updated**:
 
 - Enhanced ModelRegistryClient and simplified interactions with the Model Registry.
 - Geti™ SDK upgraded to version 2.2.0.
@@ -59,17 +59,17 @@
 
 ## v1.3.2
 
-**Release Date:** October 2024
+**Release Date**: October 2024
 
-**Updated:**
+**Updated**:
 
 - Updated setuptools version.
 
 ## v1.3.1
 
-**Release Date:** September 2024
+**Release Date**: September 2024
 
-**Updated:**
+**Updated**:
 
 - Updates to XIRIS app, adding support for additional configuration parameters.
 - Minor bug fixes and improvements.
@@ -77,19 +77,19 @@
 
 ## v1.3.0
 
-**Release Date:** July 2024
+**Release Date**: July 2024
 
-**Added:**
+**Added**:
 
 - Object tracking functionality for UDFs.
 - Tags to published metadata.
 - Improved gencamsrc handling of default property values.
 
-**Fixed:**
+**Fixed**:
 
 - Issues with image format handling (in gencamsrc) and NPU driver updates.
 
-**Updated:**
+**Updated**:
 
 - DL Streamer updated to version 2024.0.2.
 - Updated ONNX and OpenVINO™ pip packages.

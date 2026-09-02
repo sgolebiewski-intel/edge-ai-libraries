@@ -2,16 +2,16 @@
 
 ## Version 2026.2.0
 
-**Release Date:** September 9, 2026
+**Release Date**: September 9, 2026
 
-**New:**
+**New**:
 
 - **Platform & Device Capabilities API**: New `GET /api/v1/capabilities` endpoint returns a structured snapshot of the host platform and its compute devices (CPU, GPU, NPU, memory, storage, media codecs). Two detail profiles are available via `?profile=`: `minimal` (default) for a high-level summary and `expanded` for a full technical inventory. Enables workload placement without shelling out to platform-specific tools.
 - **Software Capabilities Export**: The capabilities snapshot reports the software stack on each detected compute device (drivers, runtimes, supported precisions, media codecs), enabling capability-aware model and pipeline placement across heterogeneous edge fleets.
 - **Hardware Discovery Tooling Bundled**: The runtime image ships `dmidecode`, `pciutils` (`lspci`), `util-linux` (`lsblk`), and `hwinfo` for out-of-the-box capability detection with no extra host packages or sidecar containers.
 - **Optional OpenVINO™ Build Variant**: New `openvino` extra in `pyproject.toml` and `INSTALL_OPENVINO` Docker build argument. When enabled, adds `vainfo` and `intel-media-va-driver` for VAAPI codec detection, while keeping the default image lean.
 
-**Improved:**
+**Improved**:
 
 - **Telegraf 1.38.4 Built from Source**: Compiled from the upstream `v1.38.4` tag using a digest-pinned Go 1.26.4 toolchain. Patches vulnerable bundled dependencies (`rclone` → 1.73.5, `go-billy` → 5.9.0), remediating known CVEs and producing a fully reproducible build.
 - **qmassa 2.1.0 and qmmd 0.2.0**: Installed with `cargo install --locked --git … --tag …` from upstream instead of crates.io, preventing build failures from yanked versions and bringing the latest Intel® GPU telemetry improvements.
@@ -23,9 +23,9 @@
 
 ## Version 2026.1.0
 
-**Release Date:** May 11, 2026
+**Release Date**: May 11, 2026
 
-**New:**
+**New**:
 
 - **Server-Sent Events (SSE) Streaming** — New `/metrics/stream` endpoint streams all metrics (system + custom) in real-time via SSE. Each connected client polls the Telegraf Prometheus endpoint independently. Browser requests receive a live HTML table; SSE clients receive raw event stream
   - **Impact**: Dashboards can now consume metrics without polling, enabling real-time visualizations. Replaces the old WebSocket relay model
@@ -58,7 +58,7 @@
   - Service statistics (`GET /api/v1/stats`)
   - **Impact**: Easy to integrate into monitoring systems and dashboards
 
-**Improved:**
+**Improved**:
 
 - **Debounced Persistence** — Custom metrics are persisted to Telegraf with configurable debounce (default 100ms). Prevents HTTP bottleneck when ingesting high-frequency metrics
   - **Impact**: Support for 1000+ metrics per second without API latency spikes
@@ -78,7 +78,7 @@
 - **GZIP Compression** — Automatic compression for HTTP responses >1 KB
   - **Impact**: Reduced bandwidth for metrics streaming (especially important for SSE)
 
-**Known Issues:**
+**Known Issues**:
 
 None at this release. See GitHub issues for feature requests and discussions.
 
@@ -86,9 +86,9 @@ None at this release. See GitHub issues for feature requests and discussions.
 
 ## Version 2026.0.1
 
-**Release Date:** May 5, 2026
+**Release Date**: May 5, 2026
 
-**Fixed:**
+**Fixed**:
 
 - **SSE Stream HTML UI** — Browser requests to `/metrics/stream` now receive an HTML page with an in-place updated metrics table (previously showed raw SSE stream)
   - **Impact**: Live dashboard experience in browser without client-side framework
@@ -102,9 +102,9 @@ None at this release. See GitHub issues for feature requests and discussions.
 
 ## Version 2026.0.0
 
-**Release Date:** April 1, 2026
+**Release Date**: April 1, 2026
 
-**New:**
+**New**:
 
 - **Initial Release** — Metrics Manager with:
   - Telegraf-based system metrics collection (CPU, RAM, temperature, GPU, NPU)
@@ -127,7 +127,7 @@ None at this release. See GitHub issues for feature requests and discussions.
 - Python **3.12** runtime + FastAPI service
 - supervisord process supervisor
 
-> **Note on qmmd:** The default Metrics Manager already collects GPU metrics via `qmassa_reader.py` and Telegraf. Enable qmmd only if you need a standalone Prometheus exporter on a separate port. See [Environment Variables](./get-started/environment-variables.md#optional-components) for details.
+> **Note on qmmd**: The default Metrics Manager already collects GPU metrics via `qmassa_reader.py` and Telegraf. Enable qmmd only if you need a standalone Prometheus exporter on a separate port. See [Environment Variables](./get-started/environment-variables.md#optional-components) for details.
 
 ---
 
@@ -148,12 +148,12 @@ None at this release. See GitHub issues for feature requests and discussions.
 
 No breaking changes. All existing endpoints remain compatible.
 
-**What changed:**
+**What changed**:
 
 - SSE stream now returns flat metric format instead of measurement/field split
 - Content negotiation added for `/metrics/stream` (HTML vs SSE)
 
-**Migration steps:**
+**Migration steps**:
 
 1. Pull new image: `docker pull intel/metrics-manager:2026.1.0`
 2. Update `docker-compose.yaml` or Helm values if pinning version

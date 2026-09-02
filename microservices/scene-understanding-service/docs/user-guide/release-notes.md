@@ -5,7 +5,7 @@ most recent release is listed first; older entries are preserved for history.
 
 ## Version 2026.2.0
 
-**Release Date:** September 9, 2026
+**Release Date**: September 9, 2026
 
 Scene Understanding Service is a generic microservice for multi-scene, zone-based
 behavioral analysis. Its behavior is defined entirely through two YAML files
@@ -13,7 +13,7 @@ behavioral analysis. Its behavior is defined entirely through two YAML files
 prevention, restricted-area monitoring, and other zone-based use cases without
 code changes.
 
-**New:**
+**New**:
 
 - Multi-scene, multi-camera person tracking with per-person session state
   (zone visits, dwell time, behavioral flags).
@@ -29,7 +29,7 @@ code changes.
 - Ships self-contained with sample configuration for standalone evaluation and
   drop-in use with any Scenescape-based deployment.
 
-**Known Issues:**
+**Known Issues**:
 
 - The service requires a reachable Scenescape deployment (including the
   analytics component on Scenescape 2026.2.0) to produce zone-based events
@@ -42,9 +42,9 @@ First release of the Scene Understanding Service as a self-contained,
 reusable microservice for multi-scene behavioral analysis and suspicious
 activity detection, built for edge deployment on Intel hardware.
 
-**Release Date:** June 18, 2026
+**Release Date**: June 18, 2026
 
-**New:**
+**New**:
 
 - Scenescape MQTT-driven, multi-scene, multi-camera person tracking with a
   per-person session state machine (zone visits, dwell time, flags).
@@ -63,7 +63,7 @@ activity detection, built for edge deployment on Intel hardware.
 - New User Guide doc set: overview, get-started, how-it-works, configuration,
   api-reference, and troubleshooting, plus an architecture diagram.
 
-**Known issues:**
+**Known issues**:
 
 - The service is an event consumer/producer; it requires a reachable
   Scenescape deployment (MQTT + REST) to produce meaningful output.

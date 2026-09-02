@@ -4,7 +4,7 @@
 
 This is the first release for multilevel video understanding. This microservice implements a novel multi-level framework designed specifically for video summarization, with specialized capabilities for processing long-form video content.
 
-**Features:**
+**Features**:
 
 - Process video from local files or http(s) links.
 - Containerization with Docker.

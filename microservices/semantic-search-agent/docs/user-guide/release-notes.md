@@ -10,9 +10,9 @@ date TBD
 
 First release of the Semantic Search Agent as a production-ready, multi-strategy AI comparison microservice.
 
-**Release Date:** June 17, 2026
+**Release Date**: June 17, 2026
 
-**New:**
+**New**:
 
 - **REST Comparison API** with three endpoints:
   - `POST /api/v1/compare/order` — Two-pass order validation (exact, then semantic) that returns missing, extra, quantity-mismatch, and matched item sets.

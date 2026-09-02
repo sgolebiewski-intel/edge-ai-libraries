@@ -2,9 +2,9 @@
 
 ## Version 1.0.0
 
-**Release date:** September 9, 2026
+**Release date**: September 9, 2026
 
-**Summary:**
+**Summary**:
 
 Initial release of the Behavioral Analysis Service, a pose-based suspicious activity
 detection microservice for retail loss-prevention use cases. This is a production-ready
@@ -17,7 +17,7 @@ The Behavioral Analysis Service analyzes video frame sequences to detect suspici
 2. Evaluating pose sequences against behavioral patterns defined in YAML.
 3. Optionally forwarding key frames to a Visual Language Model (VLM) for visual verification.
 
-**Features:**
+**Features**:
 
 - **Pose extraction** — YOLO26n-pose inference via OpenVINO Runtime (no PyTorch dependency)
 - **Declarative YAML behavioral pattern engine** — add new patterns without code changes
@@ -30,14 +30,14 @@ The Behavioral Analysis Service analyzes video frame sequences to detect suspici
 - **Base image** — `intel/dlstreamer:2026.2.0-ubuntu24` (Python 3.12)
 - **Container-ready** — fully configurable via environment variables and volume-mounted YAML
 
-**Use Cases:**
+**Use Cases**:
 
 - **Retail loss prevention** — detect suspicious concealment behaviors (e.g., shelf-to-waist movements) in real time
 - **Behavioral analysis at the edge** — extract and evaluate pose sequences without reliance on cloud inference
 - **Multimodal detection** — combine pose-based detection with optional VLM visual verification for improved accuracy
 - **Video surveillance** — efficient frame-by-frame behavioral monitoring in retail environments
 
-**Known Limitations:**
+**Known Limitations**:
 
 - The service requires a reachable SceneScape deployment (MQTT broker + SeaweedFS) to produce meaningful output
 - VLM confirmation adds latency; consider circuit breaker settings for high-throughput scenarios

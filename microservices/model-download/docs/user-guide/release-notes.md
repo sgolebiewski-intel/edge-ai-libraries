@@ -2,7 +2,7 @@
 
 ## Version 2026.2.0
 
-**Release Date:** September 9, 2026
+**Release Date**: September 9, 2026
 
 This release introduces **configurable external model sources**, **request-scoped credential overrides and startup model preloading**, **OpenVINO HETERO device conversion**, and **job cancellation**, along with validation, AI skill, and documentation improvements.
 
@@ -24,7 +24,7 @@ This release introduces **configurable external model sources**, **request-scope
 - **Updated the default container UID/GID to 1000**: aligns with host user permissions and simplifies volume access
 - **Fixed security vulnerability issues**
 
-**Known Issues:**
+**Known Issues**:
 
 - **Intermittent curl SSL certificate errors**: Some plugins may intermittently fail with curl: (60) SSL certificate problem: unable to get local issuer certificate during HTTPS requests. The root cause is currently under investigation.
 
@@ -32,9 +32,9 @@ This release introduces **configurable external model sources**, **request-scope
 
 ## Version 2026.1.0
 
-**Release Date:** June 17, 2026
+**Release Date**: June 17, 2026
 
-**New:**
+**New**:
 
 - Added HETERO device support for OpenVINO conversion: `config.device` now accepts `HETERO:<dev>[,<dev>...]` (e.g. `HETERO:GPU,CPU`) in addition to `CPU`, `GPU`, and `NPU`. Converted models are stored under a filesystem-safe device directory (e.g. `openvino_models/hetero_gpu_cpu/`). The NPU int4 override applies only to the exact `NPU` device, not to HETERO combinations.
 - Added a new Pipeline Zoo Models plugin for downloading models from the `dlstreamer/pipeline-zoo-models` repository.
@@ -54,32 +54,32 @@ This release introduces **configurable external model sources**, **request-scope
 - Added a quickstart guide for ephemeral mode.
 - Added `POST /api/v1/models/list` to list models available from supported hubs before download. Listing is currently supported for `huggingface`, `ultralytics`, `pipeline-zoo-models`, and `geti`.
 
-**Improved:**
+**Improved**:
 
 - API hub names are now accepted case-insensitively (e.g. `Geti`, `GETI`, and `HuggingFace` all map to their canonical lowercase identifier).
 - `GET /api/v1/plugins` now reports model-listing capabilities and accepted listing filter fields.
 - `microsoft/Phi3.5-mini-instruct` model conversion requires the default OpenVINO™ version (`v2025.4.1`); newer versions with `transformers>4.55` are not yet compatible.
 
-**Known Issues:**
+**Known Issues**:
 
 - Intel® does not support Edge Manageability Framework deployment currently.
 - Due to a limitation in the DL Streamer public model download script, all supported precision artifacts (for example, FP32 and FP16) are downloaded by default even when not requested. When INT8 is specifically requested by user, the other supported precision artifacts are still downloaded along with INT8.
 
 ## Version 1.1.0
 
-**Release Date:** February 20, 2026
+**Release Date**: February 20, 2026
 
-**New:**
+**New**:
 
 - Implemented component-based model conversion for models not supported by Optimum library.
 - Added a new Geti™ plugin for downloading models from Geti software.
 - Enabled the OpenVINO™ plugin with VLM support.
 
-**Improved:**
+**Improved**:
 
 - Updated the OpenVINO™ plugin to support NPU for LLM models.
 
-**Known Issues:**
+**Known Issues**:
 
 - Intel® does not support Edge Manageability Framework deployment currently.
 

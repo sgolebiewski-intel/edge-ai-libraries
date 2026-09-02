@@ -5,9 +5,9 @@ integration context, see the [Video Search and Summarization release notes](http
 
 ## Version 2026.2.0
 
-**Release Date:** August 4, 2026
+**Release Date**: August 4, 2026
 
-**New (initial release):**
+**New (initial release)**:
 
 - Multi-backend retriever support (`vdms`, `milvus`, `pgvector`, `faiss`)
 - Backend-centric folder structure under `src/retriever/backends/`
@@ -19,7 +19,7 @@ integration context, see the [Video Search and Summarization release notes](http
 - Developer template and guide for adding new backends
 - Docker Compose overlays for running the retriever against a selected backend
 
-**Improved:**
+**Improved**:
 
 - Hardened the VDMS over-fetch floor so `fetch_k` is always greater than `k`, improving recall when filters discard candidates.
 - Backend registry, middleware, and VDMS backend fixes with expanded test coverage.

@@ -5,9 +5,9 @@ recent release is listed first; older entries are preserved for history.
 
 ## v1.1.0
 
-**Release Date:** September 9, 2026
+**Release Date**: September 9, 2026
 
-**New:**
+**New**:
 
 - Named voice selection through the `voice` parameter, replacing speaker-index
   based selection with human-readable voice identifiers.
@@ -17,14 +17,14 @@ recent release is listed first; older entries are preserved for history.
 - Speaking-style instructions for Qwen3-TTS through the `instructions` request
   field.
 
-**Improved:**
+**Improved**:
 
 - Synthesis performance and speech quality: faster generation with more natural
   prosody across supported voices.
 - OpenAI API compatibility retained for supported request fields and voice
   handling.
 
-**Known Issues:**
+**Known Issues**:
 
 - English-only synthesis; unsupported languages return HTTP `400`.
 - The `model` request parameter is accepted for API compatibility but the
@@ -33,13 +33,13 @@ recent release is listed first; older entries are preserved for history.
 
 ## v1.0.0
 
-**Release Date:** June 2026
+**Release Date**: June 2026
 
 Initial release of the Text To Speech microservice: an
 OpenAI-API-compatible speech synthesis service with multi-runtime support
 and selectable models, built for edge deployment on Intel® hardware.
 
-**New:**
+**New**:
 
 - OpenAI-compatible speech endpoint (`POST /v1/audio/speech`) returning
   either raw `audio/wav` or a JSON envelope with metadata and a
@@ -64,7 +64,7 @@ and selectable models, built for edge deployment on Intel® hardware.
   Python mode binds `127.0.0.1:8011` on the host.
 - Container runs as a non-root user (UID 1000).
 
-**Known issues:**
+**Known issues**:
 
 - English-only synthesis. Requests with any other language are rejected
   with HTTP `400`.

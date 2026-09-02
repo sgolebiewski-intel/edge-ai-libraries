@@ -2,25 +2,25 @@
 
 ## Version 2026.1.0
 
-**Release Date:** June 17, 2026
+**Release Date**: June 17, 2026
 
-**Fixed:**
+**Fixed**:
 
 - Fixed the LlamaIndex import issue by replacing the deprecated BaseLlamaPack dependency with an updated import structure.
 
 ## Version 1.0.5
 
-**Release Date:** 25 Mar 2026
+**Release Date**: 25 Mar 2026
 
-**Fixed:**
+**Fixed**:
 
 - Fix security vulnerabilities by updating several package versions.
 
 ## Version 1.0.4
 
-**Release Date:** 17 Feb 2026
+**Release Date**: 17 Feb 2026
 
-**Improved:**
+**Improved**:
 
 - Updated default `CHUNK_SIZE` to 4096 to support larger files and updated supporting documents
 

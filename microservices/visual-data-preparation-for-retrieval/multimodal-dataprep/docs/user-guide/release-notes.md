@@ -6,26 +6,26 @@
 
 **New**:
 
-- **Multimodal ingestion:** the service now ingests **images** alongside video. Images are embedded directly (no frame extraction) into the same shared vector space as video frames and text summaries, discriminated by a `content_type` (`video`/`image`/`text`) metadata field, enabling cross-modal search.
-- **Three image transports:** multipart binary (`POST /media/upload`), inline base64 and remote URL (`POST /media/ingest`, typed on a `type` discriminator; batch via `POST /media/ingest/batch`).
-- **Async batch ingestion:** `POST /media/upload/batch`, `/media/ingest/batch`, `/media/process/batch`, and `/media/ingest-dir` return `202 Accepted` with a `job_id` polled at `GET /media/jobs/{job_id}` (cancellable via `DELETE`). Per-item error isolation keeps one bad item from failing the whole job.
-- **Content deduplication:** optional content-hash (SHA-256) dedup gated by `MM_DATAPREP_ALLOW_DUPLICATE_UPLOADS` (default `true`); byte-identical re-uploads are rejected `409 Conflict` across all transports.
+- **Multimodal ingestion**: the service now ingests **images** alongside video. Images are embedded directly (no frame extraction) into the same shared vector space as video frames and text summaries, discriminated by a `content_type` (`video`/`image`/`text`) metadata field, enabling cross-modal search.
+- **Three image transports**: multipart binary (`POST /media/upload`), inline base64 and remote URL (`POST /media/ingest`, typed on a `type` discriminator; batch via `POST /media/ingest/batch`).
+- **Async batch ingestion**: `POST /media/upload/batch`, `/media/ingest/batch`, `/media/process/batch`, and `/media/ingest-dir` return `202 Accepted` with a `job_id` polled at `GET /media/jobs/{job_id}` (cancellable via `DELETE`). Per-item error isolation keeps one bad item from failing the whole job.
+- **Content deduplication**: optional content-hash (SHA-256) dedup gated by `MM_DATAPREP_ALLOW_DUPLICATE_UPLOADS` (default `true`); byte-identical re-uploads are rejected `409 Conflict` across all transports.
 - **HTTP Range / seek** support on `GET /media/download` (`206 Partial Content`).
-- **Complete delete CRUD:** `DELETE /media/{bucket}/{video_id}` now removes both the stored object and its embeddings from the vector database.
-- **Ingest by reference:** `store_copy=false` indexes media already present on a mounted path without copying bytes into object storage, using a canonical, path-traversal-safe metadata contract (`MM_DATAPREP_INGEST_DATA_ROOT` / `INGEST_DATA_ROOT_HOST`).
+- **Complete delete CRUD**: `DELETE /media/{bucket}/{video_id}` now removes both the stored object and its embeddings from the vector database.
+- **Ingest by reference**: `store_copy=false` indexes media already present on a mounted path without copying bytes into object storage, using a canonical, path-traversal-safe metadata contract (`MM_DATAPREP_INGEST_DATA_ROOT` / `INGEST_DATA_ROOT_HOST`).
 - **RTSP source support** in the embedding pipeline (`POST /media/rtsp`).
-- **Metrics Manager integration:** ingestion throughput is published for live observability.
+- **Metrics Manager integration**: ingestion throughput is published for live observability.
 - Added expanded NPU device support in setup/runtime configuration for per-component execution (`MM_DATAPREP_EMBEDDING_DEVICE`, `MM_DATAPREP_DETECTION_DEVICE`).
 - Added richer API/OpenAPI alignment updates for media processing and management endpoints.
 
 **Improved**:
 
 - **Endpoints renamed `/videos/*` → `/media/*`** to reflect multimodal functionality (for example `/videos/upload` → `/media/upload`, `/videos/minio` → `/media/process`, `/videos/batch/{job_id}` → `/media/jobs/{job_id}`). Request/response field names (`video_id`, `video_name`, `video_url`) are unchanged for retriever compatibility.
-- **Backend-agnostic:** vector database (`vdms`/`milvus`) and object storage (`minio`/`local`) are each selected at startup behind a factory via `MM_DATAPREP_VECTORDB_BACKEND` / `MM_DATAPREP_STORAGE_BACKEND` — no code changes to switch. See [Pluggable Backends](pluggable-backends.md).
-- **Registry-based factories:** vector-store and storage backends self-register via a decorator, so adding a backend is a single self-contained module with no factory edits.
+- **Backend-agnostic**: vector database (`vdms`/`milvus`) and object storage (`minio`/`local`) are each selected at startup behind a factory via `MM_DATAPREP_VECTORDB_BACKEND` / `MM_DATAPREP_STORAGE_BACKEND` — no code changes to switch. See [Pluggable Backends](pluggable-backends.md).
+- **Registry-based factories**: vector-store and storage backends self-register via a decorator, so adding a backend is a single self-contained module with no factory edits.
 - **Microservice renamed** from `vdms-dataprep` to `multimodal-dataprep`, removing VDMS-specific naming from generic identifiers.
 - **Environment variables normalized** under a single `MM_DATAPREP_` prefix, with fully independent per-component device selection.
-- **Single in-process embedding pipeline:** the deprecated API embedding mode and the standalone multimodal-embedding-serving container were removed; embeddings are generated through the in-process Python SDK.
+- **Single in-process embedding pipeline**: the deprecated API embedding mode and the standalone multimodal-embedding-serving container were removed; embeddings are generated through the in-process Python SDK.
 - Object detection now applies to both video frames and images via the shared `MM_DATAPREP_ENABLE_OBJECT_DETECTION` toggle.
 - Hardened NPU runtime dependency installation in Docker images (including stricter Level Zero/driver setup validation).
 - Simplified containerization flow by removing legacy dev/lint/report runtime paths and aligning setup scripts with a production-focused image flow.
@@ -49,7 +49,7 @@
 
 ## Version 2026.1.0
 
-**Release Date:** June 17, 2026
+**Release Date**: June 17, 2026
 
 **New**:
 

@@ -2,7 +2,7 @@
 
 ## Version 2026.2.0
 
-**Release Date:** September 9, 2026
+**Release Date**: September 9, 2026
 
 **New**
 
@@ -13,20 +13,20 @@
 
 ## Version 2026.1.0
 
-**Release Date:** June 17, 2026
+**Release Date**: June 17, 2026
 
-**New:**
+**New**:
 
 - The HF token is made optional. Now, it is only required when the user downloads gated models.
 
-**Upgrade Notes:**
+**Upgrade Notes**:
 
 - Upgraded the OLLAMA binary version.
 - Dependency Upgrades: Upgraded application dependencies flagged by Dependabot for known vulnerabilities.
 
 ## Version 1.3.2
 
-**Release Date:** WW09 2026
+**Release Date**: WW09 2026
 
 - Upgrade Ollama binary to latest version 0.17.0.
 - Upgrade GPU drivers for Panther Lake (PTL) support.

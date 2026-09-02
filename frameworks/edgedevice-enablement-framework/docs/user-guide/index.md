@@ -27,14 +27,14 @@ GPU or NPU driver installation.
 
 ## Main Supported Features
 
-|**Category**                  |**Feature**               |
-|------------------------------|--------------------------|
-|**Hardware**                  | - Support for 4th and 5th Gen Intel® Xeon® Scalable processor <br> - Support for Intel® Core™ Ultra processor and 12th and 13th Gen Intel® Core™ industrial processors <br> - Support for Intel® Iris® Xe Integrated Graphics for Core platform <br> - Intel® Atom® Processor |
-|**OS**                        | - Ubuntu 24.04.4 (Or the latest LTS version from Canonical) |
-|**CaaS**                      | - Model: Bare Metal <br> - ContainerD; Docker CE; Docker Compose |
-|**Observability / Telemetry** | - Aggregate and query telemetry (e.g., Prometheus) <br> - GPU, CPU and Memory Telemetry <br> - Visualization and Logs analysis |
-|**Security**                  | - Secure Boot (documentation) (Enabled for Sapphire Rapids (SPR), Raptor Lake (RPL). Not supported on Meteor Lake (MTL) internal SKUs) <br> - A hardware RoT-based foundation (TPM chip SW) <br> - Secure network and communication (IPsec, OpenSSL) |
-|**Framework**                 | - OVPL; OpenVINO™ LTS; DL Streamer; GStreamer; Graph Compute Runtime; OpenCV with Ffmpeg |
+| **Category** | **Feature** |
+| --- | --- |
+| **Hardware** | - Support for 4th and 5th Gen Intel® Xeon® Scalable processor <br> - Support for Intel® Core™ Ultra processor and 12th and 13th Gen Intel® Core™ industrial processors <br> - Support for Intel® Iris® Xe Integrated Graphics for Core platform <br> - Intel® Atom® Processor |
+| **OS** | - Ubuntu 24.04.4 (Or the latest LTS version from Canonical) |
+| **CaaS** | - Model: Bare Metal <br> - ContainerD; Docker CE; Docker Compose |
+| **Observability / Telemetry** | - Aggregate and query telemetry (e.g., Prometheus) <br> - GPU, CPU and Memory Telemetry <br> - Visualization and Logs analysis |
+| **Security** | - Secure Boot (documentation) (Enabled for Sapphire Rapids (SPR), Raptor Lake (RPL). Not supported on Meteor Lake (MTL) internal SKUs) <br> - A hardware RoT-based foundation (TPM chip SW) <br> - Secure network and communication (IPsec, OpenSSL) |
+| **Framework** | - OVPL; OpenVINO™ LTS; DL Streamer; GStreamer; Graph Compute Runtime; OpenCV with Ffmpeg |
 
 ## Key Hardware Elements Supported
 

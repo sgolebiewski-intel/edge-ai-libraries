@@ -2,9 +2,9 @@
 
 ## Version 2025.2.0
 
-**Release Date:** December 10, 2025
+**Release Date**: December 10, 2025
 
-**New:**
+**New**:
 
 - Microservices Architecture:
 

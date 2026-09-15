@@ -16,7 +16,7 @@ ensure_sudo () {
   else
     # No password available and no usable TTY (e.g. under the panelled UI or a
     # pipe/background job). Avoid hanging forever on a hidden password prompt.
-    echo "ensure_sudo: sudo requires a password but none is available; set SUDO_PASSWORD or run 'sudo -v' first" 1>&2
+    echo "ensure_sudo: sudo requires a password but none is available" 1>&2
     return 1
   fi
 }

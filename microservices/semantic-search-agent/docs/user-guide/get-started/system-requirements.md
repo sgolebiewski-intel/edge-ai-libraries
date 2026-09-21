@@ -45,7 +45,8 @@ Required only when you set `DEFAULT_MATCHING_STRATEGY` to `semantic` or `hybrid`
 | `openvino_local` | OpenVINO IR^1^ model files on disk. `OPENVINO_MODEL_PATH` must point to them.  |
 | `openai`         | Valid `OPENAI_API_KEY` with access to the configured model.                    |
 
-> **Note**: 1. OpenVINO Intermediate Representation (IR).
+> [!NOTE]
+> 1. OpenVINO Intermediate Representation (IR).
 
 ## Network Requirements
 

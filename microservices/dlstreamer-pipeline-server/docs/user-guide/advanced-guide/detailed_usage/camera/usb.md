@@ -10,7 +10,7 @@
 "pipeline": "v4l2src device=/dev/<DEVICE_VIDEO_NODE> name=source ! video/x-raw,format=YUY2 ! videoconvert ! video/x-raw,format=BGR ! appsink name=destination"
 ```
 
->**Note**:
+> [!NOTE]
 
 - In case you want to enable resizing with USB camera use the
   `videoscale` element and specify the `height` and `width`  parameter in the pipeline.

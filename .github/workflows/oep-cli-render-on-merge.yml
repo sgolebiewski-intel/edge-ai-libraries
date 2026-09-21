@@ -1,7 +1,8 @@
 # SPDX-FileCopyrightText: (C) 2026 Intel Corporation
 # SPDX-License-Identifier: Apache-2.0
 
-name: Render OEP CLI on merge
+name: "[OEP CLI]  Render OEP CLI on merge"
+run-name: "[OEP CLI]  Render OEP CLI on merge workflow (by @${{ github.actor }} via ${{ github.event_name }})"
 
 # Regenerate the committed, ready-to-ship installer
 # (frameworks/oep-installer-cli/rendered/openedge-cli) whenever any of its
@@ -42,7 +43,7 @@ jobs:
       github.actor != 'copilot-swe-agent[bot]' &&
       github.actor != 'Copilot' &&
       github.actor != vars.AUTOMATION_ACTOR
-    runs-on: [self-hosted, linux, oep-lab]
+    runs-on: ubuntu-24.04
     timeout-minutes: 20
     steps:
       - name: Verify required tooling

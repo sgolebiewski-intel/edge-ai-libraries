@@ -2738,15 +2738,12 @@ debian_40_install_gpu () {
     # install the packages
     ensure_apt install --no-install-recommends -y $pkg_list
   fi
+  verify_gpu
 }
 
 debian_40_remove_gpu () {
   configure_gpu $*
-  if verify_gpu; then
-    ensure_apt autoremove -m -y clinfo libze-intel-gpu1 intel-media-va-driver-non-free intel-opencl-icd || true
-  else
-    echo "Gpu drivers are removed already. Skipping"
-  fi
+  ensure_apt autoremove -m -y clinfo libze-intel-gpu1 intel-media-va-driver-non-free intel-opencl-icd || true
   # Remove legacy/conflicting apt sources and keyrings for the Intel GPU repo.
   # Older installer versions wrote /etc/apt/sources.list.d/intel-gpu.list using the
   # intel-gpu-archive-keyring.gpg keyring. Because that entry points at the same
@@ -3485,15 +3482,12 @@ debian_40_install_npu () {
     ensure_apt install -y $(find . -name "*.deb" -print)
     ensure_sudo rm -rf "$workspace"
   fi
+  verify_npu
 }
 
 debian_40_remove_npu () {
-  if verify_npu; then
-    ensure_apt autoremove -m -y intel-driver-compiler-npu intel-fw-npu intel-level-zero-npu intel-level-zero-npu-dbgsym || true
-    ensure_sudo rm -rf "$workspace" 2> /dev/null || true
-  else
-    echo "npu drivers are removed already. Skipping"
-  fi
+  ensure_apt autoremove -m -y intel-driver-compiler-npu intel-fw-npu intel-level-zero-npu intel-level-zero-npu-dbgsym || true
+  ensure_sudo rm -rf "$workspace" 2> /dev/null || true
 }
 
 debian_40_sbom_npu () {
@@ -3774,6 +3768,21 @@ debian_90_remove_pcb_anomaly_detection () {
   ensure_sudo rm -rf "$workspace" 2> /dev/null || true
 }
 
+debian_05_install_pciutils () {
+  if ensure_apt_is_installed pciutils; then
+    echo "Pciutils is already installed. Skipping..."
+  else
+    ensure_apt update
+    ensure_apt install --no-install-recommends -y pciutils
+  fi
+}
+
+debian_05_sbom_pciutils () {
+  cat <<EOF
+"pkg-list": ["pciutils"]
+EOF
+}
+
 # Physical AI Framework - the Physical AI training/deployment SDK (the
 # `physicalai-train` distribution, which also pulls in the `physicalai`
 # runtime). It provides the `physicalai` CLI (fit / export / benchmark /
@@ -3965,7 +3974,7 @@ EOF
 }
 
 debian_10_profile_pre_system_scan () {
-  [ "$1" != "install" ] || echo "curl dmidecode"
+  [ "$1" != "install" ] || echo "curl dmidecode pciutils"
 }
 
 debian_10_install_pre_system_scan () {

@@ -135,8 +135,9 @@ The following global options are supported:
 To specify component specific options, insert a `--<component-name>` tag:
 
 ```bash
-openedge-cli install smart_park smart_intersection --smart_parking --gpu
+openedge-cli install smart_parking smart_intersection --smart_parking --gpu
 ```
+where `--gpu` applies to the smart_parking component.  
 
 > Omit `--<component-name>` if there is only a single component or the specified options apply to all components.  
 

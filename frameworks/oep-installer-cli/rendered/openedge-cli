@@ -2540,6 +2540,373 @@ debian_99_profile_edge_base () {
 }
 
 
+configure_edge_pack () {
+  edge_pack_repo="apt.repos.intel.com"
+  edge_pack_key_url="https://$edge_pack_repo/intel-gpg-keys/GPG-PUB-KEY-INTEL-SW-PRODUCTS.PUB"
+  edge_pack_key_file=/etc/apt/keyrings/edgepack.gpg
+  edge_pack_source="deb [signed-by=$edge_pack_key_file] https://$edge_pack_repo/edgepack $VERSION_CODENAME stable"
+  edge_pack_list_file=/etc/apt/sources.list.d/edgepack.list
+  edge_pack_pref=(
+    "Package: *"
+    "Pin: origin $edge_pack_repo"
+    "Pin-Priority: 1001"
+  )
+  edge_pack_pref_file=/etc/apt/preferences.d/edgepack.pref
+}
+
+debian_15_profile_edge_pack () {
+  echo "pre_system_scan core_types curl gpg"
+}
+
+debian_15_install_edge_pack () {
+  configure_edge_pack "$@"
+  local reinstall=$([[ " $* " = *" --reinstall "* ]] && echo 1 || echo 0)
+  local reconfigured=0
+  if [ ! -e "$edge_pack_key_file" ] || [ $reinstall -eq 1 ]; then
+    ensure_apt_key "$edge_pack_key_file" "$edge_pack_key_url" --dearmor
+    reconfigured=1
+  fi
+  if [ ! -e "$edge_pack_source_file" ] || [ $reinstall -eq 1 ]; then
+    ensure_apt_source "$edge_pack_list_file" "$edge_pack_source"
+    reconfigured=1
+  fi
+  if [ ! -e "$edge_pack_pref_file" ] || [ $reinstall -eq 1 ]; then
+    ensure_apt_preference "$edge_pack_pref_file" "${edge_pack_pref[@]}"
+    reconfigured=1
+  fi
+  [ $reconfigured -eq 0 ] || ensure_apt update -y
+}
+
+debian_15_remove_edge_pack () {
+  configure_edge_pack "$@"
+  ensure_sudo rm -f "$edge_pack_key_file" "$edge_pack_source_file" "$edge_pack_pref_file"
+}
+
+#sbom by individual packs
+#debian_15_sbom_edge_pack () {
+#}
+
+
+configure_edge_pack_base_realtime () {
+  configure_edge_pack "$@"
+  version="1.0"
+}
+
+debian_20_profile_edge_pack_base_realtime () {
+  echo "edge_pack"
+}
+
+debian_20_install_edge_pack_base_realtime () {
+  configure_edge_pack_base_realtime "$@"
+  if ensure_apt_is_installed intel-edge-base-realtime=$version && [[ " $* " != *" --reinstall "* ]]; then
+    echo "intel-edge-base-realtime already installed. Skipping" 1>&2
+  else
+    debian_20_remove_edge_pack_base_realtime
+    ensure_apt install --no-install-recommends "intel-edge-base-realtime=$version*"
+  fi
+}
+
+debian_20_remove_edge_pack_base_realtime () {
+  ensure_apt autoremove -y intel-edge-base-realtime || true
+}
+
+debian_20_sbom_edge_pack_base_realtime () {
+  configure_edge_pack_base_realtime "$@"
+  IFS=$'|'
+  local pref_str="${edge_pack_pref[*]}"
+  cat <<EOF
+"name": "$edge_pack_repo"
+"gpg-key": "$edge_pack_key_url"
+"key_file": "$edge_pack_key_file"
+"apt-source": "$edge_pack_source"
+"apt-list-file": "$edge_pack_list_file"
+"apt-pref": ["${pref_str//|/'","'}"]
+"apt-pref-file": "$edge_pack_pref_file"
+"pkg-list": ["intel-edge-base-realtime=$version"]
+EOF
+}
+
+
+configure_edge_pack_base_standard () {
+  configure_edge_pack "$@"
+  version="1.0"
+}
+
+debian_20_profile_edge_pack_base_standard () {
+  echo "edge_pack"
+}
+
+debian_20_install_edge_pack_base_standard () {
+  configure_edge_pack_base_standard "$@"
+  if ensure_apt_is_installed intel-edge-base-standard=$version && [[ " $* " != *" --reinstall "* ]]; then
+    echo "intel-edge-base-standard already installed. Skipping" 1>&2
+  else
+    debian_20_remove_edge_pack_base_standard
+    ensure_apt install --no-install-recommends "intel-edge-base-standard=$version*"
+  fi
+}
+
+debian_20_remove_edge_pack_base_standard () {
+  ensure_apt autoremove -y intel-edge-base-standard || true
+}
+
+debian_20_sbom_edge_pack_base_standard () {
+  configure_edge_pack_base_standard "$@"
+  IFS=$'|'
+  local pref_str="${edge_pack_pref[*]}"
+  cat <<EOF
+"name": "$edge_pack_repo"
+"gpg-key": "$edge_pack_key_url"
+"key_file": "$edge_pack_key_file"
+"apt-source": "$edge_pack_source"
+"apt-list-file": "$edge_pack_list_file"
+"apt-pref": ["${pref_str//|/'","'}"]
+"apt-pref-file": "$edge_pack_pref_file"
+"pkg-list": ["intel-edge-base-standard=$version*"]
+EOF
+}
+
+
+configure_edge_pack_graphics_core () {
+  configure_edge_pack "$@"
+  version="1.0"
+}
+
+debian_20_profile_edge_pack_graphics_core () {
+  echo "edge_pack"
+}
+
+debian_20_install_edge_pack_graphics_core () {
+  configure_edge_pack_graphics_core "$@"
+  if ensure_apt_is_installed intel-edge-graphics-core=$version && [[ " $* " != *" --reinstall "* ]]; then
+    echo "intel-edge-graphics-core already installed. Skipping" 1>&2
+  else
+    debian_20_remove_edge_pack_graphics_core
+    ensure_apt install --no-install-recommends "intel-edge-graphics-core=$version*"
+  fi
+}
+
+debian_20_remove_edge_pack_graphics_core () {
+  ensure_apt autoremove -y intel-edge-graphics-core || true
+}
+
+debian_20_sbom_edge_pack_graphics_core () {
+  configure_edge_pack_graphics_core "$@"
+  IFS=$'|'
+  local pref_str="${edge_pack_pref[*]}"
+  cat <<EOF
+"name": "$edge_pack_repo"
+"gpg-key": "$edge_pack_key_url"
+"key_file": "$edge_pack_key_file"
+"apt-source": "$edge_pack_source"
+"apt-list-file": "$edge_pack_list_file"
+"apt-pref": ["${pref_str//|/'","'}"]
+"apt-pref-file": "$edge_pack_pref_file"
+"pkg-list": ["intel-edge-graphics-core=$version*"]
+EOF
+}
+
+
+configure_edge_pack_graphics_display () {
+  configure_edge_pack "$@"
+  version="1.0"
+}
+
+debian_20_profile_edge_pack_graphics_display () {
+  echo "edge_pack"
+}
+
+debian_20_install_edge_pack_graphics_display () {
+  configure_edge_pack_graphics_display "$@"
+  if ensure_apt_is_installed intel-edge-graphics-display=$version && [[ " $* " != *" --reinstall "* ]]; then
+    echo "intel-edge-graphics-display already installed. Skipping" 1>&2
+  else
+    debian_20_remove_edge_pack_graphics_display
+    ensure_apt install --no-install-recommends "intel-edge-graphics-display=$version*"
+  fi
+}
+
+debian_20_remove_edge_pack_graphics_display () {
+  ensure_apt autoremove -y intel-edge-graphics-display || true
+}
+
+debian_20_sbom_edge_pack_graphics_display () {
+  configure_edge_pack_graphics_display "$@"
+  IFS=$'|'
+  local pref_str="${edge_pack_pref[*]}"
+  cat <<EOF
+"name": "$edge_pack_repo"
+"gpg-key": "$edge_pack_key_url"
+"key_file": "$edge_pack_key_file"
+"apt-source": "$edge_pack_source"
+"apt-list-file": "$edge_pack_list_file"
+"apt-pref": ["${pref_str//|/'","'}"]
+"apt-pref-file": "$edge_pack_pref_file"
+"pkg-list": ["intel-edge-graphics-display=$version*"]
+EOF
+}
+
+
+configure_edge_pack_media_core () {
+  configure_edge_pack "$@"
+  version="1.0"
+}
+
+debian_20_profile_edge_pack_media_core () {
+  echo "edge_pack"
+}
+
+debian_20_install_edge_pack_media_core () {
+  configure_edge_pack_media_core "$@"
+  if ensure_apt_is_installed intel-edge-media-core=$version && [[ " $* " != *" --reinstall "* ]]; then
+    echo "intel-edge-media-core already installed. Skipping" 1>&2
+  else
+    debian_20_remove_edge_pack_media_core
+    ensure_apt install --no-install-recommends "intel-edge-media-core=$version*"
+  fi
+}
+
+debian_20_remove_edge_pack_media_core () {
+  ensure_apt autoremove -y intel-edge-media-core || true
+}
+
+debian_20_sbom_edge_pack_media_core () {
+  configure_edge_pack_media_core "$@"
+  IFS=$'|'
+  local pref_str="${edge_pack_pref[*]}"
+  cat <<EOF
+"name": "$edge_pack_repo"
+"gpg-key": "$edge_pack_key_url"
+"key_file": "$edge_pack_key_file"
+"apt-source": "$edge_pack_source"
+"apt-list-file": "$edge_pack_list_file"
+"apt-pref": ["${pref_str//|/'","'}"]
+"apt-pref-file": "$edge_pack_pref_file"
+"pkg-list": ["intel-edge-media-core=$version*"]
+EOF
+}
+
+
+configure_edge_pack_media_ffmpeg () {
+  configure_edge_pack "$@"
+  version="1.0"
+}
+
+debian_20_profile_edge_pack_media_ffmpeg () {
+  echo "edge_pack"
+}
+
+debian_20_install_edge_pack_media_ffmpeg () {
+  configure_edge_pack_media_ffmpeg "$@"
+  if ensure_apt_is_installed intel-edge-media-ffmpeg=$version && [[ " $* " != *" --reinstall "* ]]; then
+    echo "intel-edge-media-ffmpeg already installed. Skipping" 1>&2
+  else
+    debian_20_remove_edge_pack_media_ffmpeg
+    ensure_apt install --no-install-recommends "intel-edge-media-ffmpeg=$version*"
+  fi
+}
+
+debian_20_remove_edge_pack_media_ffmpeg () {
+  ensure_apt autoremove -y intel-edge-media-ffmpeg || true
+}
+
+debian_20_sbom_edge_pack_media_ffmpeg () {
+  configure_edge_pack_media_ffmpeg "$@"
+  IFS=$'|'
+  local pref_str="${edge_pack_pref[*]}"
+  cat <<EOF
+"name": "$edge_pack_repo"
+"gpg-key": "$edge_pack_key_url"
+"key_file": "$edge_pack_key_file"
+"apt-source": "$edge_pack_source"
+"apt-list-file": "$edge_pack_list_file"
+"apt-pref": ["${pref_str//|/'","'}"]
+"apt-pref-file": "$edge_pack_pref_file"
+"pkg-list": ["intel-edge-media-ffmpeg=$version*"]
+EOF
+}
+
+
+configure_edge_pack_media_gst () {
+  configure_edge_pack "$@"
+  version="1.0"
+}
+
+debian_20_profile_edge_pack_media_gst () {
+  echo "edge_pack"
+}
+
+debian_20_install_edge_pack_media_gst () {
+  configure_edge_pack_media_gst "$@"
+  if ensure_apt_is_installed intel-edge-media-gst=$version && [[ " $* " != *" --reinstall "* ]]; then
+    echo "intel-edge-media-gst already installed. Skipping" 1>&2
+  else
+    debian_20_remove_edge_pack_media_gst
+    ensure_apt install --no-install-recommends "intel-edge-media-gst=$version*"
+  fi
+}
+
+debian_20_remove_edge_pack_media_gst () {
+  ensure_apt autoremove -y intel-edge-media-gst || true
+}
+
+debian_20_sbom_edge_pack_media_gst () {
+  configure_edge_pack_media_gst "$@"
+  IFS=$'|'
+  local pref_str="${edge_pack_pref[*]}"
+  cat <<EOF
+"name": "$edge_pack_repo"
+"gpg-key": "$edge_pack_key_url"
+"key_file": "$edge_pack_key_file"
+"apt-source": "$edge_pack_source"
+"apt-list-file": "$edge_pack_list_file"
+"apt-pref": ["${pref_str//|/'","'}"]
+"apt-pref-file": "$edge_pack_pref_file"
+"pkg-list": ["intel-edge-media-gst=$version*"]
+EOF
+}
+
+
+configure_edge_pack_npu () {
+  configure_edge_pack "$@"
+  version="1.0"
+}
+
+debian_20_profile_edge_pack_npu () {
+  echo "edge_pack"
+}
+
+debian_20_install_edge_pack_npu () {
+  configure_edge_pack_npu "$@"
+  if ensure_apt_is_installed intel-edge-npu=$version && [[ " $* " != *" --reinstall "* ]]; then
+    echo "intel-edge-npu already installed. Skipping" 1>&2
+  else
+    debian_20_remove_edge_pack_npu
+    ensure_apt install --no-install-recommends "intel-edge-npu=$version*"
+  fi
+}
+
+debian_20_remove_edge_pack_npu () {
+  ensure_apt autoremove -y intel-edge-npu || true
+}
+
+debian_20_sbom_edge_pack_npu () {
+  configure_edge_pack_npu "$@"
+  IFS=$'|'
+  local pref_str="${edge_pack_pref[*]}"
+  cat <<EOF
+"name": "$edge_pack_repo"
+"gpg-key": "$edge_pack_key_url"
+"key_file": "$edge_pack_key_file"
+"apt-source": "$edge_pack_source"
+"apt-list-file": "$edge_pack_list_file"
+"apt-pref": ["${pref_str//|/'","'}"]
+"apt-pref-file": "$edge_pack_pref_file"
+"pkg-list": ["intel-edge-npu=$version*"]
+EOF
+}
+
+
 configure_esq () {
   workspace="$(ensure_project_path)/esq"
 }

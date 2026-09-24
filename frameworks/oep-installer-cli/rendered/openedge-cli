@@ -2051,7 +2051,7 @@ ensure_apt_source_remove () {
 
 configure_anomalib () {
   workspace="$(ensure_project_path)/anomalib"
-  version=2.6.0
+  version=2.6.2
   repository=https://github.com/open-edge-platform/anomalib.git
 }
 
@@ -3407,7 +3407,7 @@ debian_90_remove_loitering_detection () {
 
 configure_loss_prevention () {
   workspace="$(ensure_project_path)/loss_prevention"
-  version=v2026.1.0-rc2
+  version=v2026.2.0
   repository="https://github.com/intel-retail/loss-prevention.git"
 }
 
@@ -3675,7 +3675,7 @@ debian_90_remove_multimodal_weld_defect_detection () {
 
 configure_nicu_warmer () {
   workspace="$(ensure_project_path)/nicu-warmer"
-  version=50e02996223da20a7375aaf7919faf3f1d50ed5c
+  version=release-2026.2.0
   repository="https://github.com/open-edge-platform/edge-ai-suites.git"
   device_env="configs/res/all-$(ensure_select_device $*).env"
   models=(
@@ -3917,7 +3917,7 @@ EOF
 
 configure_order_accuracy () {
   workspace="$(ensure_project_path)/order-accuracy"
-  version=fe872f5f5e475b9d75954f273f6d995bce95cdc6
+  version=v2026.2.0-rc1
   repository="https://github.com/intel-retail/order-accuracy.git"
 }
 
@@ -5043,7 +5043,7 @@ debian_30_install_uv () {
 
 configure_video_search_and_summarization () {
   workspace="$(ensure_project_path)/video_search_and_summarization"
-  version=7f124d9ef54c843345f51bb74c86103cef819531
+  version=release-2026.2.0
   repository="https://github.com/open-edge-platform/edge-ai-libraries.git"
   used_ports="${APP_HOST_PORT:-12345} 3001 7890 6016 6008 8999 9777 8300 9300 8090 4001 4002 55555 9090 9273 5432 1883 5672 8640"
 
@@ -5160,7 +5160,7 @@ debian_85_remove_video_search_and_summarization () {
 
 configure_vippet () {
   workspace="$(ensure_project_path)/vippet"
-  version=release-2026.1.0
+  version=release-2026.2.0
   repository=https://github.com/open-edge-platform/edge-ai-libraries.git
 }
 

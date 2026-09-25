@@ -1685,6 +1685,12 @@ ensure_git_clone () {
   fi
 }
 
+# clone then remove .git
+ensure_git_export () {
+  ensure_git_clone "$@"
+  rm -rf "$1"/.git
+}
+
 
 # add groups and ensure user is part of the groups
 # use docker: for a system group
@@ -1853,13 +1859,13 @@ ensure_select_device () {
   [ ! -e /dev/accel/accel0 ] || device="npu"
   [ ! -e /dev/dri/renderD128 ] || device="gpu"
   case " $* " in
-  *" --npu "*)
+  *" --NPU "*)
     [ ! -e /dev/accel/accel0 ] || device="npu"
     ;;
-  *" --cpu "*)
+  *" --CPU "*)
     device="cpu"
     ;;
-  *" --gpu "*)
+  *" --GPU "*)
     [ ! -e /dev/dri/renderD128 ] || device="gpu"
     ;;
   esac
@@ -1982,7 +1988,7 @@ ensure_apt () {
     if [ ${#package_list[*]} -gt 0 ]; then
       local valid_packages=($(dpkg-query -W -f='${db:Status-Status} ${Package}\n' "${package_list[@]}" 2>/dev/null | awk '$1!="not-installed"{print $2}'))
       if [ ${#valid_packages[*]} -gt 0 ]; then
-        ensure_sudo env DEBIAN_FRONTEND=noninteractive no_proxy=${no_proxy1%%,} NO_PROXY=${no_proxy%%,} apt-get $1 -y ${options[*]} ${valid_packages[*]}
+        ensure_sudo env DEBIAN_FRONTEND=noninteractive no_proxy=${no_proxy1%%,} NO_PROXY=${no_proxy1%%,} apt-get $1 -y ${options[*]} ${valid_packages[*]}
       fi
     fi
     ;;
@@ -1990,7 +1996,7 @@ ensure_apt () {
     [ -e /dev/shm/apt_update ] || ensure_apt update -y
     ;;&
   *)
-    ensure_sudo env DEBIAN_FRONTEND=noninteractive no_proxy=${no_proxy1%%,} NO_PROXY=${no_proxy%%,} apt-get -y "$@"
+    ensure_sudo env DEBIAN_FRONTEND=noninteractive no_proxy=${no_proxy1%%,} NO_PROXY=${no_proxy1%%,} apt-get -y "$@"
     ;;
   esac
 }
@@ -3370,26 +3376,28 @@ debian_90_install_loitering_detection () {
   configure_loitering_detection
   if verify_loitering_detection && [[ " $* " != *" --reinstall "* ]]; then
     echo "Loitering detection is already installed. Skipping"
-    return
+  else
+    # clone the repository
+    ensure_disk_space 280
+    ensure_git_export "$workspace" $version $repository metro-ai-suite/metro-vision-ai-app-recipe
+
+    # setup
+    cd "$workspace/metro-ai-suite/metro-vision-ai-app-recipe"
+    sed -i 's|curl |curl -f |' loitering-detection/install.sh
+    ./install.sh loitering-detection $(ensure_ip)
+    verify_loitering_detection
   fi
 
-  # clone the repository
-  ensure_disk_space 280
-  ensure_git_clone "$workspace" $version $repository metro-ai-suite/metro-vision-ai-app-recipe
-
-  # setup
-  cd "$workspace/metro-ai-suite/metro-vision-ai-app-recipe"
-  sed -i 's|curl |curl -f |' loitering-detection/install.sh
-  ./install.sh loitering-detection $(ensure_ip)
-  verify_loitering_detection
+  local device=$(ensure_select_device "$@")
+  sed -i "/No device selected/,/fi/{s|defaulting to ...|defaulting to ${device^^}|;s|forced.*=.*$|forced${device^^}=true|}" "$workspace"/metro-ai-suite/metro-vision-ai-app-recipe/loitering-detection/sample_start.sh
 }
 
 debian_90_start_loitering_detection () {
   ensure_ports_open "80 443" debian_90_stop_loitering_detection
   configure_loitering_detection
   cd "$workspace"/metro-ai-suite/metro-vision-ai-app-recipe
-  docker compose -f compose-without-scenescape.yml up -d
-  ./sample_start.sh $(ensure_select_device $*)
+  docker compose -f compose-without-scenescape.yml up -d --wait
+  ./sample_start.sh
   echo "@@HIGHLIGHT UI entrypoint: http://$(ensure_ip)"
   echo "@@HIGHLIGHT Grafana username/password: admin"
 }
@@ -3987,16 +3995,14 @@ debian_90_install_pallet_defect_detection () {
   configure_pallet_defect_detection
   if verify_pallet_defect_detection && [[ " $* " != *" --reinstall "* ]]; then
     echo "Pallet defect detection is already installed. Skipping"
-    return
-  fi
+  else
+    # clone the repository
+    ensure_disk_space 50
+    ensure_git_export "$workspace" $version $repository manufacturing-ai-suite/industrial-edge-insights-vision
 
-  # clone the repository
-  ensure_disk_space 50
-  ensure_git_clone "$workspace" $version $repository manufacturing-ai-suite/industrial-edge-insights-vision
-
-  # setup
-  cd "$workspace/manufacturing-ai-suite/industrial-edge-insights-vision"
-  cat > .env <<EOF
+    # setup
+    cd "$workspace"/manufacturing-ai-suite/industrial-edge-insights-vision
+    cat > .env <<EOF
 $(cat .env_pallet-defect-detection)
 HOST_IP=$(ensure_ip)
 ENABLE_HTTPS_MODE=true
@@ -4005,8 +4011,12 @@ MINIO_SECRET_KEY=$(cat /dev/random | tr -dc a-z | head -c 5)$(cat /dev/random | 
 MTX_WEBRTCICESERVERS2_0_USERNAME=$(cat /dev/random | tr -dc a-z | head -c 5)$(cat /dev/random | tr -dc 0-9 | head -c 5)
 MTX_WEBRTCICESERVERS2_0_PASSWORD=$(cat /dev/random | tr -dc a-z | head -c 5)$(cat /dev/random | tr -dc 0-9 | head -c 5)
 EOF
-  ./setup.sh
-  verify_pallet_defect_detection
+    ./setup.sh
+    verify_pallet_defect_detection
+  fi
+
+  local device="_$(ensure_select_device "$@")"
+  sed -i "s|^PIPELINE=.*$|PIPELINE=pallet_defect_detection${device//_cpu/}|" "$workspace"/manufacturing-ai-suite/industrial-edge-insights-vision/sample_start.sh
 }
 
 debian_90_start_pallet_defect_detection () {
@@ -4016,7 +4026,7 @@ debian_90_start_pallet_defect_detection () {
   cd "$workspace"/manufacturing-ai-suite/industrial-edge-insights-vision
   docker compose up -d --wait
 
-  ./sample_start.sh -p pallet_defect_detection$(ensure_select_device | sed -e 's|^|_|' -e 's|_cpu||')
+  ./sample_start.sh
   echo "@@HIGHLIGHT URL: http://$(ensure_ip)"
 }
 
@@ -4050,16 +4060,14 @@ debian_90_install_pcb_anomaly_detection () {
   configure_pcb_anomaly_detection
   if verify_pcb_anomaly_detection && [[ " $* " != *" --reinstall "* ]]; then
     echo "PCB anomaly detection is already installed. Skipping"
-    return
-  fi
+  else
+    # clone the repository
+    ensure_disk_space 60
+    ensure_git_export "$workspace" $version $repository manufacturing-ai-suite/industrial-edge-insights-vision
 
-  # clone the repository
-  ensure_disk_space 60
-  ensure_git_clone "$workspace" $version $repository manufacturing-ai-suite/industrial-edge-insights-vision
-
-  # setup
-  cd "$workspace/manufacturing-ai-suite/industrial-edge-insights-vision"
-  cat > .env <<EOF
+    # setup
+    cd "$workspace/manufacturing-ai-suite/industrial-edge-insights-vision"
+    cat > .env <<EOF
 $(cat .env_pcb-anomaly-detection)
 HOST_IP=$(ensure_ip)
 ENABLE_HTTPS_MODE=true
@@ -4068,8 +4076,12 @@ MINIO_SECRET_KEY=$(cat /dev/random | tr -dc a-z | head -c 5)$(cat /dev/random | 
 MTX_WEBRTCICESERVERS2_0_USERNAME=$(cat /dev/random | tr -dc a-z | head -c 5)$(cat /dev/random | tr -dc 0-9 | head -c 5)
 MTX_WEBRTCICESERVERS2_0_PASSWORD=$(cat /dev/random | tr -dc a-z | head -c 5)$(cat /dev/random | tr -dc 0-9 | head -c 5)
 EOF
-  ./setup.sh
-  verify_pcb_anomaly_detection
+    ./setup.sh
+    verify_pcb_anomaly_detection
+  fi
+
+  local device="_$(ensure_select_device "$@")"
+  sed -i "s|^PIPELINE=.*$|PIPELINE=pcb_anomaly_detection${device//_cpu/}|" "$workspace"/manufacturing-ai-suite/industrial-edge-insights-vision/sample_start.sh
 }
 
 debian_90_start_pcb_anomaly_detection () {
@@ -4079,7 +4091,7 @@ debian_90_start_pcb_anomaly_detection () {
   cd "$workspace"/manufacturing-ai-suite/industrial-edge-insights-vision
   docker compose up -d --wait
 
-  ./sample_start.sh -p pcb_anomaly_detection$(ensure_select_device $* | sed -e 's|^|_|' -e 's|_cpu||')
+  ./sample_start.sh
   echo "@@HIGHLIGHT URL: http://$(ensure_ip)"
 }
 
@@ -4425,16 +4437,16 @@ system_scan_check_membank () {
 
 system_scan_check_network_access () {
   local check_urls=(
-    http://security.ubuntu.com
+    http://connectivity-check.ubuntu.com
     https://apt.repos.intel.com
   ) url
 
   for url in "${check_urls[@]}"; do
-    curl -fsSL --retry 2 $url > /dev/null || { echo "$url by $(id -un)"; return 0; }
+    no_proxy= NO_PROXY= curl -fsSL --retry 2 $url > /dev/null || { echo "$url by $(id -un)"; return 0; }
   done
 
   for url in "${check_urls[@]}"; do
-    ensure_sudo curl -fsSL --retry 2 $url > /dev/null || { echo "$url by root"; return 0; }
+    no_proxy= NO_PROXY= ensure_sudo curl -fsSL --retry 2 $url > /dev/null || { echo "$url by root"; return 0; }
   done
   echo "registry reachable"
 }
@@ -4792,19 +4804,37 @@ debian_90_install_smart_intersection () {
   configure_smart_intersection
   if verify_smart_intersection && [[ " $* " != *" --reinstall "* ]]; then
     echo "Smart intersection is already installed. Skipping"
-    return
+  else
+    # clone the repository
+    ensure_disk_space 1500
+    ensure_git_export "$workspace" $version $repository metro-ai-suite/metro-vision-ai-app-recipe
+
+    # setup
+    cd "$workspace/metro-ai-suite/metro-vision-ai-app-recipe"
+    sed -i 's|sudo chown|#sudo chown|' smart-intersection/install.sh
+    sed -i 's|curl -k |curl -f |' smart-intersection/init.sh
+    ./install.sh smart-intersection $(ensure_ip)
+    verify_smart_intersection
   fi
 
-  # clone the repository
-  ensure_disk_space 1500
-  ensure_git_clone "$workspace" $version $repository metro-ai-suite/metro-vision-ai-app-recipe
-
-  # setup
-  cd "$workspace/metro-ai-suite/metro-vision-ai-app-recipe"
-  sed -i 's|sudo chown|#sudo chown|' smart-intersection/install.sh
-  sed -i 's|curl -k |curl -f |' smart-intersection/init.sh
-  ./install.sh smart-intersection $(ensure_ip)
-  verify_smart_intersection
+  cd "$workspace"/metro-ai-suite/metro-vision-ai-app-recipe
+  local device=$(ensure_select_device "$@")
+  sed -i "s|_DEVICE=.*|_DEVICE=${device^^}|" docker-compose.yml
+  [ -e smart-intersection/src/dlstreamer-pipeline-server/config.json.orig ] || cp -f smart-intersection/src/dlstreamer-pipeline-server/config.json smart-intersection/src/dlstreamer-pipeline-server/config.json.orig
+  case "$device" in
+  cpu)
+    jq -r '.config.pipelines |= map(select(.name | test("-(gpu|npu)$") | not))' smart-intersection/src/dlstreamer-pipeline-server/config.json.orig > smart-intersection/src/dlstreamer-pipeline-server/config.json
+    ;;
+  npu)
+    jq -r '.config.pipelines |= map(select(.name | endswith("-npu")))' smart-intersection/src/dlstreamer-pipeline-server/config.json.orig > smart-intersection/src/dlstreamer-pipeline-server/config.json
+    ;;
+  gpu)
+    jq -r '.config.pipelines |= map(select(.name | endswith("-gpu")))' smart-intersection/src/dlstreamer-pipeline-server/config.json.orig > smart-intersection/src/dlstreamer-pipeline-server/config.json
+    ;;
+  *)
+    cp -f smart-intersection/src/dlstreamer-pipeline-server/config.json.orig smart-intersection/src/dlstreamer-pipeline-server/config.json
+    ;;
+  esac
 }
 
 debian_90_start_smart_intersection () {
@@ -4812,22 +4842,6 @@ debian_90_start_smart_intersection () {
   ensure_ports_open 443 debian_90_stop_smart_intersection
 
   cd "$workspace"/metro-ai-suite/metro-vision-ai-app-recipe
-
-  local device=$(ensure_select_device $*)
-  sed -i -e "s|DETECTION_DEVICE=.*|DETECTION_DEVICE=$device|" -e "s|CLASSIFICATION_DEVICE=.*|CLASSIFICATION_DEVICE=$device|" docker-compose.yml
-  [ -e smart-intersection/src/dlstreamer-pipeline-server/config.json.orig ] || cp -f smart-intersection/src/dlstreamer-pipeline-server/config.json smart-intersection/src/dlstreamer-pipeline-server/config.json.orig
-  case "$device" in
-  cpu)
-    jq -r '.config.pipelines[].name | select(endswith("-gpu") or endswith("-npu") | not)' smart-intersection/src/dlstreamer-pipeline-server/config.json.orig > smart-intersection/src/dlstreamer-pipeline-server/config.json
-    ;;
-  npu)
-    jq -r '.config.pipelines[].name | select(endswith("-npu"))' smart-intersection/src/dlstreamer-pipeline-server/config.json.orig > smart-intersection/src/dlstreamer-pipeline-server/config.json
-    ;;
-  *)
-    jq -r '.config.pipelines[].name | select(endswith("-gpu"))' smart-intersection/src/dlstreamer-pipeline-server/config.json.orig > smart-intersection/src/dlstreamer-pipeline-server/config.json
-    ;;
-  esac
-
   export SUPASS=$(cat smart-intersection/src/secrets/supass)
   docker compose up -d 
   echo "@@HIGHLIGHT URL: https://$(ensure_ip)"
@@ -4863,26 +4877,28 @@ debian_90_install_smart_parking () {
   configure_smart_parking
   if verify_smart_parking && [[ " $* " != *" --reinstall "* ]]; then
     echo "Smart parking is already installed. Skipping..."
-    return 0
+  else
+    # clone the repository
+    ensure_disk_space 300
+    ensure_git_clone "$workspace" $version $repository metro-ai-suite/metro-vision-ai-app-recipe
+
+    # setup
+    cd "$workspace/metro-ai-suite/metro-vision-ai-app-recipe"
+    sed -i 's|curl | curl -f |' smart-parking/install.sh
+    ./install.sh smart-parking $(ensure_ip)
+    verify_smart_parking
   fi
 
-  # clone the repository
-  ensure_disk_space 300
-  ensure_git_clone "$workspace" $version $repository metro-ai-suite/metro-vision-ai-app-recipe
-
-  # setup
-  cd "$workspace/metro-ai-suite/metro-vision-ai-app-recipe"
-  sed -i 's|curl | curl -f |' smart-parking/install.sh
-  ./install.sh smart-parking $(ensure_ip)
-  verify_smart_parking
+  local device=$(ensure_select_device "$@")
+  sed -i "/No device selected/,/fi/{s|defaulting to ...|defaulting to ${device^^}|;s|forced.*=.*$|forced${device^^}=true|}" "$workspace"/metro-ai-suite/metro-vision-ai-app-recipe/smart-parking/sample_start.sh
 }
 
 debian_90_start_smart_parking () {
   ensure_ports_open "80 443" debian_90_stop_smart_parking
   configure_smart_parking
   cd "$workspace"/metro-ai-suite/metro-vision-ai-app-recipe
-  docker compose up -d
-  ./sample_start.sh $(ensure_select_device $*)
+  docker compose up -d --wait
+  ./sample_start.sh
   echo "@@HIGHLIGHT URL: http://$(ensure_ip)"
   echo "@@HIGHLIGHT Grafana username/password: admin"
 }
@@ -5048,7 +5064,7 @@ configure_video_search_and_summarization () {
   repository="https://github.com/open-edge-platform/edge-ai-libraries.git"
   used_ports="${APP_HOST_PORT:-12345} 3001 7890 6016 6008 8999 9777 8300 9300 8090 4001 4002 55555 9090 9273 5432 1883 5672 8640"
 
-  local device=$(ensure_select_device $*)
+  local device=$(ensure_select_device "$@")
   export VLM_MODEL_NAME=Qwen/Qwen2.5-VL-3B-Instruct
   export ENABLED_WHISPER_MODELS=tiny.en,small.en,medium.en
   export OD_MODEL_NAME=yolov8l-worldv2
@@ -5115,24 +5131,23 @@ debian_85_install_video_search_and_summarization () {
   configure_video_search_and_summarization $*
   if verify_video_search_and_summarization && [[ " $* " != *" --reinstall "* ]]; then
     echo "video_search_and_summarization is already installed. Skipping..."
-    return 0
+  else
+    # clone the repository
+    ensure_disk_space 8000
+    ensure_ports_open "$used_ports" return 3
+    ensure_git_export "$workspace" $version $repository sample-applications/video-search-and-summarization
+
+    # setup
+    cd "$workspace"/sample-applications/video-search-and-summarization
+    ensure_hf_token $VLM_MODEL_NAME $TEXT_EMBEDDING_MODEL $OVMS_LLM_MODEL_NAME                   
+
+    sed -i "s|export HOST_IP=.*|export HOST_IP=$(ensure_ip)|" setup.sh
+    sed -i 's|FINAL_ARG=.*|FINAL_ARG="${FINAL_ARG:-up -d}"|' setup.sh
+    export FINAL_ARG=pull
+    . ./setup.sh --search-and-summary
+
+    verify_video_search_and_summarization
   fi
-
-  # clone the repository
-  ensure_disk_space 8000
-  ensure_ports_open "$used_ports" return 3
-  ensure_git_clone "$workspace" $version $repository sample-applications/video-search-and-summarization
-
-  # setup
-  cd "$workspace"/sample-applications/video-search-and-summarization
-  ensure_hf_token $VLM_MODEL_NAME $TEXT_EMBEDDING_MODEL $OVMS_LLM_MODEL_NAME                   
-
-  sed -i "s|export HOST_IP=.*|export HOST_IP=$(ensure_ip)|" setup.sh
-  sed -i 's|FINAL_ARG=.*|FINAL_ARG="${FINAL_ARG:-up -d}"|' setup.sh
-  export FINAL_ARG=pull
-  . ./setup.sh --search-and-summary
-
-  verify_video_search_and_summarization
 }
 
 debian_85_start_video_search_and_summarization () {

@@ -75,10 +75,9 @@ source scripts/run_service.sh up --plugins all --model-path <host path>
 ```
 
 > [!NOTE]
-> For public models, no token is needed. Set the Hugging Face token via the `HUGGINGFACEHUB_API_TOKEN` environment variable to download GATED models and for conversion to OpenVINO IR format.
-
-> [!NOTE]
-> Ensure the host path does not require privileged access for directory creation. Intel recommends using `$PWD/host_path` or a similar location within your work directory.
+>
+> - For public models, no token is needed. Set the Hugging Face token via the `HUGGINGFACEHUB_API_TOKEN` environment variable to download GATED models and for conversion to OpenVINO IR format.
+> - Ensure the host path does not require privileged access for directory creation. Intel recommends using `$PWD/host_path` or a similar location within your work directory.
 
 The `run_service.sh` script is a Docker Compose wrapper that builds and manages the model download service container with configurable plugins, model paths, and deployment options.
 
@@ -249,10 +248,10 @@ curl -X POST "http://<host-ip>:8200/api/v1/models/download?download_path=yolo_mo
 ```
 
 > [!NOTE]
-> YOLO vision models from Ultralytics model hub will be downloaded and converted to
-> the OpenVINO IR format with FP32 and FP16 precision by default.
-> [!NOTE]
-> Ultralytics supports a single model name, comma-separated model names, or `"name": "all"`.
+>
+> - YOLO vision models from Ultralytics model hub will be downloaded and converted to
+>   the OpenVINO IR format with FP32 and FP16 precision by default.
+> - Ultralytics supports a single model name, comma-separated model names, or `"name": "all"`.
 
 **Download an Ultralytics model with INT8 quantization:**
 
@@ -275,15 +274,14 @@ curl -X POST "http://<host-ip>:8200/api/v1/models/download?download_path=yolo_in
 ```
 
 > [!NOTE]
-> **Note: INT8 behavior for Ultralytics requests:**
-> 
+> **INT8 behavior for Ultralytics requests:**
+>
 > - Set `config.quantize` to request INT8 export.
 > - INT8 requests only support a single model name per request. Requests using comma-separated model names, `all`, or `yolo_all` with `quantize` are rejected.
 > - If INT8 is requested but no INT8 artifact is produced, the request fails and partial artifacts are cleaned up.
 > - Due to a limitation in the DL Streamer public model download script, requesting INT8 also downloads other supported precision artifacts for the model if present like FP32, FP16.
 > - Currently available datasets are coco, coco8 and coco128.
-
-**NOTE:** coco is a very large dataset of over 20GB and containing more than a 100,000 images. Quantization on this dataset can take a very long time. For development purposes, it is recommended to use coco128 or coco8 instead, which is much lighter.
+> - coco is a very large dataset of over 20GB and containing more than a 100,000 images. Quantization on this dataset can take a very long time. For development purposes, it is recommended to use coco128 or coco8 instead, which is much lighter.
 
 **Download a Hugging Face model and convert it to OpenVINO IR format:**
 
@@ -333,7 +331,7 @@ curl -X POST "http://<host-ip>:8200/api/v1/models/download?download_path=ovms_mo
 ```
 
 > [!NOTE]
-> 
+>
 > - Need additional OpenVINO export knobs? Review the parameter matrix in the [OpenVINO Model Server export guide](https://github.com/openvinotoolkit/model_server/blob/main/demos/common/export_models/README.md#quick-start) and pass the corresponding fields through `config`.
 > - Visual-language models automatically set `pipeline_type` to `VLM` for type 'VLM'.
 > - Unknown parameters keep their original spelling (underscores included) and are forwarded as `--<param_name>`, so options such as `reasoning_parser`, `tool_parser` etc.
@@ -411,10 +409,9 @@ curl -X POST "http://<host-ip>:8200/api/v1/models/download?download_path=udf_tim
 ```
 
 > [!NOTE]
-> The URL must point to a tar archive (ex: `.tar`, `.tar.gz`) containing a single model's files, and `name` must be a single value (comma-separated names and `all` are not supported for `remote-url`).
-
-> [!NOTE]
-> Pass hub names (`pipeline-zoo-models`, `remote-url`) directly to `--plugins`. The internal plugin implementation is shared but not user-visible.
+>
+> - The URL must point to a tar archive (ex: `.tar`, `.tar.gz`) containing a single model's files, and `name` must be a single value (comma-separated names and `all` are not supported for `remote-url`).
+> - Pass hub names (`pipeline-zoo-models`, `remote-url`) directly to `--plugins`. The internal plugin implementation is shared but not user-visible.
 
 **Download an Open Model Zoo (OMZ) model:**
 
@@ -437,10 +434,10 @@ curl -X POST "http://<host-ip>:8200/api/v1/models/download?download_path=omz_mod
 ```
 
 > [!NOTE]
-> Models without a matching entry in `omz_rules.yaml` are downloaded and
-> converted, but no post-processing is applied.
-> [!NOTE]
-> OMZ supports a single model name or comma-separated model names (for example, `"name": "mobilenet-v2-pytorch,face-detection-retail-0004"`). `"name": "all"` is not supported for OMZ because each model requires both download and conversion, and processing the full catalog can be very time-consuming and resource-intensive.
+>
+> - Models without a matching entry in `omz_rules.yaml` are downloaded and
+>   converted, but no post-processing is applied.
+> - OMZ supports a single model name or comma-separated model names (for example, `"name": "mobilenet-v2-pytorch,face-detection-retail-0004"`). `"name": "all"` is not supported for OMZ because each model requires both download and conversion, and processing the full catalog can be very time-consuming and resource-intensive.
 
 **Download fixed HLS models (3D pose, rPPG, AI-ECG):**
 

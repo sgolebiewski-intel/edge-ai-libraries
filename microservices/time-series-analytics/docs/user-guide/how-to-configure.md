@@ -42,9 +42,8 @@ This document describes the configuration options available in `config.json` for
 Refer to [Running inferencing on GPU](https://docs.openedgeplatform.intel.com/dev/edge-ai-suites/ai-suite-manufacturing/industrial-edge-insights-time-series/get-started.html#running-user-defined-function-udf-inference-on-gpu) for usage of GPU in Time Series - Wind Turbine Anomaly Detection Sample App.
 
 > [!NOTE]
-> **Note on GPU Support:**
-> 
-> - GPU inferencing for machine learning models is supported via the Intel scikit-learn extension (scikit-learn-intelex)
+>
+> - GPU inference for machine learning models is supported via the Intel scikit-learn extension (scikit-learn-intelex)
 > - Intel iGPU (Integrated Graphics Processing Unit) drivers are included within the Time Series Analytics Microservice to facilitate GPU usage.
 > - The scikit-learn-intelex package comes pre-installed, delivering optimized performance and GPU-enabled model inferencing for Intel hardware.
 > - Actual GPU utilization is determined by the model's compatibility with GPU execution and the available GPU hardware resources.
@@ -62,7 +61,7 @@ Refer to [Running inferencing on GPU](https://docs.openedgeplatform.intel.com/de
 For more information on how to configure MQTT alerts, refer to [Publishing MQTT Alerts](https://docs.openedgeplatform.intel.com/dev/edge-ai-suites/ai-suite-manufacturing/industrial-edge-insights-time-series/how-to-guides/configure-alerts.html#docker-publish-mqtt-alerts)
 
 > [!NOTE]
-> 
+>
 > - MQTT Broker Availability: Ensure that the MQTT broker is accessible and available on the network before initializing this client.
 > - The broker must be reachable via the configured host and port.
 
@@ -77,7 +76,7 @@ For more information on how to configure MQTT alerts, refer to [Publishing MQTT 
 For more information on how to configure OPC-UA alerts, refer to [Publishing OPC-UA Alerts](https://docs.openedgeplatform.intel.com/dev/edge-ai-suites/ai-suite-manufacturing/industrial-edge-insights-time-series/how-to-guides/configure-alerts.html#docker-publish-opc-ua-alerts)
 
 > [!NOTE]
-> 
+>
 > - An OPC UA server must be available and running at the specified endpoint
 >   for this code to function properly.
 > - Ensure the server is accessible and the connection parameters (endpoint URL, security settings, credentials)

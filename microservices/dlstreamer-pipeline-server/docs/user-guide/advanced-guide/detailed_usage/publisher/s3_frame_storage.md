@@ -28,10 +28,9 @@ The following parameters are supported to configure S3 publishing:
 - `block`: Optional. It is `false` by default, meaning s3 write will be asynchronous to MQTT publishing. As a result, there might be a scenario where metadata of frame is present but the s3 has still not finished writing the frame to the storage. If specified as `true`, then s3 write and MQTT publishing will be synchronous. In this case, metadata of the frame will be present in MQTT only after s3 has completed writing the frame to the storage.
 
 > [!NOTE]
-> The frames are stored at `<bucket>/<folder_prefix>/<filename>.<extension>`. `<filename>` is a unique name for each frame given by DL Streamer Pipeline Server. If the `folder_prefix` is not specified or kept blank, then the frame will be stored at `<bucket>/<filename>.<extension>`
-
-> [!NOTE]
-> DL Streamer Pipeline Server supports only writing of object data to S3 storage. It does not support creating, maintaining or deletion of buckets. It also does not support reading or deletion of objects from bucket. This documentation assumes that if you want to use this feature, then you already have a S3 storage with buckets configured.
+>
+> - The frames are stored at `<bucket>/<folder_prefix>/<filename>.<extension>`. `<filename>` is a unique name for each frame given by DL Streamer Pipeline Server. If the `folder_prefix` is not specified or kept blank, then the frame will be stored at `<bucket>/<filename>.<extension>`
+> - DL Streamer Pipeline Server supports only writing of object data to S3 storage. It does not support creating, maintaining or deletion of buckets. It also does not support reading or deletion of objects from bucket. This documentation assumes that if you want to use this feature, then you already have a S3 storage with buckets configured.
 
 After making changes to config.json, make sure to save it and restart DL Streamer Pipeline Server. Ensure that the changes made to the config.json are reflected in the container by volume mounting it as mentioned [here](../../../how-to-guides/change-dlstreamer-pipeline.md).
 

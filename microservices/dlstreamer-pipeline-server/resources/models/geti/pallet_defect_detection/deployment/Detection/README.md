@@ -114,14 +114,14 @@ Exportable code is a .zip archive that contains simple demo to get and visualize
    You can press `Q` to stop inference during demo running.
 
    > [!NOTE]
-   > If you provide a single image as input, the demo processes and renders it quickly, then exits. To continuously
-   > visualize inference results on the screen, apply the `--loop` option, which enforces processing a single image in a loop.
-   > In this case, you can stop the demo by pressing `Q` button or killing the process in the terminal (`Ctrl+C` for Linux).
-   > 
-   > [!NOTE]
-   > Default configuration contains info about pre- and post processing for inference and is guaranteed to be correct.
-   > Also you can change `config.json` that specifies the confidence threshold and color for each class visualization, but any
-   > changes should be made with caution.
+   >
+   > - If you provide a single image as input, the demo processes and renders it quickly, then exits. To continuously
+   >   visualize inference results on the screen, apply the `--loop` option, which enforces processing a single image in a loop.
+   >   In this case, you can stop the demo by pressing `Q` button or killing the process in the terminal (`Ctrl+C` for Linux).
+   >
+   > - Default configuration contains info about pre- and post processing for inference and is guaranteed to be correct.
+   >   Also you can change `config.json` that specifies the confidence threshold and color for each class visualization, but any
+   >   changes should be made with caution.
 
 3. To save inferenced results with predictions on it, you can specify the folder path, using `--output`.
    It works for images, videos, image folders and web cameras. To prevent issues, do not specify it together with a `--loop` parameter.

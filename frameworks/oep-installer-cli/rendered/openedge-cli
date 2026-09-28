@@ -60,13 +60,17 @@ main () {
       else
         # critical group permissions
         local -A _groups=()
-        local _j _dep _rest_args=() _restart=0
+        local _j _dep _g _gf _deps _resolved _rest_args=() _restart=0
         for ((_j=$_i;_j<${#_cmds[@]};_j++)); do
           _rest_args+=(${_cmds[$_j]} ${_args[$_j]})
-          for _dep in $(act_find_deps install install $(act_resolve_args ${_cmds[$_j]} ${_globals[*]} ${_args[$_j]})); do
-            { [[ "$_dep" = ${ID_LIKE}_*_install_gpu ]] || [[ "$_dep" = ${ID_LIKE}_*_install_npu ]]; } && _groups["render:992"]=1
-            [[ "$_dep" = ${ID_LIKE}_*_install_gpu ]] && _groups["video:"]=1
-            [[ "$_dep" = ${ID_LIKE}_*_install_docker ]] && _groups["docker:"]=1
+	  _resolved=($(act_resolve_args ${_cmds[$_j]} ${_globals[*]} ${_args[$_j]}))
+	  _deps=($(act_find_deps install install ${_resolved[*]}))
+          for _dep in ${_deps[*]}; do
+            _gf=${_dep/_install_/_group_}
+            declare -F $_gf > /dev/null 2>&1 || continue
+            for _g in $($_gf $(act_extract_args group ${_dep#*_*_*_} "${_deps[*]#${ID_LIKE}_*_install_}" ${_resolved[*]})); do
+              _groups["$_g"]=1
+            done
           done
         done
 
@@ -2512,6 +2516,10 @@ EOF
   fi
 }
 
+debian_30_group_docker () {
+  echo "docker:"
+}
+
 debian_30_install_docker () {
   if docker version > /dev/null 2>&1 && docker buildx version > /dev/null 2>&1 && docker compose version > /dev/null 2>&1 && [[ " $* " != *" --reinstall "* ]]; then
     echo "Docker is already installed. Skipping..."
@@ -2679,6 +2687,10 @@ debian_20_profile_edge_pack_base_standard () {
   echo "edge_pack"
 }
 
+debian_20_group_edge_pack_base_standard () {
+  echo "render:992 video:"
+}
+
 debian_20_install_edge_pack_base_standard () {
   configure_edge_pack_base_standard "$@"
   if ensure_apt_is_installed intel-edge-base-standard=$version && [[ " $* " != *" --reinstall "* ]]; then
@@ -2717,6 +2729,10 @@ debian_20_profile_edge_pack_graphics_core () {
   echo "edge_pack"
 }
 
+debian_20_group_edge_pack_graphics_core () {
+  echo "render:992 video:"
+}
+
 debian_20_install_edge_pack_graphics_core () {
   configure_edge_pack_graphics_core "$@"
   if ensure_apt_is_installed intel-edge-graphics-core=$version && [[ " $* " != *" --reinstall "* ]]; then
@@ -2753,6 +2769,10 @@ configure_edge_pack_graphics_display () {
 
 debian_20_profile_edge_pack_graphics_display () {
   echo "edge_pack"
+}
+
+debian_20_group_edge_pack_graphics_display () {
+  echo "render:992 video:"
 }
 
 debian_20_install_edge_pack_graphics_display () {
@@ -2905,6 +2925,10 @@ configure_edge_pack_npu () {
 
 debian_20_profile_edge_pack_npu () {
   echo "edge_pack"
+}
+
+debian_20_group_edge_pack_npu () {
+  echo "render:992"
 }
 
 debian_20_install_edge_pack_npu () {
@@ -3100,6 +3124,10 @@ verify_gpu () {
 
 debian_40_profile_gpu () {
   echo "curl gpg libze1"
+}
+
+debian_40_group_gpu () {
+  echo "render:992 video:"
 }
 
 debian_40_install_gpu () {
@@ -3880,6 +3908,10 @@ verify_npu () {
 
 debian_40_profile_npu () {
   echo "libtbb12 jq libze1"
+}
+
+debian_40_gpu_npu () {
+  echo "render:992"
 }
 
 debian_40_install_npu () {

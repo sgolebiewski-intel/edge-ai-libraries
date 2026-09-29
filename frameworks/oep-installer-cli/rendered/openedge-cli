@@ -2755,14 +2755,20 @@ debian_20_profile_edge_pack_base_realtime () {
   echo "edge_pack"
 }
 
+debian_20_group_edge_pack_base_realtime () {
+  echo "render:992 video:"
+}
+
 debian_20_install_edge_pack_base_realtime () {
   configure_edge_pack_base_realtime "$@"
   if ensure_apt_is_installed intel-edge-base-realtime=$version && [[ " $* " != *" --reinstall "* ]]; then
     echo "intel-edge-base-realtime already installed. Skipping" 1>&2
   else
     debian_20_remove_edge_pack_base_realtime
+    ensure_group_add $(debian_20_group_edge_pack_base_realtime)
     ensure_apt install "${edge_pack_install_options[@]}" "intel-edge-base-realtime=$version*"
   fi
+  [ -c /dev/dri/renderD128 ]
 }
 
 debian_20_remove_edge_pack_base_realtime () {
@@ -2804,8 +2810,10 @@ debian_20_install_edge_pack_base_standard () {
     echo "intel-edge-base-standard already installed. Skipping" 1>&2
   else
     debian_20_remove_edge_pack_base_standard
+    ensure_group_add $(debian_20_group_edge_pack_base_standard)
     ensure_apt install "${edge_pack_install_options[@]}" "intel-edge-base-standard=$version*"
   fi
+  [ -c /dev/dri/renderD128 ]
 }
 
 debian_20_remove_edge_pack_base_standard () {
@@ -2847,8 +2855,10 @@ debian_20_install_edge_pack_graphics_core () {
     echo "intel-edge-graphics-core already installed. Skipping" 1>&2
   else
     debian_20_remove_edge_pack_graphics_core
+    ensure_group_add $(debian_20_group_edge_pack_graphics_core)
     ensure_apt install "${edge_pack_install_options[@]}" "intel-edge-graphics-core=$version*"
   fi
+  [ -c /dev/dri/renderD128 ]
 }
 
 debian_20_remove_edge_pack_graphics_core () {
@@ -2890,8 +2900,10 @@ debian_20_install_edge_pack_graphics_display () {
     echo "intel-edge-graphics-display already installed. Skipping" 1>&2
   else
     debian_20_remove_edge_pack_graphics_display
+    ensure_group_add $(debian_20_group_edge_pack_graphics_display)
     ensure_apt install "${edge_pack_install_options[@]}" "intel-edge-graphics-display=$version*"
   fi
+  [ -c /dev/dri/renderD128 ]
 }
 
 debian_20_remove_edge_pack_graphics_display () {
@@ -3050,8 +3062,10 @@ debian_20_install_edge_pack_npu () {
     echo "intel-edge-npu already installed. Skipping" 1>&2
   else
     debian_20_remove_edge_pack_npu
+    ensure_group_add $(debian_20_group_edge_pack_npu)
     ensure_apt install "${edge_pack_install_options[@]}" "intel-edge-npu=$version*"
   fi
+  [ -c /dev/accel/accel0 ]
 }
 
 debian_20_remove_edge_pack_npu () {
@@ -3254,7 +3268,7 @@ debian_40_install_gpu () {
     debian_40_remove_gpu || true
 
     # create the render group
-    ensure_group_add render:992 video:
+    ensure_group_add $(debian_40_group_gpu)
 
     # product key & list 
     ensure_apt_key $key_file $key_url --dearmor
@@ -4034,7 +4048,7 @@ debian_40_install_npu () {
     ensure_apt autoremove -y intel-driver-compiler-npu intel-fw-npu intel-level-zero-npu intel-level-zero-npu-dbgsym || true
 
     # create the render group
-    ensure_group_add render:992
+    ensure_group_add $(debian_40_gpu_npu)
   
     mkdir -p "$workspace"
     cd "$workspace"

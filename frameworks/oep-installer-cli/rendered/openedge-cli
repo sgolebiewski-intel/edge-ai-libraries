@@ -2735,8 +2735,10 @@ debian_15_install_edge_pack () {
 }
 
 debian_15_remove_edge_pack () {
-  configure_edge_pack "$@"
-  ensure_sudo rm -f "$edge_pack_key_file" "$edge_pack_source_file" "$edge_pack_pref_file"
+  dpkg -l | grep -q -F intel-edge- || { 
+    configure_edge_pack "$@"
+    ensure_sudo rm -f "$edge_pack_key_file" "$edge_pack_source_file" "$edge_pack_pref_file"
+  }
 }
 
 #sbom by individual packs
@@ -2765,6 +2767,7 @@ debian_20_install_edge_pack_base_realtime () {
 
 debian_20_remove_edge_pack_base_realtime () {
   ensure_apt autoremove -y intel-edge-base-realtime || true
+  debian_15_remove_edge_pack "$@" || true
 }
 
 debian_20_sbom_edge_pack_base_realtime () {
@@ -2807,6 +2810,7 @@ debian_20_install_edge_pack_base_standard () {
 
 debian_20_remove_edge_pack_base_standard () {
   ensure_apt autoremove -y intel-edge-base-standard || true
+  debian_15_remove_edge_pack "$@" || true
 }
 
 debian_20_sbom_edge_pack_base_standard () {
@@ -2849,6 +2853,7 @@ debian_20_install_edge_pack_graphics_core () {
 
 debian_20_remove_edge_pack_graphics_core () {
   ensure_apt autoremove -y intel-edge-graphics-core || true
+  debian_15_remove_edge_pack "$@" || true
 }
 
 debian_20_sbom_edge_pack_graphics_core () {
@@ -2891,6 +2896,7 @@ debian_20_install_edge_pack_graphics_display () {
 
 debian_20_remove_edge_pack_graphics_display () {
   ensure_apt autoremove -y intel-edge-graphics-display || true
+  debian_15_remove_edge_pack "$@" || true
 }
 
 debian_20_sbom_edge_pack_graphics_display () {
@@ -2929,6 +2935,7 @@ debian_20_install_edge_pack_media_core () {
 
 debian_20_remove_edge_pack_media_core () {
   ensure_apt autoremove -y intel-edge-media-core || true
+  debian_15_remove_edge_pack "$@" || true
 }
 
 debian_20_sbom_edge_pack_media_core () {
@@ -2967,6 +2974,7 @@ debian_70_install_edge_pack_media_ffmpeg () {
 
 debian_70_remove_edge_pack_media_ffmpeg () {
   ensure_apt autoremove -y intel-edge-media-ffmpeg || true
+  debian_15_remove_edge_pack "$@" || true
 }
 
 debian_70_sbom_edge_pack_media_ffmpeg () {
@@ -3005,6 +3013,7 @@ debian_70_install_edge_pack_media_gst () {
 
 debian_70_remove_edge_pack_media_gst () {
   ensure_apt autoremove -y intel-edge-media-gst || true
+  debian_15_remove_edge_pack "$@" || true
 }
 
 debian_70_sbom_edge_pack_media_gst () {
@@ -3028,7 +3037,7 @@ configure_edge_pack_npu () {
 }
 
 debian_20_profile_edge_pack_npu () {
-  echo "edge_pack"
+  echo "edge_pack libze1"
 }
 
 debian_20_group_edge_pack_npu () {
@@ -3047,6 +3056,7 @@ debian_20_install_edge_pack_npu () {
 
 debian_20_remove_edge_pack_npu () {
   ensure_apt autoremove -y intel-edge-npu || true
+  debian_15_remove_edge_pack "$@" || true
 }
 
 debian_20_sbom_edge_pack_npu () {
@@ -3200,11 +3210,11 @@ $(ensure_sbom_format pkg-list git ca-certificates)
 EOF
 }
 
-debian_15_install_gpg () {
+debian_10_install_gpg () {
   ensure_apt_install_package gpgv1
 }
 
-debian_15_sbom_gpg () {
+debian_10_sbom_gpg () {
   cat <<EOF
 $(ensure_sbom_format pkg-list gpgv1)
 EOF

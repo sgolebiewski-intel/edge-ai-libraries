@@ -3607,7 +3607,11 @@ configure_loitering_detection () {
 }
 
 verify_loitering_detection () {
-  [ -e "$workspace"/metro-ai-suite/metro-vision-ai-app-recipe/loitering-detection/src/dlstreamer-pipeline-server/videos/VIRAT_S_000101.mp4 ]
+  local v
+  for v in 101 102 103 104; do
+    [ -e "$workspace"/metro-ai-suite/metro-vision-ai-app-recipe/loitering-detection/src/dlstreamer-pipeline-server/videos/VIRAT_S_000$v.mp4 ]
+  done
+  [ -e "$workspace"/metro-ai-suite/metro-vision-ai-app-recipe/loitering-detection/src/dlstreamer-pipeline-server/models/intel/pedestrian-and-vehicle-detector-adas-0001/FP16/pedestrian-and-vehicle-detector-adas-0001.bin ]
 }
 
 debian_90_profile_loitering_detection () {
@@ -4244,6 +4248,7 @@ configure_pallet_defect_detection () {
 
 verify_pallet_defect_detection () {
   [ -e "$workspace"/manufacturing-ai-suite/industrial-edge-insights-vision/resources/pallet-defect-detection/videos/warehouse.avi ]
+  [ -e "$workspace"/manufacturing-ai-suite/industrial-edge-insights-vision/resources/pallet-defect-detection/models/pallet-defect-detection/deployment/Detection/model/model.bin ]
 }
 
 debian_90_profile_pallet_defect_detection () {
@@ -4309,6 +4314,7 @@ configure_pcb_anomaly_detection () {
 
 verify_pcb_anomaly_detection () {
   [ -e "$workspace"/manufacturing-ai-suite/industrial-edge-insights-vision/resources/pcb-anomaly-detection/videos/anomalib_pcb_test.avi ]
+  [ -e "$workspace/manufacturing-ai-suite/industrial-edge-insights-vision/resources/pcb-anomaly-detection/models/pcb-anomaly-detection/deployment/Anomaly classification/model/model.bin" ]
 }
 
 debian_90_profile_pcb_anomaly_detection () {
@@ -5105,7 +5111,11 @@ configure_smart_intersection () {
 }
 
 verify_smart_intersection () {
-  [ -e "$workspace"/metro-ai-suite/metro-vision-ai-app-recipe/smart-intersection/src/dlstreamer-pipeline-server/videos/1122north_h264.ts ]
+  local v
+  for v in 1122east_h264.ts 1122north_h264.ts 1122south_h264.ts 1122west_h264.ts; do
+    [ -e "$workspace"/metro-ai-suite/metro-vision-ai-app-recipe/smart-intersection/src/dlstreamer-pipeline-server/videos/$v ]
+  done
+  [ -e "$workspace"/metro-ai-suite/metro-vision-ai-app-recipe/smart-intersection/src/dlstreamer-pipeline-server/models/intersection/openvino.bin ]
 }
 
 debian_90_profile_smart_intersection () {
@@ -5178,7 +5188,14 @@ configure_smart_parking () {
 }
 
 verify_smart_parking () {
-  [ -e "$workspace"/metro-ai-suite/metro-vision-ai-app-recipe/smart-parking/src/dlstreamer-pipeline-server/videos/new_video_1.mp4 ]
+  local i p
+  for i in 1 2 3 4; do
+    [ -e "$workspace"/metro-ai-suite/metro-vision-ai-app-recipe/smart-parking/src/dlstreamer-pipeline-server/videos/new_video_$i.mp4 ]
+  done
+  for p in FP16 FP32 INT8; do
+    [ -e "$workspace"/metro-ai-suite/metro-vision-ai-app-recipe/smart-parking/src/dlstreamer-pipeline-server/models/public/yolo11s/$p/yolo11s.bin ]
+  done
+  [ -e "$workspace"/metro-ai-suite/metro-vision-ai-app-recipe/smart-parking/src/dlstreamer-pipeline-server/models/colorcls2/colorcls2.bin ]
 }
 
 debian_90_profile_smart_parking () {

@@ -14,15 +14,15 @@
     "options": [
       {
         "label": "CPU",
-        "value": "cpu"
+        "value": "CPU"
       },
       {
         "label": "GPU",
-        "value": "gpu"
+        "value": "GPU"
       },
       {
         "label": "NPU",
-        "value": "npu"
+        "value": "NPU"
       }
     ]
   },

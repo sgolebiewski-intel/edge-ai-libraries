@@ -64,7 +64,7 @@ main () {
         for ((_j=$_i;_j<${#_cmds[@]};_j++)); do
           _rest_args+=(${_cmds[$_j]} ${_args[$_j]})
 	  _resolved=($(act_resolve_args ${_cmds[$_j]} ${_globals[*]} ${_args[$_j]}))
-	  _deps=($(act_find_deps install install ${_resolved[*]}))
+	  _deps=($(act_find_deps install ${_resolved[*]}))
           for _dep in ${_deps[*]}; do
             _gf=${_dep/_install_/_group_}
             declare -F $_gf > /dev/null 2>&1 || continue
@@ -314,10 +314,13 @@ subcommand_sbom () {
   [[ " $* " != *" --help "* ]] || return
 
   # scan for dependencies
-  local handler
-  for handler in $(act_find_deps install $(act_resolve_args install "$@") | tr ' ' '\n' | sort); do
-    declare -F ${handler/_install_/_sbom_} > /dev/null 2>&1 || continue
-    ${handler/_install_/_sbom_} $(act_extract_args sbom ${handler#*_*_*_} "${handles[*]#${ID_LIKE}_*_sbom_}" "$@")
+  local handles=($(act_find_deps install $(act_resolve_args install "$@")))
+  local all_install_modules="${handles[*]#${ID_LIKE}_*_install_}"
+  local handler sbomer
+  for handler in $(printf '%s\n' "${handles[@]}" | sort); do
+    sbomer=${handler/_install_/_sbom_}
+    declare -F $sbomer > /dev/null 2>&1 || continue
+    $sbomer $(act_extract_args sbom ${handler#*_*_*_} "$all_install_modules" "$@")
     echo "---"
   done
 }
@@ -1579,6 +1582,7 @@ act_helper () {
     if [ "$act_name" = "install" ]; then
       # build license gate
       local -A licenses=() licenses_text=()
+      local all_install_modules="${handles[*]#${ID_LIKE}_*_install_}"
       for licenser in ${handles[*]/_install_/_license_}; do
         if declare -F $licenser > /dev/null 2>&1; then
           local name1=${licenser#*_*_*_} license_line license_id="" license_keep=0
@@ -1591,7 +1595,7 @@ act_helper () {
               ;;
             esac
             [ $license_keep -eq 1 ] && licenses_text[$license_id]+="${license_line}"$'\n'
-          done < <($licenser "$@")
+          done < <($licenser $(act_extract_args install $name1 "$all_install_modules" "$@"))
         fi
       done
       if [ ${#licenses[*]} -gt 0 ]; then
@@ -1647,9 +1651,11 @@ act_helper () {
           fi
         fi
       done
-      if [[ " $* " != *" --dry-run "* && $rc -eq 0 && -v _act_cache_functions[${act_name}_pre_system_scan] ]]; then
+      # final summary: rerun pre_system_scan only if it is part of the dependency chain
+      local scan_handler="${_act_cache_functions[${act_name}_pre_system_scan]:-}"
+      if [[ " $* " != *" --dry-run "* && $rc -eq 0 && -n "$scan_handler" && " ${handles[*]} " = *" $scan_handler "* ]]; then
         echo "@@REPORT SYSTEM SUMMARY"
-        ${_act_cache_functions[${act_name}_pre_system_scan]}
+        $scan_handler $(act_extract_args $act_name pre_system_scan "${handles[*]#${ID_LIKE}_*_${act_name}_}" "$@")
       fi
     } > >(
       LOG_FILE="$(ensure_project_path)/$installer_name/$(date +%Y-%m-%d).logs"
@@ -3178,7 +3184,7 @@ debian_90_profile_geti () {
 }
 
 debian_90_install_geti () {
-  configure_geti $*
+  configure_geti "$@"
 
   if verify_geti && [[ " $* " != *" --reinstall "* ]]; then
     echo "Geti already installed. Skipping."
@@ -3190,7 +3196,7 @@ debian_90_install_geti () {
 }
 
 debian_90_start_geti () {
-  configure_geti $*
+  configure_geti "$@"
   ensure_ports_open "$port" debian_90_stop_geti
 
   mkdir -p "$workspace"/geti-data
@@ -3209,12 +3215,12 @@ debian_90_start_geti () {
 }
 
 debian_90_stop_geti () {
-  configure_geti $*
+  configure_geti "$@"
   docker rm -f geti-app || true
 }
 
 debian_90_remove_geti () {
-  debian_90_stop_geti $* || true
+  debian_90_stop_geti "$@"
   docker image rm $image_name || true
 }
 

@@ -1450,10 +1450,13 @@ _handle_line() {
 # create an askpass helper
 act_panelled_logs_askpass () {
   local askpass_helper="$1"
-  ( umask 077;cat > "$askpass_helper" <<'EOF'
+  local askpass_env="$2"
+  ( 
+    umask 077
+    read -r -d '' template << 'EOF'
 #!/bin/bash
-if [ -n "$SUDO_PASSWORD" ]; then
-  printf '%s\n' "$SUDO_PASSWORD"
+if [ -n "$ASKPASS_ENV" ]; then
+  printf '%s\n' "$ASKPASS_ENV"
 else
   exec 8<>/dev/tty 2>/dev/null || exit 1
   # size and style
@@ -1469,6 +1472,7 @@ else
   printf '%s\n' "$pw"
 fi
 EOF
+    printf '%s\n' "${template//ASKPASS_ENV/$askpass_env}" > "$askpass_helper"
   ) && chmod 700 "$askpass_helper"
 }
 
@@ -1843,7 +1847,28 @@ ensure_hf_token () {
     fi
   fi
 
-  local model f gated=()
+  if ! ensure_hf_token_check_models "$@"; then
+    [ -z "$HF_TOKEN" ] || { echo "Invalid or unauthroized HF_TOKEN" 1>&2; return 3; }
+
+    # write an askpass helper
+    local rundir="${XDG_RUNTIME_DIR:-/run/user/$(id -u)}"
+    [ -d "$rundir" ] && [ -w "$rundir" ] || rundir="$(ensure_project_path)/${installer_name:?}"
+    mkdir -p "$rundir" 2>/dev/null || return 1
+    {
+      flock -w 300 -e 9 || { echo "ensure_hf_token: timed out waiting for another installer" >&2; return 1; }
+      local askpass_helper="$rundir"/askpass-hftoken
+      act_panelled_logs_askpass "$askpass_helper" HF_TOKEN || { echo "ensure_hf_token: failed to create askpass helper" >&2; return 1; }
+      export HF_TOKEN="$("$askpass_helper" 'HF_TOKEN:' | tr -d '\n')"
+    } 9< "$rundir"
+
+    ensure_hf_token_check_models "$@"
+  fi
+}
+
+# Verify if model permissions are granted on the token
+ensure_hf_token_check_models () {
+  local models=("$@")
+  local model f
   for model in ${models[*]}; do
     local probes=()
     for f in $(curl -s -L "https://huggingface.co/api/models/${model}?full=tree" | tr ',' '\n' | grep -F '"rfilename":' | cut -f4 -d'"'); do
@@ -1865,8 +1890,8 @@ ensure_hf_token () {
         continue
         ;;
       401|403|404) 
-        gated+=($model)
-        break
+        echo "gated model: $model" 1>&2
+        return 1
         ;;
       *)
         echo "Unknown probe code $code" 1>&2
@@ -1875,11 +1900,7 @@ ensure_hf_token () {
       esac
     done
   done
-
-  if [ ${#gated[*]} -gt 0 ]; then
-    echo "Gated model(s): ${gated[*]}" 1>&2
-    return 3
-  fi
+  return 0
 }
 
 
@@ -1972,8 +1993,8 @@ ensure_sudo () {
     (
       flock -w 300 -e 9 || { echo "ensure_sudo: timed out waiting for another installer" >&2; exit 1; }
       if [ ! -x "$SUDO_ASKPASS" ]; then
-        askpass_helper="$rundir"/askpass
-        act_panelled_logs_askpass "$askpass_helper" || { echo "ensure_sudo: failed to create askpass helper" >&2; exit 1; }
+        askpass_helper="$rundir"/askpass-sudo
+        act_panelled_logs_askpass "$askpass_helper" SUDO_PASSWORD || { echo "ensure_sudo: failed to create askpass helper" >&2; exit 1; }
         export SUDO_ASKPASS="$askpass_helper"
       fi
       sudo -A env "${proxy_args[@]}" "$@"
@@ -3696,13 +3717,59 @@ debian_90_remove_loitering_detection () {
 }
 
 configure_loss_prevention () {
-  workspace="$(ensure_project_path)/loss_prevention"
+  workspace="$(ensure_project_path)/loss-prevention"
   version=v2026.2.0
   repository="https://github.com/intel-retail/loss-prevention.git"
 }
 
+configure_loss_prevention_options () {
+  local device="$1"; shift
+
+  cd "$workspace"
+  sed -i -e "s|^TARGET_DEVICE [?]= .*|TARGET_DEVICE ?= ${device^^}|" -e "s|^VLM_DEVICE [?]= .*|VLM_DEVICE ?= ${device^^}|" Makefile
+
+  local camera_stream="$(grep -m1 -E '^CAMREA_STREAM [?]=' | cut -f2 -d= | tr -d ' ')"
+  local workload_dist="$(grep -m1 -E '^WORKLOAD_DIST [?]=' | cut -f2 -d= | tr -d ' ')"
+
+  if [[ " $* " = *" --od "* ]]; then
+    camera_stream="camera_to_workload_asc_object_detection.json"
+    workload_dist="workload_to_pipeline_asc_object_detection_$device.json"
+  elif [[ " $* " = *" --oc "* ]]; then
+    camera_stream="camera_to_workload_asc_object_detection_classification.json"
+    workload_dist="workload_to_pipeline_asc_object_detection_classification_$device.json"
+  elif [[ " $* " = *" --age "* ]]; then
+    camera_stream="camera_to_workload_asc_age_verification.json"
+    workload_dist="workload_to_pipeline_asc_age_verification_$device.json"
+  elif [[ " $* " = *" --lpvlm "* ]]; then
+    camera_stream="camera_to_workload_vlm.json"
+    workload_dist="workload_to_pipeline_vlm.json"
+  elif [[ " $* " = *" --lp "* ]]; then
+    camera_stream="camera_to_workload.json"
+    workload_dist="workload_to_pipeline_${device/npu/gpu-npu}.json"
+  fi
+  sed -i -e "s|^CAMERA_STREAM [?]= .*|CAMERA_STREAM ?= $camera_stream|" -e "s|^WORKLOAD_DIST [?]= .*|WORKLOAD_DIST ?= $workload_dist|" Makefile
+
+  make download-sample-videos && {
+    local v rc=0
+    for v in $(grep '"fileSrc":' configs/$camera_stream | cut -f4 -d'"' | cut -f1 -d'|'); do
+      [ $(find performance-tools/sample-media -name "${v/.mp4}-*.mp4" | wc -l) -gt 0 ] || { echo "Failed to find video $v" 1>&2; rc=1; }
+    done
+    [ $rc -eq 0 ]
+  }
+
+  make download-models && {
+    local m rc=0
+    for m in $(grep -E '"model":|"vlm_model":' configs/$workload_dist | cut -f4 -d'"'); do
+      [ $(find models -ipath "*/$m/*" -name "*.bin" -print | wc -l) -gt 0 ] || { echo "Failed to find model $m" 1>&2; rc=1; }
+    done
+    [ $rc -eq 0 ]
+  }
+}
+
 verify_loss_prevention () {
-  [ -e "$workspace"/performance-tools/sample-media/face-detection-3249935-1080-15-bench.mp4 ]
+  [ -d "$workspace" ]
+  [ -e "$workspace"/src/.env ]
+  [ -e "$workspace"/Makefile ]
 }
 
 debian_90_profile_loss_prevention () {
@@ -3711,18 +3778,18 @@ debian_90_profile_loss_prevention () {
 
 debian_90_install_loss_prevention () {
   configure_loss_prevention
+  export HTTP_PROXY=${HTTP_PROXY:-$http_proxy} HTTPS_PROXY=${HTTPS_PROXY:-$https_proxy} NO_PROXY=${NO_PROXY:-$no_proxy}
+
   if verify_loss_prevention && [[ " $* " != *" --reinstall "* ]]; then
     echo "Loss prevention is already installed. Skipping"
-    return
-  fi
+  else 
+    # clone the repository
+    ensure_disk_space 300
+    ensure_git_clone "$workspace" $version $repository
 
-  # clone the repository
-  ensure_disk_space 300
-  ensure_git_clone "$workspace" $version $repository
-
-  # setup
-  pushd "$workspace" > /dev/null
-  cat > src/.env <<EOF
+    # setup
+    pushd "$workspace" > /dev/null
+    cat > src/.env <<EOF
 MINIO_ROOT_USER="$(cat /dev/random | tr -dc a-z | head -c 5)$(cat /dev/random | tr -dc 0-9 | head -c 5)"
 MINIO_ROOT_PASSWORD="$(cat /dev/random | tr -dc a-z | head -c 5)$(cat /dev/random | tr -dc 0-9 | head -c 5)"
 MINIO_API_HOST_PORT="4000"
@@ -3743,22 +3810,58 @@ LOCAL_UID=$(id -u)
 LOCAL_GID=$(id -g)
 EOF
 
-  # download videos
+    # build images
+    make build-benchmark
+
+    # create benchmark venv
+    ( 
+      cd performance-tools/benchmark-scripts
+      python3 -m venv venv
+      . venv/bin/activate
+      pip3 install -r requirements.txt
+    )
+
+    # modify Makefile so venv does not always rebuild
+    sed -i -e 's|python3* -m venv venv|echo|' -e 's|pip3* install -r requirements.txt|echo|' Makefile
+    
+    verify_loss_prevention
+  fi
+
+  local device=$(ensure_select_device "$@")
+  configure_loss_prevention_options "$device" "$@" --lp   # --lp as default
+
+  echo "@@HIGHLIGHT workspace: $workspace"
+  echo "@@HIGHLIGHT $installer_name start --od"
+  echo "@@HIGHLIGHT $installer_name start --oc"
+  echo "@@HIGHLIGHT $installer_name start --age"
+  echo "@@HIGHLIGHT $installer_name start --lp"
+  echo "@@HIGHLIGHT $installer_name start --lpvlm"
+}
+
+debian_90_start_loss_prevention () {
+  configure_loss_prevention
   export HTTP_PROXY=${HTTP_PROXY:-$http_proxy} HTTPS_PROXY=${HTTPS_PROXY:-$https_proxy} NO_PROXY=${NO_PROXY:-$no_proxy}
-  set -a
-  . src/.env
-  set +a
-  make download-sample-videos
 
-  # download models
-  make download-models
+  cd "$workspace"
+  local device1=$(ensure_select_device "$@")
+  local device2=$(grep -m1 -E '^TARGET_DEVICE [?]=' Makefile | cut -f2 -d= | tr -d ' ')
+  [[ " $* " = *" --$device1 "* || " $* " = *" --${device1^^} "* ]] || device1="${device2,,}"
+  configure_loss_prevention_options "$device1" "$@"
 
-  verify_loss_prevention
-  popd > /dev/null
+  make down-lp 2> /dev/null || true
+  make -o build-benchmark -o download-sample-videos -o download-models benchmark-stream-density
+
+  echo "@@HIGHLIGHT $installer_name start --od"
+  echo "@@HIGHLIGHT $installer_name start --oc"
+  echo "@@HIGHLIGHT $installer_name start --age"
+  echo "@@HIGHLIGHT $installer_name start --lp"
+  echo "@@HIGHLIGHT $installer_name start --lpvlm"
+  echo "@@HIGHLIGHT $installer_name remove"
 }
 
 debian_90_remove_loss_prevention () {
   configure_loss_prevention
+  cd "$workspace" && make down-lp || true
   ensure_sudo rm -rf "$workspace" 2> /dev/null || true
 }
 
@@ -4222,55 +4325,166 @@ $(ensure_sbom_format pkg-list "openvino-$version")
 EOF
 }
 
-configure_order_accuracy () {
-  workspace="$(ensure_project_path)/order-accuracy"
-  version=v2026.2.0-rc1
+configure_order_accuracy_dine_in () {
+  workspace="$(ensure_project_path)/order-accuracy-dine-in"
+  version=v2026.2.0
   repository="https://github.com/intel-retail/order-accuracy.git"
+  ports=(7861 8083 8002 8011 9000 8081 9091)
 }
 
-verify_order_accuracy () {
-  [ -e "$workspace"/ovms-service/models/openbmb/MiniCPM-V-4_5-int4/openvino_language_model.bin ]
-  [ -e "$workspace"/take-away/models/yolo11n_int8_openvino_model/yolo11n.bin ]
+configure_order_accuracy_dine_in_device () {
+  local default_device=$(grep -E "^TARGET_DEVICE=" "$workspace"/dine-in/.env | tail -n1 | cut -f2 -d=)
+  local selected_device=$(ensure_select_device "$@")
+  if [ "$default_device" != "${selected_device^^}" ]; then
+    sed -i "s|^TARGET_DEVICE=.*|TARGET_DEVICE=${selected_device^^}|" "$workspace"/dine-in/.env
+    cd "$workspace"/ovms-service
+    ./setup_models.sh --app dine-in
+  fi
 }
 
-debian_90_profile_order_accuracy () {
+verify_order_accuracy_dine_in () {
+  local model="$(. "$workspace"/dine-in/.env 2> /dev/null || . "$workspace"/dine-in/.env.example 2> /dev/null; echo "$OVMS_MODEL_NAME")"
+  [ -e "$workspace"/ovms-service/models/$model/openvino_language_model.bin ]
+}
+
+debian_90_profile_order_accuracy_dine_in () {
   echo "git curl gawk make python3_venv docker edge_base"
 }
 
-debian_90_install_order_accuracy () {
-  configure_order_accuracy
-  if verify_order_accuracy && [[ " $* " != *" --reinstall "* ]]; then
+debian_90_install_order_accuracy_dine_in () {
+  configure_order_accuracy_dine_in
+  export HTTP_PROXY=${HTTP_PROXY:-$http_proxy} HTTPS_PROXY=${HTTPS_PROXY:-$https_proxy} NO_PROXY=${NO_PROXY:-$no_proxy}
+
+  if verify_order_accuracy_dine_in && [[ " $* " != *" --reinstall "* ]]; then
     echo "Order accuracy is already installed. Skipping"
-    return
+  else 
+    # clone the repository
+    ensure_disk_space 10000
+    ensure_git_clone "$workspace" $version $repository
+
+    # initialize .env
+    cd "$workspace"/dine-in
+    make init-env
+
+    # setup
+    local model="$(. .env; echo "$OVMS_MODEL_NAME")"
+    ensure_hf_token "${model/MiniCPM-V-4_5-int4/MiniCPM-V-4_5}"
+
+    sed -i "s|^HF_TOKEN=.*|HF_TOKEN=$HF_TOKEN|" .env
+    sed -i "s|^TARGET_DEVICE=.*|TARGET_DEVICE=|" .env
+
+    cd "$workspace"/dine-in
+    make build
   fi
 
-  # clone the repository
-  ensure_disk_space 10000
-  ensure_git_clone "$workspace" $version $repository
-
-  # setup
-  export HTTP_PROXY=${HTTP_PROXY:-$http_proxy} HTTPS_PROXY=${HTTPS_PROXY:-$https_proxy} NO_PROXY=${NO_PROXY:-$no_proxy}
-  ensure_hf_token Qwen/Qwen2.5-VL-7B-Instruct openbmb/MiniCPM-V-4_5 
-
-  for app in dine-in take-away; do
-    cd "$workspace"/$app
-    make init-env
-    sed -i "s|^HF_TOKEN=.*|HF_TOKEN=$HF_TOKEN|" .env
-    cd ../ovms-service
-    ./setup_models.sh --app $app
-    cd "$workspace"/$app
-    make build
-  done
-  
-  cd "$workspace"
-  verify_order_accuracy
+  configure_order_accuracy_dine_in_device "$@"
+  verify_order_accuracy_dine_in
 
   echo "@@HIGHLIGHT workspace @$workspace"
-  echo "@@HIGHLIGHT cd dine-in[|take-away] && make up"
+  echo "@@HIGHLIGHT $installer_name start"
 }
 
-debian_90_remove_order_accuracy () {
-  configure_order_accuracy
+debian_90_start_order_accuracy_dine_in () {
+  configure_order_accuracy_dine_in "$@"
+  export HTTP_PROXY=${HTTP_PROXY:-$http_proxy} HTTPS_PROXY=${HTTPS_PROXY:-$https_proxy} NO_PROXY=${NO_PROXY:-$no_proxy}
+
+  ensure_ports_open "${ports[*]}" debian_90_stop_order_accuracy_dine_in "$@"
+  cd "$workspace"/dine-in
+  make up
+  echo "@@HIGHLIGHT URL: http://$(ensure_ip):${ports[0]}"
+  echo "@@HIGHLIGHT $installer_name stop"
+  echo "@@HIGHLIGHT $installer_name remove"
+}
+
+debian_90_stop_order_accuracy_dine_in () {
+  configure_order_accuracy_dine_in "$@"
+  cd "$workspace"/dine-in && make down || true
+}
+
+debian_90_remove_order_accuracy_dine_in () {
+  debian_90_stop_order_accuracy_dine_in "$@"
+  ensure_sudo rm -rf "$workspace" 2> /dev/null || true
+}
+
+
+configure_order_accuracy_take_away () {
+  workspace="$(ensure_project_path)/order-accuracy-take-away"
+  version=v2026.2.0
+  repository="https://github.com/intel-retail/order-accuracy.git"
+  ports=(7861 8083 8002 8011 9000 8081 9091)
+}
+
+configure_order_accuracy_take_away_device () {
+  local default_device=$(grep -E "^TARGET_DEVICE=" "$workspace"/take-away/.env | tail -n1 | cut -f2 -d=)
+  local selected_device=$(ensure_select_device "$@")
+  if [ "$default_device" != "${selected_device^^}" ]; then
+    sed -i "s|^TARGET_DEVICE=.*|TARGET_DEVICE=${selected_device^^}|" "$workspace"/take-away/.env
+    cd "$workspace"/ovms-service
+    ./setup_models.sh --app take-away
+  fi
+}
+
+verify_order_accuracy_take_away () {
+  local model="$(. "$workspace"/take-away/.env 2> /dev/null || . "$workspace"/take-away/.env.example 2> /dev/null; echo "$OVMS_MODEL_NAME")"
+  [ -e "$workspace"/ovms-service/models/$model/openvino_language_model.bin ]
+}
+
+debian_90_profile_order_accuracy_take_away () {
+  echo "git curl gawk make python3_venv docker edge_base"
+}
+
+debian_90_install_order_accuracy_take_away () {
+  configure_order_accuracy_take_away
+  export HTTP_PROXY=${HTTP_PROXY:-$http_proxy} HTTPS_PROXY=${HTTPS_PROXY:-$https_proxy} NO_PROXY=${NO_PROXY:-$no_proxy}
+
+  if verify_order_accuracy_take_away && [[ " $* " != *" --reinstall "* ]]; then
+    echo "Order accuracy is already installed. Skipping"
+  else 
+    # clone the repository
+    ensure_disk_space 10000
+    ensure_git_clone "$workspace" $version $repository
+
+    # initialize .env
+    cd "$workspace"/take-away
+    make init-env
+
+    # setup
+    local model="$(. .env; echo "$OVMS_MODEL_NAME")"
+    ensure_hf_token "${model/MiniCPM-V-4_5-int4/MiniCPM-V-4_5}"
+
+    sed -i "s|^HF_TOKEN=.*|HF_TOKEN=$HF_TOKEN|" .env
+    sed -i "s|^TARGET_DEVICE=.*|TARGET_DEVICE=|" .env
+
+    cd "$workspace"/take-away
+    make build
+  fi
+
+  configure_order_accuracy_take_away_device "$@"
+  verify_order_accuracy_take_away
+
+  echo "@@HIGHLIGHT workspace @$workspace"
+  echo "@@HIGHLIGHT $installer_name start"
+}
+
+debian_90_start_order_accuracy_take_away () {
+  configure_order_accuracy_take_away "$@"
+  export HTTP_PROXY=${HTTP_PROXY:-$http_proxy} HTTPS_PROXY=${HTTPS_PROXY:-$https_proxy} NO_PROXY=${NO_PROXY:-$no_proxy}
+
+  ensure_ports_open "${ports[*]}" debian_90_stop_order_accuracy_take_away "$@"
+  cd "$workspace"/take-away
+  make up
+  echo "@@HIGHLIGHT URL: http://$(ensure_ip):${ports[0]}"
+  echo "@@HIGHLIGHT $installer_name stop"
+  echo "@@HIGHLIGHT $installer_name remove"
+}
+
+debian_90_stop_order_accuracy_take_away () {
+  configure_order_accuracy_take_away "$@"
+  cd "$workspace"/take-away && make down || true
+}
+
+debian_90_remove_order_accuracy_take_away () {
+  debian_90_stop_order_accuracy_take_away "$@"
   ensure_sudo rm -rf "$workspace" 2> /dev/null || true
 }
 
@@ -5753,7 +5967,7 @@ debian_99_profile_metro_ai_suite () {
 
 debian_99_profile_retail_ai_suite () {
   # metro ai suites cannot start at the same time
-  [ "$1" = "start" ] || echo "loss_prevention order_accuracy"
+  [ "$1" = "start" ] || echo "loss_prevention order_accuracy_dine_in order_accuracy_take_away"
 }
 
 

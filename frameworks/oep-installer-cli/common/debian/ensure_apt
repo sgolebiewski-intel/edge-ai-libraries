@@ -58,3 +58,20 @@ ensure_apt_install_package () {
   fi
 }
 
+# check downgrades
+ensure_apt_allow_downgrades () {
+  local allow_downgrades=($1); shift
+  local dg downgrades=()
+  for dg in $(apt-get install -s "$@" | awk '
+/The following packages will be DOWNGRADED:/{flag=1;next}
+/^[^ ]/{flag=0}
+flag&&$1{for(i=1;i<=NF;i++)print$i}
+'); do
+    [[ " ${allow_downgrades[*]} " = *" $dg "* ]] || downgrades+=("$dg")
+  done
+  if [ ${#downgrades[*]} -gt 0 ]; then
+    echo "Detected unexpected downgrades: ${downgrades[*]}" 1>&2
+    return 3
+  fi
+}
+

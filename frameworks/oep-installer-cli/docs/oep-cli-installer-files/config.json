@@ -198,6 +198,28 @@
           "device": true
         },
         {
+          "label": "Wind Turbine Anormaly Detection",
+          "value": "wind_turbine_anomaly_detection",
+          "supports": {
+            "PROFILE": [
+              "manufacturing_ai_suite"
+            ]
+          },
+          "startStop": true,
+          "device": true
+        },
+        {
+          "label": "Multimodal Weld Defect Detection",
+          "value": "multimodal_weld_defect_detection",
+          "supports": {
+            "PROFILE": [
+              "manufacturing_ai_suite"
+            ]
+          },
+          "startStop": true,
+          "device": true
+        },
+        {
           "label": "Loss Prevention",
           "value": "loss_prevention",
           "supports": {
@@ -207,8 +229,17 @@
           }
         },
         {
-          "label": "Order Accuracy",
-          "value": "order_accuracy",
+          "label": "Order Accuracy - DineIn",
+          "value": "order_accuracy_dine_in",
+          "supports": {
+            "PROFILE": [
+              "retail_ai_suite"
+            ]
+          }
+        },
+        {
+          "label": "Order Accuracy - Takeaway",
+          "value": "order_accuracy_take_away",
           "supports": {
             "PROFILE": [
               "retail_ai_suite"
@@ -481,6 +512,14 @@
             {
               "text": "PCB Anomaly Detection",
               "url": "https://docs.openedgeplatform.intel.com/dev/edge-ai-suites/ai-suite-manufacturing/industrial-edge-insights-vision/index.html"
+            },
+            {
+              "text": "Wind Turbine Anormaly Detection",
+              "url": "https://docs.openedgeplatform.intel.com/dev/edge-ai-suites/ai-suite-manufacturing/industrial-edge-insights-time-series/wind-turbine-anomaly-detection/index.html"
+            },
+            {
+              "text": "Multimodal Weld Defect Detection",
+              "url": "https://docs.openedgeplatform.intel.com/dev/edge-ai-suites/ai-suite-manufacturing/industrial-edge-insights-multimodal/index.html"
             }
           ]
         },

@@ -1571,6 +1571,38 @@ act_find_deps () {
   echo "${!handlers[*]}"
 }
 
+# Change scope of global --reinstall to explicitly named modules excluding dependencies
+act_scope_reinstall () {
+  local act_name=$1; shift
+  if [ "$act_name" != "install" ] || [[ " $* " != *" --reinstall "* ]]; then
+    echo "$*"; return
+  fi
+  local all=" ${_act_cache_names[*]:-${_act_cache_modules[*]}} "
+  local -a out=()
+  local scoped=0 hit=0 a m
+  for a in "$@"; do
+    [[ "$a" = --* && "$all" = *" ${a#--} "* ]] && scoped=1   # module sections start
+    if [[ $scoped -eq 0 && "$a" = "--reinstall" ]]; then hit=1; continue; fi
+    out+=("$a")
+  done
+  if [ $hit -eq 1 ]; then
+    local bound=0
+    for m in $(act_extract_modules $act_name "${out[@]}"); do
+      if [ -z "${_act_cache_functions[${act_name}_$m]:-}" ]; then
+        echo "note: --reinstall skipped for profile '$m'" >&2
+        continue
+      fi
+      out+=("--$m" "--reinstall")
+      bound=1
+    done
+    if [ $bound -eq 0 ]; then
+      echo "--reinstall requires at least one module (profiles are not reinstalled)" >&2
+      return 1
+    fi
+  fi
+  echo "${out[*]}"
+}
+
 act_helper () {
   local act_name=${1%%,*}
   local act_text="${1#*,}"
@@ -1590,6 +1622,7 @@ act_helper () {
   local mods_file="$(ensure_project_path)/$installer_name/modules"
   local explicit_mods="$(act_extract_modules $act_name "$@")"
   set -- $(act_resolve_args $act_name "$@")
+  set -- $(act_scope_reinstall $act_name "$@")
 
   # scan for dependencies
   local handles=($(act_find_deps $act_name "$@"))
@@ -3674,15 +3707,20 @@ debian_90_remove_live_video_captioning () {
 configure_loitering_detection () {
   workspace="$(ensure_project_path)/loitering-detection"
   version=release-2026.2.0
-  repository="https://github.com/open-edge-platform/edge-ai-suites.git"
+  repository="https://github.com/open-edge-platform/metro-ai-suite.git"
+}
+
+configure_loitering_detection_device () {
+  local device="$1"
+  sed -i "/No device selected/,/fi/{s|defaulting to ...|defaulting to ${device^^}|;s|forced.*=.*$|forced${device^^}=true|}" "$workspace"/metro-vision-ai-app-recipe/loitering-detection/sample_start.sh
 }
 
 verify_loitering_detection () {
   local v
   for v in 101 102 103 104; do
-    [ -e "$workspace"/metro-ai-suite/metro-vision-ai-app-recipe/loitering-detection/src/dlstreamer-pipeline-server/videos/VIRAT_S_000$v.mp4 ]
+    [ -e "$workspace"/metro-vision-ai-app-recipe/loitering-detection/src/dlstreamer-pipeline-server/videos/VIRAT_S_000$v.mp4 ]
   done
-  [ -e "$workspace"/metro-ai-suite/metro-vision-ai-app-recipe/loitering-detection/src/dlstreamer-pipeline-server/models/intel/pedestrian-and-vehicle-detector-adas-0001/FP16/pedestrian-and-vehicle-detector-adas-0001.bin ]
+  [ -e "$workspace"/metro-vision-ai-app-recipe/loitering-detection/src/dlstreamer-pipeline-server/models/intel/pedestrian-and-vehicle-detector-adas-0001/FP16/pedestrian-and-vehicle-detector-adas-0001.bin ]
 }
 
 debian_90_profile_loitering_detection () {
@@ -3696,32 +3734,43 @@ debian_90_install_loitering_detection () {
   else
     # clone the repository
     ensure_disk_space 280
-    ensure_git_export "$workspace" $version $repository metro-ai-suite/metro-vision-ai-app-recipe
+    ensure_git_export "$workspace" $version $repository metro-vision-ai-app-recipe
 
     # setup
-    cd "$workspace/metro-ai-suite/metro-vision-ai-app-recipe"
+    cd "$workspace/metro-vision-ai-app-recipe"
     sed -i 's|curl |curl -f |' loitering-detection/install.sh
     ./install.sh loitering-detection $(ensure_ip)
     verify_loitering_detection
   fi
 
   local device=$(ensure_select_device "$@")
-  sed -i "/No device selected/,/fi/{s|defaulting to ...|defaulting to ${device^^}|;s|forced.*=.*$|forced${device^^}=true|}" "$workspace"/metro-ai-suite/metro-vision-ai-app-recipe/loitering-detection/sample_start.sh
+  configure_loitering_detection_device "$device"
+
+  echo "@@HIGHLIGHT workspace: $workspace"
+  echo "@@HIGHLIGHT $installer_name start [--gpu|npu|cpu]"
+  echo "@@HIGHLIGHT $installer_name remove"
 }
 
 debian_90_start_loitering_detection () {
   ensure_ports_open "80 443" debian_90_stop_loitering_detection
   configure_loitering_detection
-  cd "$workspace"/metro-ai-suite/metro-vision-ai-app-recipe
+
+  local device=$(ensure_select_device "$@")
+  [[ " ${*,,} " != *" --$device "* ]] || configure_loitering_detection_device "$device"
+
+  cd "$workspace"/metro-vision-ai-app-recipe
   docker compose -f compose-without-scenescape.yml up -d --wait
   ./sample_start.sh
-  echo "@@HIGHLIGHT UI entrypoint: http://$(ensure_ip)"
-  echo "@@HIGHLIGHT Grafana username/password: admin"
+
+  echo "@@HIGHLIGHT UI: http://$(ensure_ip)"
+  echo "@@HIGHLIGHT Grafana AUTH: admin/admin"
+  echo "@@HIGHLIGHT $installer_name start [--gpu|npu|cpu]"
+  echo "@@HIGHLIGHT $installer_name stop|remove"
 }
 
 debian_90_stop_loitering_detection () {
   configure_loitering_detection
-  cd "$workspace"/metro-ai-suite/metro-vision-ai-app-recipe
+  cd "$workspace"/metro-vision-ai-app-recipe
   ./sample_stop.sh || true
   docker compose -f compose-without-scenescape.yml down -v --remove-orphans
 }
@@ -5352,40 +5401,12 @@ EOF
 configure_smart_intersection () {
   workspace="$(ensure_project_path)/smart-intersection"
   version=release-2026.2.0
-  repository="https://github.com/open-edge-platform/edge-ai-suites.git"
+  repository="https://github.com/open-edge-platform/metro-ai-suite.git"
 }
 
-verify_smart_intersection () {
-  local v
-  for v in 1122east_h264.ts 1122north_h264.ts 1122south_h264.ts 1122west_h264.ts; do
-    [ -e "$workspace"/metro-ai-suite/metro-vision-ai-app-recipe/smart-intersection/src/dlstreamer-pipeline-server/videos/$v ]
-  done
-  [ -e "$workspace"/metro-ai-suite/metro-vision-ai-app-recipe/smart-intersection/src/dlstreamer-pipeline-server/models/intersection/openvino.bin ]
-}
-
-debian_90_profile_smart_intersection () {
-  echo "git curl gawk jq edge_base docker"
-}
-
-debian_90_install_smart_intersection () {
-  configure_smart_intersection
-  if verify_smart_intersection && [[ " $* " != *" --reinstall "* ]]; then
-    echo "Smart intersection is already installed. Skipping"
-  else
-    # clone the repository
-    ensure_disk_space 1500
-    ensure_git_export "$workspace" $version $repository metro-ai-suite/metro-vision-ai-app-recipe
-
-    # setup
-    cd "$workspace/metro-ai-suite/metro-vision-ai-app-recipe"
-    sed -i 's|sudo chown|#sudo chown|' smart-intersection/install.sh
-    sed -i 's|curl -k |curl -f |' smart-intersection/init.sh
-    ./install.sh smart-intersection $(ensure_ip)
-    verify_smart_intersection
-  fi
-
-  cd "$workspace"/metro-ai-suite/metro-vision-ai-app-recipe
-  local device=$(ensure_select_device "$@")
+configure_smart_intersection_device () {
+  local device="$1"
+  cd "$workspace"/metro-vision-ai-app-recipe
   sed -i "s|_DEVICE=.*|_DEVICE=${device^^}|" docker-compose.yml
   [ -e smart-intersection/src/dlstreamer-pipeline-server/config.json.orig ] || cp -f smart-intersection/src/dlstreamer-pipeline-server/config.json smart-intersection/src/dlstreamer-pipeline-server/config.json.orig
   case "$device" in
@@ -5404,20 +5425,63 @@ debian_90_install_smart_intersection () {
   esac
 }
 
+verify_smart_intersection () {
+  local v
+  for v in 1122east_h264.ts 1122north_h264.ts 1122south_h264.ts 1122west_h264.ts; do
+    [ -e "$workspace"/metro-vision-ai-app-recipe/smart-intersection/src/dlstreamer-pipeline-server/videos/$v ]
+  done
+  [ -e "$workspace"/metro-vision-ai-app-recipe/smart-intersection/src/dlstreamer-pipeline-server/models/intersection/openvino.bin ]
+}
+
+debian_90_profile_smart_intersection () {
+  echo "git curl gawk jq edge_base docker"
+}
+
+debian_90_install_smart_intersection () {
+  configure_smart_intersection
+  if verify_smart_intersection && [[ " $* " != *" --reinstall "* ]]; then
+    echo "Smart intersection is already installed. Skipping"
+  else
+    # clone the repository
+    ensure_disk_space 1500
+    ensure_git_export "$workspace" $version $repository metro-vision-ai-app-recipe
+
+    # setup
+    cd "$workspace/metro-vision-ai-app-recipe"
+    sed -i 's|sudo chown|#sudo chown|' smart-intersection/install.sh
+    sed -i 's|curl -k |curl -f |' smart-intersection/init.sh
+    ./install.sh smart-intersection $(ensure_ip)
+    verify_smart_intersection
+  fi
+
+  local device=$(ensure_select_device "$@")
+  configure_smart_intersection_device "$device"
+
+  echo "@@HIGHLIGHT workspace: $workspace"
+  echo "@@HIGHLIGHT $installer_name start [--gpu|npu|cpu]"
+  echo "@@HIGHLIGHT $installer_name remove"
+}
+
 debian_90_start_smart_intersection () {
   configure_smart_intersection
   ensure_ports_open 443 debian_90_stop_smart_intersection
 
-  cd "$workspace"/metro-ai-suite/metro-vision-ai-app-recipe
+  local device=$(ensure_select_device "$@")
+  [[ " ${*,,} " != *" --$device "* ]] || configure_smart_intersection_device "$device"
+
+  cd "$workspace"/metro-vision-ai-app-recipe
   export SUPASS=$(cat smart-intersection/src/secrets/supass)
   docker compose up -d 
+
   echo "@@HIGHLIGHT URL: https://$(ensure_ip)"
   echo "@@HIGHLIGHT username/password: admin/$SUPASS"
+  echo "@@HIGHLIGHT $install_name start [--gpu|npu|cpu]"
+  echo "@@HIGHLIGHT $install_name stop|remove"
 }
 
 debian_90_stop_smart_intersection () {
   configure_smart_intersection
-  cd "$workspace"/metro-ai-suite/metro-vision-ai-app-recipe
+  cd "$workspace"/metro-vision-ai-app-recipe
   docker compose -f compose-scenescape.yml down -v --remove-orphans
 }
 
@@ -5429,18 +5493,23 @@ debian_90_remove_smart_intersection () {
 configure_smart_parking () {
   workspace="$(ensure_project_path)/smart-parking"
   version=release-2026.2.0
-  repository="https://github.com/open-edge-platform/edge-ai-suites.git"
+  repository="https://github.com/open-edge-platform/metro-ai-suite.git"
+}
+
+configure_smart_parking_device () {
+  local device="$1"
+  sed -i "/No device selected/,/fi/{s|defaulting to ...|defaulting to ${device^^}|;s|forced.*=.*$|forced${device^^}=true|}" "$workspace"/metro-vision-ai-app-recipe/smart-parking/sample_start.sh
 }
 
 verify_smart_parking () {
   local i p
   for i in 1 2 3 4; do
-    [ -e "$workspace"/metro-ai-suite/metro-vision-ai-app-recipe/smart-parking/src/dlstreamer-pipeline-server/videos/new_video_$i.mp4 ]
+    [ -e "$workspace"/metro-vision-ai-app-recipe/smart-parking/src/dlstreamer-pipeline-server/videos/new_video_$i.mp4 ]
   done
   for p in FP16 FP32 INT8; do
-    [ -e "$workspace"/metro-ai-suite/metro-vision-ai-app-recipe/smart-parking/src/dlstreamer-pipeline-server/models/public/yolo11s/$p/yolo11s.bin ]
+    [ -e "$workspace"/metro-vision-ai-app-recipe/smart-parking/src/dlstreamer-pipeline-server/models/public/yolo11s/$p/yolo11s.bin ]
   done
-  [ -e "$workspace"/metro-ai-suite/metro-vision-ai-app-recipe/smart-parking/src/dlstreamer-pipeline-server/models/colorcls2/colorcls2.bin ]
+  [ -e "$workspace"/metro-vision-ai-app-recipe/smart-parking/src/dlstreamer-pipeline-server/models/colorcls2/colorcls2.bin ]
 }
 
 debian_90_profile_smart_parking () {
@@ -5454,32 +5523,42 @@ debian_90_install_smart_parking () {
   else
     # clone the repository
     ensure_disk_space 300
-    ensure_git_export "$workspace" $version $repository metro-ai-suite/metro-vision-ai-app-recipe
+    ensure_git_export "$workspace" $version $repository metro-vision-ai-app-recipe
 
     # setup
-    cd "$workspace/metro-ai-suite/metro-vision-ai-app-recipe"
+    cd "$workspace/metro-vision-ai-app-recipe"
     sed -i 's|curl | curl -f |' smart-parking/install.sh
     ./install.sh smart-parking $(ensure_ip)
     verify_smart_parking
   fi
 
   local device=$(ensure_select_device "$@")
-  sed -i "/No device selected/,/fi/{s|defaulting to ...|defaulting to ${device^^}|;s|forced.*=.*$|forced${device^^}=true|}" "$workspace"/metro-ai-suite/metro-vision-ai-app-recipe/smart-parking/sample_start.sh
+  configure_smart_parking_device "$device"
+
+  echo "@@HIGHLIGHT workspace: $workspace"
+  echo "@@HIGHLIGHT $installer_name start [--gpu|npu|cpu]" 
 }
 
 debian_90_start_smart_parking () {
   ensure_ports_open "80 443" debian_90_stop_smart_parking
   configure_smart_parking
-  cd "$workspace"/metro-ai-suite/metro-vision-ai-app-recipe
+
+  local device=$(ensure_select_device "$@")
+  [[ " ${*,,} " != *" --$device "* ]] || configure_smart_parking_device "$device"
+
+  cd "$workspace"/metro-vision-ai-app-recipe
   docker compose up -d --wait
   ./sample_start.sh
+
   echo "@@HIGHLIGHT URL: http://$(ensure_ip)"
-  echo "@@HIGHLIGHT Grafana username/password: admin"
+  echo "@@HIGHLIGHT Grafana AUTH: admin/admin"
+  echo "@@HIGHLIGHT $installer_name start [--gpu|npu|cpu]" 
+  echo "@@HIGHLIGHT $installer_name stop|remove"
 }
 
 debian_90_stop_smart_parking () {
   configure_smart_parking
-  cd "$workspace"/metro-ai-suite/metro-vision-ai-app-recipe
+  cd "$workspace"/metro-vision-ai-app-recipe
   ./sample_stop.sh || true
   docker compose down -v --remove-orphans
 }

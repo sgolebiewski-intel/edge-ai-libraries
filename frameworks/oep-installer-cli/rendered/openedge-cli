@@ -149,6 +149,33 @@ subcommand_install () {
     echo
     return 0
   fi
+
+  # bind --reinstall to explicitly listed modules
+  if [[ " $* " = *" --reinstall "* ]]; then
+    local all=" ${_act_cache_names[*]:-${_act_cache_modules[*]}} " scoped=0 hit=0 a out=() bind=()
+    for a in "$@"; do
+      if [[ "$a" = --* && "$all" = *" ${a#--} "* ]]; then
+        scoped=1                                               # module sections start
+      elif [ $scoped -eq 0 ]; then
+        if [ "$a" = "--reinstall" ]; then hit=1; continue; fi  # drop global copy only
+        if [[ "$a" != -* && "$all" = *" $a "* ]]; then          # explicit module name
+          if [ -n "${_act_cache_functions[install_$a]:-}" ]; then
+            bind+=("--$a" "--reinstall")
+          else
+            echo "note: --reinstall skipped for profile '$a'" >&2
+          fi
+        fi
+      fi
+      out+=("$a")
+    done
+    if [ $hit -eq 1 ] && [ ${#bind[@]} -eq 0 ]; then
+      echo "--reinstall requires at least one explicitly named module" >&2
+      return 3
+    fi
+    [ $hit -eq 1 ] && out+=("${bind[@]}")
+    set -- "${out[*]}"
+  fi
+
   act_helper "install,Installation,Installing,Installed" "" "$@"
 }
 
@@ -1571,38 +1598,6 @@ act_find_deps () {
   echo "${!handlers[*]}"
 }
 
-# Change scope of global --reinstall to explicitly named modules excluding dependencies
-act_scope_reinstall () {
-  local act_name=$1; shift
-  if [ "$act_name" != "install" ] || [[ " $* " != *" --reinstall "* ]]; then
-    echo "$*"; return
-  fi
-  local all=" ${_act_cache_names[*]:-${_act_cache_modules[*]}} "
-  local -a out=()
-  local scoped=0 hit=0 a m
-  for a in "$@"; do
-    [[ "$a" = --* && "$all" = *" ${a#--} "* ]] && scoped=1   # module sections start
-    if [[ $scoped -eq 0 && "$a" = "--reinstall" ]]; then hit=1; continue; fi
-    out+=("$a")
-  done
-  if [ $hit -eq 1 ]; then
-    local bound=0
-    for m in $(act_extract_modules $act_name "${out[@]}"); do
-      if [ -z "${_act_cache_functions[${act_name}_$m]:-}" ]; then
-        echo "note: --reinstall skipped for profile '$m'" >&2
-        continue
-      fi
-      out+=("--$m" "--reinstall")
-      bound=1
-    done
-    if [ $bound -eq 0 ]; then
-      echo "--reinstall requires at least one module (profiles are not reinstalled)" >&2
-      return 1
-    fi
-  fi
-  echo "${out[*]}"
-}
-
 act_helper () {
   local act_name=${1%%,*}
   local act_text="${1#*,}"
@@ -1622,7 +1617,6 @@ act_helper () {
   local mods_file="$(ensure_project_path)/$installer_name/modules"
   local explicit_mods="$(act_extract_modules $act_name "$@")"
   set -- $(act_resolve_args $act_name "$@")
-  set -- $(act_scope_reinstall $act_name "$@")
 
   # scan for dependencies
   local handles=($(act_find_deps $act_name "$@"))
@@ -1717,11 +1711,10 @@ act_helper () {
 
     # pass on modules to subsequent command
     if [[ " $* " != *" --dry-run "* ]]; then
-      if [ $rc -ne 0 ]; then
-        rm -f "$mods_file"
-      elif [ -n "${explicit_mods// }" ]; then
+      rm -f "$mods_file"
+      if [ -n "${explicit_mods// }" ]; then
         mkdir -p "${mods_file%/*}"
-        echo $explicit_mods > "$mods_file"
+        echo "$explicit_mods" > "$mods_file"
       fi
     fi
 
@@ -2166,12 +2159,29 @@ ensure_apt_install_package () {
   fi
 }
 
+# check downgrades
+ensure_apt_allow_downgrades () {
+  local allow_downgrades=($1); shift
+  local dg downgrades=()
+  for dg in $(apt-get install -s "$@" | awk '
+/The following packages will be DOWNGRADED:/{flag=1;next}
+/^[^ ]/{flag=0}
+flag&&$1{for(i=1;i<=NF;i++)print$i}
+'); do
+    [[ " ${allow_downgrades[*]} " = *" $dg "* ]] || downgrades+=("$dg")
+  done
+  if [ ${#downgrades[*]} -gt 0 ]; then
+    echo "Detected unexpected downgrades: ${downgrades[*]}" 1>&2
+    return 3
+  fi
+}
+
 
 ensure_apt_key () {
-  local key_file=$1 key_url=$2
+  local key_file="$1" key_url="$2"
   local no_proxy1=$(echo ${no_proxy:-$NO_PROXY} | tr ',' '\n' | grep -v -E '^[.]?intel.com$' | tr '\n' ',')
 
-  sudo mkdir -p $(dirname $key_file)
+  ensure_sudo mkdir -p "$(dirname "$key_file")"
   if [[ "$*" = *"--dearmor"* ]]; then
     no_proxy=$no_proxy1 NO_PROXY=$no_proxy1 curl -fsSL "$key_url" | gpg --dearmor | ensure_sudo tee "$key_file" > /dev/null
   else
@@ -2812,7 +2822,7 @@ configure_edge_pack () {
   )
   edge_pack_pref_file=/etc/apt/preferences.d/edgepack.pref
   edge_pack_install_options=("--no-install-recommends")
-  [[ " $* " != *" --allow-downgrades "* ]] || edge_pack_install_options+=("--allow-downgrades")
+  edge_pack_allow_downgrades=(libgbm1 libgstreamer-gl1.0-0 libva-wayland2 mesa-libgallium weston)
 }
 
 debian_15_profile_edge_pack () {
@@ -2868,9 +2878,10 @@ debian_20_install_edge_pack_base_realtime () {
   if ensure_apt_is_installed intel-edge-base-realtime=$version && [[ " $* " != *" --reinstall "* ]]; then
     echo "intel-edge-base-realtime already installed. Skipping" 1>&2
   else
-    debian_20_remove_edge_pack_base_realtime
+    ensure_apt autoremove -y intel-edge-base-realtime || true
     ensure_group_add $(debian_20_group_edge_pack_base_realtime)
-    ensure_apt install "${edge_pack_install_options[@]}" "intel-edge-base-realtime=$version*"
+    ensure_apt_allow_downgrades "${edge_pack_allow_downgrades[*]}" "${edge_pack_install_options[@]}" "intel-edge-base-realtime=$version*"
+    ensure_apt install --allow-downgrades "${edge_pack_install_options[@]}" "intel-edge-base-realtime=$version*"
   fi
   [ -c /dev/dri/renderD128 ]
 }
@@ -2913,9 +2924,10 @@ debian_20_install_edge_pack_base_standard () {
   if ensure_apt_is_installed intel-edge-base-standard=$version && [[ " $* " != *" --reinstall "* ]]; then
     echo "intel-edge-base-standard already installed. Skipping" 1>&2
   else
-    debian_20_remove_edge_pack_base_standard
+    ensure_apt autoremove -y intel-edge-base-standard || true
     ensure_group_add $(debian_20_group_edge_pack_base_standard)
-    ensure_apt install "${edge_pack_install_options[@]}" "intel-edge-base-standard=$version*"
+    ensure_apt_allow_downgrades "${edge_pack_allow_downgrades[*]}" "${edge_pack_install_options[@]}" "intel-edge-base-standard=$version*"
+    ensure_apt install --allow-downgrades "${edge_pack_install_options[@]}" "intel-edge-base-standard=$version*"
   fi
   [ -c /dev/dri/renderD128 ]
 }
@@ -2960,7 +2972,8 @@ debian_20_install_edge_pack_graphics_core () {
   else
     debian_20_remove_edge_pack_graphics_core
     ensure_group_add $(debian_20_group_edge_pack_graphics_core)
-    ensure_apt install "${edge_pack_install_options[@]}" "intel-edge-graphics-core=$version*"
+    ensure_apt_allow_downgrades "${edge_pack_allow_downgrades[*]}" "${edge_pack_install_options[@]}" "intel-edge-graphics-core=$version*"
+    ensure_apt install --allow-downgrades "${edge_pack_install_options[@]}" "intel-edge-graphics-core=$version*"
   fi
   [ -c /dev/dri/renderD128 ]
 }
@@ -3005,7 +3018,8 @@ debian_20_install_edge_pack_graphics_display () {
   else
     debian_20_remove_edge_pack_graphics_display
     ensure_group_add $(debian_20_group_edge_pack_graphics_display)
-    ensure_apt install "${edge_pack_install_options[@]}" "intel-edge-graphics-display=$version*"
+    ensure_apt_allow_downgrades "${edge_pack_allow_downgrades[*]}" "${edge_pack_install_options[@]}" "intel-edge-graphics-display=$version*"
+    ensure_apt install --allow-downgrades "${edge_pack_install_options[@]}" "intel-edge-graphics-display=$version*"
   fi
   [ -c /dev/dri/renderD128 ]
 }
@@ -3044,7 +3058,7 @@ debian_20_install_edge_pack_media_core () {
   if ensure_apt_is_installed intel-edge-media-core=$version && [[ " $* " != *" --reinstall "* ]]; then
     echo "intel-edge-media-core already installed. Skipping" 1>&2
   else
-    debian_20_remove_edge_pack_media_core
+    ensure_apt autoremove -y intel-edge-media-core || true
     ensure_apt install "${edge_pack_install_options[@]}" "intel-edge-media-core=$version*"
   fi
 }
@@ -3083,7 +3097,7 @@ debian_70_install_edge_pack_media_ffmpeg () {
   if ensure_apt_is_installed intel-edge-media-ffmpeg=$version && [[ " $* " != *" --reinstall "* ]]; then
     echo "intel-edge-media-ffmpeg already installed. Skipping" 1>&2
   else
-    debian_70_remove_edge_pack_media_ffmpeg
+    ensure_apt autoremove -y intel-edge-media-ffmpeg || true
     ensure_apt install "${edge_pack_install_options[@]}" "intel-edge-media-ffmpeg=$version*"
   fi
 }
@@ -3122,7 +3136,7 @@ debian_70_install_edge_pack_media_gst () {
   if ensure_apt_is_installed intel-edge-media-gst=$version && [[ " $* " != *" --reinstall "* ]]; then
     echo "intel-edge-media-gst already installed. Skipping" 1>&2
   else
-    debian_70_remove_edge_pack_media_gst
+    ensure_apt autoremove -y intel-edge-media-gst || true
     ensure_apt install "${edge_pack_install_options[@]}" "intel-edge-media-gst=$version*"
   fi
 }
@@ -3165,9 +3179,10 @@ debian_20_install_edge_pack_npu () {
   if ensure_apt_is_installed intel-edge-npu=$version && [[ " $* " != *" --reinstall "* ]]; then
     echo "intel-edge-npu already installed. Skipping" 1>&2
   else
-    debian_20_remove_edge_pack_npu
+    ensure_apt autoremove -y intel-edge-npu || true
     ensure_group_add $(debian_20_group_edge_pack_npu)
-    ensure_apt install "${edge_pack_install_options[@]}" "intel-edge-npu=$version*"
+    ensure_apt_allow_downgrades "${edge_pack_allow_downgrades[*]}" "${edge_pack_install_options[@]}" "intel-edge-npu=$version*"
+    ensure_apt install --allow-downgrades "${edge_pack_install_options[@]}" "intel-edge-npu=$version*"
   fi
   [ -c /dev/accel/accel0 ]
 }
@@ -3345,6 +3360,7 @@ configure_gpu_accel () {
   apt_entry="deb [signed-by=$key_file] https://$repo_name/gpu/${ID} ${VERSION_CODENAME} unified"
   apt_file="/etc/apt/sources.list.d/intel-graphics.list"
   pkg_list=(clinfo libze-intel-gpu1 intel-media-va-driver-non-free intel-opencl-icd)
+  allow_downgrades=(libva-wayland2)
 }
 
 verify_gpu_accel () {
@@ -3388,7 +3404,8 @@ debian_40_install_gpu_accel () {
     ensure_apt update -y
 
     # install the packages
-    ensure_apt install --no-install-recommends -y "${pkg_list[@]}"
+    ensure_apt_allow_downgrades "${allow_downgrades[*]}" --no-install-recommends "${pkg_list[@]}"
+    ensure_apt install --no-install-recommends --allow-downgrades -y "${pkg_list[@]}"
     verify_gpu_accel_packages
   fi
 }
@@ -3614,7 +3631,13 @@ debian_40_remove_libyang () {
 
 
 configure_libze1 () {
-  libze1_deb="https://snapshot.ppa.launchpadcontent.net/kobuk-team/intel-graphics/ubuntu/20260606T100000Z/pool/main/l/level-zero-loader/libze1_1.28.2-1~${VERSION_ID}~ppa1_amd64.deb"
+  if [[ " $* " = *" edge_pack_npu "* ]]; then
+    version=1.28.2
+    libze1_deb="https://snapshot.ppa.launchpadcontent.net/kobuk-team/intel-graphics/ubuntu/20260606T100000Z/pool/main/l/level-zero-loader/libze1_1.28.2-1~${VERSION_ID}~ppa1_amd64.deb"
+  else
+    version=1.32.0; 
+    libze1_deb="https://github.com/oneapi-src/level-zero/releases/download/v$version/libze1_$version+u${VERSION_ID}_amd64.deb"
+  fi
 }
 
 debian_15_profile_libze1 () {
@@ -3622,21 +3645,23 @@ debian_15_profile_libze1 () {
 }
 
 debian_15_install_libze1 () {
-  configure_libze1 
+  configure_libze1 "$@"
 
-  if ensure_apt_is_installed libze1; then
+  if ensure_apt_is_installed libze1=$version && [[ " $* " != *" --reinstall "* ]]; then
     echo "libze1 is already installed. Skipping..."
   else
-    curl -fsSL "$libze1_deb" -o /tmp/libze1.deb && {
-      ensure_apt install -y /tmp/libze1.deb || {
-        ensure_apt purge -y level-zero level-zero-devel && ensure_apt install -y /tmp/libze1.deb
+    local deb="/tmp/$(basename "$libze1_deb")"
+    curl -fsSL "$libze1_deb" -o "$deb" && {
+      ensure_apt install -y "$deb" || {
+        ensure_apt purge -y level-zero level-zero-devel libze1 && ensure_apt install -y --no-install-recommends "$deb"
       }
+      rm -f "$deb"
     }
   fi
 }
 
 debian_15_sbom_libze1 () {
-  configure_libze1
+  configure_libze1 "$@"
   cat <<EOF
 $(ensure_sbom_format pkg-list "$libze1_deb")
 EOF
@@ -4207,7 +4232,7 @@ debian_90_remove_nicu_warmer () {
 }
 
 configure_npu_accel () {
-  version=1.35.0
+  version=1.38.0
   repository=https://api.github.com/repos/intel/linux-npu-driver
   releases=https://github.com/intel/linux-npu-driver/releases
   workspace="$(ensure_project_path)/npu"
@@ -6005,10 +6030,10 @@ configure_wind_turbine_anomaly_detection () {
   version="release-2026.2.0"
   repository="https://github.com/open-edge-platform/manufacturing-ai-suite.git"
   nstreams=40
-  npoints=5000
+  npoints=500
   duration=7200
   database="datain"
-  table="wind-turbine-anomaly-data"
+  measurement="wind-turbine-anomaly-data"
   used_ports=(3000 1883)
 }
 
@@ -6078,7 +6103,7 @@ debian_90_start_wind_turbine_anomaly_detection () {
   local total_points=$(( npoints * nstreams ))
   local start_time=$SECONDS nsamples
   while [ $(( SECONDS - start_time )) -lt $duration ]; do
-    docker compose exec ia-influxdb influx -username "$infx_user" -password "$infx_pwd" -database "$database" -execute "select * from \"$table\"" > sample-data
+    docker compose exec ia-influxdb influx -username "$infx_user" -password "$infx_pwd" -database "$database" -execute "select * from \"$measurement\"" > sample-data
     nsamples=$(cat sample-data | wc -l || echo 0)
     echo "Processed $nsamples of samples, elapsed $(( SECONDS - start_time )) seconds"
     [ "$nsamples" -lt $total_points ] || break
@@ -6134,7 +6159,7 @@ END {
     }
   }
 }
-' samples
+' sample-data
 }
 
 debian_90_stop_wind_turbine_anomaly_detection () {

@@ -17,7 +17,7 @@ Profiles are groupings of installable components targeting specific domain workl
 marketing segments. The table lists the profiles:
 
 | Profile | Description |
-|: ------- |: ------ |
+| ------- | ------ |
 | `inferencing` | Core AI inferencing runtime |
 | `computer_vision` | Computer-vision pipelines, models, and runtimes | 
 | `metro_ai_suite` | City monitoring and traffic management |

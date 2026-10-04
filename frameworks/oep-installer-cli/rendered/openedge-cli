@@ -4140,12 +4140,13 @@ debian_90_start_loitering_detection () {
 
   cd "$workspace"/metro-vision-ai-app-recipe
   docker compose -f compose-without-scenescape.yml up -d --wait
-  ./sample_start.sh
 
   echo "@@HIGHLIGHT UI: http://$(ensure_ip)"
   echo "@@HIGHLIGHT Grafana AUTH: admin/admin"
   echo "@@HIGHLIGHT $installer_name start [--gpu|npu|cpu]"
   echo "@@HIGHLIGHT $installer_name stop|remove"
+
+  ./sample_start.sh && ./sample_status.sh
 }
 
 debian_90_stop_loitering_detection () {
@@ -4926,8 +4927,14 @@ configure_pallet_defect_detection_device () {
 }
 
 verify_pallet_defect_detection () {
-  [ -e "$workspace"/industrial-edge-insights-vision/resources/pallet-defect-detection/videos/warehouse.avi ]
-  [ -e "$workspace"/industrial-edge-insights-vision/resources/pallet-defect-detection/models/pallet-defect-detection/deployment/Detection/model/model.bin ]
+  [ -e "$workspace"/industrial-edge-insights-vision/resources/pallet-defect-detection/videos/warehouse.avi ] || {
+    echo "warehouse.avi missing" 1>&2
+    return 1
+  }
+  [ -e "$workspace"/industrial-edge-insights-vision/resources/pallet-defect-detection/models/pallet-defect-detection/deployment/Detection/model/model.bin ] || {
+    echo "model.bin missing" 1>&2
+    return 1
+  }
 }
 
 debian_90_profile_pallet_defect_detection () {
@@ -4953,7 +4960,10 @@ MINIO_ACCESS_KEY=$(cat /dev/random | tr -dc a-z | head -c 5)$(cat /dev/random | 
 MINIO_SECRET_KEY=$(cat /dev/random | tr -dc a-z | head -c 5)$(cat /dev/random | tr -dc 0-9 | head -c 5)
 MTX_WEBRTCICESERVERS2_0_USERNAME=$(cat /dev/random | tr -dc a-z | head -c 5)$(cat /dev/random | tr -dc 0-9 | head -c 5)
 MTX_WEBRTCICESERVERS2_0_PASSWORD=$(cat /dev/random | tr -dc a-z | head -c 5)$(cat /dev/random | tr -dc 0-9 | head -c 5)
+S3_STORAGE_USERNAME=$(cat /dev/random | tr -dc a-z | head -c 5)$(cat /dev/random | tr -dc 0-9 | head -c 5)
+S3_STORAGE_PASSWORD=$(cat /dev/random | tr -dc a-z | head -c 5)$(cat /dev/random | tr -dc 0-9 | head -c 5)
 EOF
+    sed -i 's|curl |curl -f |' apps/pallet-defect-detection/setup.sh
     ./setup.sh
     verify_pallet_defect_detection
   fi
@@ -4977,10 +4987,11 @@ debian_90_start_pallet_defect_detection () {
   cd "$workspace"/industrial-edge-insights-vision
   docker compose up -d --wait
 
-  ./sample_start.sh
   echo "@@HIGHLIGHT URL: http://$(ensure_ip)"
   echo "@@HIGHLIGHT $installer_name start [--gpu|npu|cpu]"
   echo "@@HIGHLIGHT $installer_name remove"
+
+  ./sample_start.sh && ./sample_status.sh
 }
 
 debian_90_stop_pallet_defect_detection () {
@@ -5007,8 +5018,14 @@ configure_pcb_anomaly_detection_device () {
 }
 
 verify_pcb_anomaly_detection () {
-  [ -e "$workspace"/industrial-edge-insights-vision/resources/pcb-anomaly-detection/videos/anomalib_pcb_test.avi ]
-  [ -e "$workspace"/industrial-edge-insights-vision/resources/pcb-anomaly-detection/models/pcb-anomaly-detection/deployment/Anomaly classification/model/model.bin ]
+  [ -e "$workspace"/industrial-edge-insights-vision/resources/pcb-anomaly-detection/videos/anomalib_pcb_test.avi ] || {
+    echo "anomalib_pcb_test.avi missing" 1>&2
+    return 1
+  }
+  [ -e "$workspace/industrial-edge-insights-vision/resources/pcb-anomaly-detection/models/pcb-anomaly-detection/deployment/Anomaly classification/model/model.bin" ] || {
+    echo "model.bin missing" 1>&2
+    return 1
+  }
 }
 
 debian_90_profile_pcb_anomaly_detection () {
@@ -5034,7 +5051,10 @@ MINIO_ACCESS_KEY=$(cat /dev/random | tr -dc a-z | head -c 5)$(cat /dev/random | 
 MINIO_SECRET_KEY=$(cat /dev/random | tr -dc a-z | head -c 5)$(cat /dev/random | tr -dc 0-9 | head -c 5)
 MTX_WEBRTCICESERVERS2_0_USERNAME=$(cat /dev/random | tr -dc a-z | head -c 5)$(cat /dev/random | tr -dc 0-9 | head -c 5)
 MTX_WEBRTCICESERVERS2_0_PASSWORD=$(cat /dev/random | tr -dc a-z | head -c 5)$(cat /dev/random | tr -dc 0-9 | head -c 5)
+S3_STORAGE_USERNAME=$(cat /dev/random | tr -dc a-z | head -c 5)$(cat /dev/random | tr -dc 0-9 | head -c 5)
+S3_STORAGE_PASSWORD=$(cat /dev/random | tr -dc a-z | head -c 5)$(cat /dev/random | tr -dc 0-9 | head -c 5)
 EOF
+    sed -i 's|curl |curl -f |' apps/pcb-anomaly-detection/setup.sh
     ./setup.sh
     verify_pcb_anomaly_detection
   fi
@@ -5058,10 +5078,11 @@ debian_90_start_pcb_anomaly_detection () {
   cd "$workspace"/industrial-edge-insights-vision
   docker compose up -d --wait
 
-  ./sample_start.sh
   echo "@@HIGHLIGHT URL: http://$(ensure_ip)"
   echo "@@HIGHLIGHT $installer_name start [--gpu|--npu|--cpu]"
   echo "@@HIGHLIGHT $installer_name stop|remove"
+
+  ./sample_start.sh && ./sample_status.sh
 }
 
 debian_90_stop_pcb_anomaly_detection () {
@@ -5808,6 +5829,72 @@ EOF
 }
 
 
+debian_30_install_rsync () {
+  ensure_apt_install_package rsync
+}
+
+debian_30_sbom_rsync () {
+  cat <<EOF
+$(ensure_sbom_format pkg-list rsync)
+EOF
+}
+
+configure_scenescape () {
+  workspace="$(ensure_project_path)/scenescape"
+  version=release-2026.2.0
+  repository=https://github.com/open-edge-platform/scenescape.git
+  used_ports=(443)
+}
+
+verify_scenescape () {
+  [ -d "$workspace" ]
+}
+
+debian_90_profile_scenescape () {
+  echo "docker curl git make unzip rsync python3_venv"
+}
+
+debian_90_install_scenescape () {
+  configure_scenescape
+  if verify_scenescape && [[ " $* " != *" --reinstall "* ]]; then
+    echo "Scenescape already installed. Skipping" 1>&2
+  else
+    ensure_disk_space 300
+    ensure_git_export "$workspace" "$version" "$repository"
+    verify_scenescape
+  fi
+
+  echo "@@HIGHLIGHT workspace: $workspace"
+  echo "@@HIGHLIGHT $installer_name start"
+  echo "@@HIGHLIGHT $installer_name remove"
+}
+
+debian_90_start_scenescape () {
+  configure_scenescape
+  ensure_ports_open "${used_ports[*]}" debian_90_stop_scenescape "$@"
+
+  cd "$workspace"
+  export SUPASS=$(cat /dev/random | tr -dc a-z | head -c 5)
+  make init-secrets
+  make demo-all DEMO_REBUILD_IMAGES=false
+
+  echo "@@HIGHLIGHT UI: https://$(ensure_ip):${used_ports[0]}"
+  echo "@@HIGHLIGHT SUPASS: $SUPASS"
+  echo "@@HIGHLIGHT $installer_name stop|remove"
+}
+
+debian_90_stop_scenescape () {
+  configure_scenescape
+  cd "$workspace" && make demo-close || true
+}
+
+debian_90_remove_scenescape () {
+  debian_90_stop_scenescape "$@"
+  cd "$workspace" && make clean-all || true
+  ensure_sudo rm -rf "$workspace"
+}
+
+
 configure_smart_intersection () {
   workspace="$(ensure_project_path)/smart-intersection"
   version=release-2026.2.0
@@ -5904,6 +5991,8 @@ configure_smart_parking () {
   workspace="$(ensure_project_path)/smart-parking"
   version=release-2026.2.0
   repository="https://github.com/open-edge-platform/metro-ai-suite.git"
+  used_ports=(80 443)
+  duration=120
 }
 
 configure_smart_parking_device () {
@@ -5952,7 +6041,7 @@ debian_90_install_smart_parking () {
 }
 
 debian_90_start_smart_parking () {
-  ensure_ports_open "80 443" debian_90_stop_smart_parking
+  ensure_ports_open "${used_ports[*]}" debian_90_stop_smart_parking
   configure_smart_parking
 
   local device=$(ensure_select_device "$@")
@@ -5960,12 +6049,13 @@ debian_90_start_smart_parking () {
 
   cd "$workspace"/metro-vision-ai-app-recipe
   docker compose up -d --wait
-  ./sample_start.sh
 
-  echo "@@HIGHLIGHT URL: http://$(ensure_ip)"
+  echo "@@HIGHLIGHT URL: http://$(ensure_ip):${used_ports[0]}"
   echo "@@HIGHLIGHT Grafana AUTH: admin/admin"
   echo "@@HIGHLIGHT $installer_name start [--gpu|npu|cpu]" 
   echo "@@HIGHLIGHT $installer_name stop|remove"
+
+  ./sample_start.sh && ./sample_status.sh
 }
 
 debian_90_stop_smart_parking () {

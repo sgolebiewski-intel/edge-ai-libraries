@@ -2885,7 +2885,19 @@ EOF
 }
 
 debian_99_profile_edge_base () {
-  [[ "$1" = "start" || "$1" = "stop" ]] || echo "gpu_accel npu_accel core_types pre_system_scan"
+  case "$1" in
+  bootstrap) # all components
+    echo "core_types pre_system_scan edge_pack_base_standard edge_pack_npu gpu_accel npu_accel"
+    ;;
+  *)
+    echo "core_types pre_system_scan"
+    if [[ " $* " = *" --edgepack "* ]]; then
+      echo "edge_pack_base_standard edge_pack_npu"
+    else
+      echo "gpu_accel npu_accel"
+    fi
+    ;;
+  esac
 }
 
 
@@ -5851,7 +5863,7 @@ verify_scenescape () {
 }
 
 debian_90_profile_scenescape () {
-  echo "docker curl git make unzip rsync python3_venv"
+  echo "docker curl git make unzip rsync python3_venv edge_base"
 }
 
 debian_90_install_scenescape () {
@@ -5992,7 +6004,6 @@ configure_smart_parking () {
   version=release-2026.2.0
   repository="https://github.com/open-edge-platform/metro-ai-suite.git"
   used_ports=(80 443)
-  duration=120
 }
 
 configure_smart_parking_device () {

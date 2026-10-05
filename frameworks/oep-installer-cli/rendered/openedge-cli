@@ -1964,18 +1964,18 @@ ensure_project_path () {
 # check ram size
 ensure_ram_size () {
   local ram_size=$1            # in KiB
-  local mem_total=$(awk '/^MemTotal:/{if(/kB/)r=$2;if(/mB/)r=$2*1000;if(/gB/)r=$2*1000000}END{print int(r)}' /proc/meminfo)
+  local mem_total=$(awk '/^MemTotal:/{print$2}' /proc/meminfo)
   if [ "$ram_size" -gt "$mem_total" ]; then
-    echo "Not enough RAM: required ${ram_size}KiB and available ${mem_total}KiB" 1>&2
+    echo "Not enough RAM: required ${ram_size} KiB and available ${mem_total} KiB" 1>&2
     return 3
   fi
 
   local swap_size=${2:-0}      # in KiB
-  local swap_total=$(awk '/^SwapTotal:/{if(/kB/)r=$2;if(/mB/)r=$2*1000;if(/gB/)r=$2*1000000}END{print int(r)}' /proc/meminfo)
-  if [ "$(( ram_size + swap_size ))" -gt "$(( mem_toal + swap_total ))" ]; then
+  local swap_total=$(awk '/^SwapTotal:/{print$2}' /proc/meminfo)
+  if [ "$(( ram_size + swap_size ))" -gt "$(( mem_total + swap_total ))" ]; then
     echo "Not enough RAM or swap space:" 1>&2
-    echo " required swap ${swap_size}KiB and available ${swap_total}KiB" 1>&2
-    echo " required mem+swap $(( ram_size + swap_size ))KiB and available $(( mem_total + swap_total ))KiB" 1>&2
+    echo " required swap ${swap_size} KiB and available ${swap_total} KiB" 1>&2
+    echo " required mem+swap $(( ram_size + swap_size )) KiB and available $(( mem_total + swap_total )) KiB" 1>&2
     return 3
   fi
 }
@@ -6737,7 +6737,7 @@ configure_wind_turbine_anomaly_detection () {
   workspace="$(ensure_project_path)/wind-turbine-anomaly-detection"
   version="release-2026.2.0"
   repository="https://github.com/open-edge-platform/manufacturing-ai-suite.git"
-  nstreams=40
+  nstreams=20
   npoints=500
   duration=7200
   database="datain"
@@ -6766,7 +6766,7 @@ debian_90_install_wind_turbine_anomaly_detection () {
     echo "Wind turbine anomaly detection already installed. Skipping..." 1>&2
   else
     ensure_disk_size 64000
-    ensure_ram_size 16777216 # 16 GiB
+    ensure_ram_size 16000000 # 16 GiB
     ensure_git_export "$workspace" "$version" "$repository" industrial-edge-insights-time-series
     cd "$workspace"/industrial-edge-insights-time-series
 

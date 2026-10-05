@@ -1754,11 +1754,11 @@ for r in rows:
 
 # check disk space
 ensure_disk_size () {
-  local disk_size=$1            # in MB
+  local disk_size=$1            # in MB (1000000 bytes)
   local disk_path="${2:-$HOME}" # optional disk path
-  local disk_avail=$(df -h --output=avail "$disk_path" | awk '/[0-9]T/{a=$1*1000000}/[0-9]G/{a=$1*1000}/[0-9]M/{a=$1*1}/[0-9]K/{a=$1/1000}END{print int(a)}')
+  local disk_avail=$(df -B1 --output=avail "$disk_path" | awk 'NR==2{print int($1/1000000)}')
   if [ "$disk_size" -gt "$disk_avail" ]; then
-    echo "Not enough disk space: required ${disk_size}MiB and available ${disk_avail}MiB"
+    echo "Not enough disk space: required ${disk_size} MB and available ${disk_avail} MB" 1>&2
     return 3
   fi
 }
@@ -2337,7 +2337,7 @@ debian_90_install_agentic_smart_community () {
     echo "Agentic Smart Community already installed. Skipping" 1>&2
   else
     ensure_disk_size 128000
-    ensure_ram_size 62000000 32000000
+    ensure_ram_size 65011712 33554432 # 62 GiB and 32 GiB
 
     ensure_git_export "$workspace" "$version" "$repository" agentic-smart-community
     mkdir -p "${mlvu_workspace%/*}"
@@ -3472,7 +3472,7 @@ debian_90_install_geti () {
     echo "Geti already installed. Skipping."
   else
     ensure_disk_size 40000
-    ensure_ram_size 16000000
+    ensure_ram_size 16777216 # 16 GiB
     docker pull $image_name
   fi
 }
@@ -6766,7 +6766,7 @@ debian_90_install_wind_turbine_anomaly_detection () {
     echo "Wind turbine anomaly detection already installed. Skipping..." 1>&2
   else
     ensure_disk_size 64000
-    ensure_ram_size 16000000 # 16 GiB
+    ensure_ram_size 16777216 # 16 GiB
     ensure_git_export "$workspace" "$version" "$repository" industrial-edge-insights-time-series
     cd "$workspace"/industrial-edge-insights-time-series
 

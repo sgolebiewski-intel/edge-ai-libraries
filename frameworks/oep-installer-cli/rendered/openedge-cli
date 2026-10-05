@@ -1753,7 +1753,7 @@ for r in rows:
 
 
 # check disk space
-ensure_disk_space () {
+ensure_disk_size () {
   local disk_size=$1            # in MB
   local disk_path="${2:-$HOME}" # optional disk path
   local disk_avail=$(df -h --output=avail "$disk_path" | awk '/[0-9]T/{a=$1*1000000}/[0-9]G/{a=$1*1000}/[0-9]M/{a=$1*1}/[0-9]K/{a=$1/1000}END{print int(a)}')
@@ -1964,9 +1964,18 @@ ensure_project_path () {
 # check ram size
 ensure_ram_size () {
   local ram_size=$1            # in KiB
-  local ram_avail=$(awk '/^MemTotal:/{if(/kB/)r=$2;if(/mB/)r=$2*1000;if(/gB/)r=$2*1000000}END{print int(r)}' /proc/meminfo)
-  if [ "$ram_size" -gt "$ram_avail" ]; then
-    echo "Not enough RAM: required ${ram_size}KiB and available ${disk_avail}KiB"
+  local mem_total=$(awk '/^MemTotal:/{if(/kB/)r=$2;if(/mB/)r=$2*1000;if(/gB/)r=$2*1000000}END{print int(r)}' /proc/meminfo)
+  if [ "$ram_size" -gt "$mem_total" ]; then
+    echo "Not enough RAM: required ${ram_size}KiB and available ${mem_total}KiB" 1>&2
+    return 3
+  fi
+
+  local swap_size=${2:-0}      # in KiB
+  local swap_total=$(awk '/^SwapTotal:/{if(/kB/)r=$2;if(/mB/)r=$2*1000;if(/gB/)r=$2*1000000}END{print int(r)}' /proc/meminfo)
+  if [ "$(( ram_size + swap_size ))" -gt "$(( mem_toal + swap_total ))" ]; then
+    echo "Not enough RAM or swap space:" 1>&2
+    echo " required swap ${swap_size}KiB and available ${swap_total}KiB" 1>&2
+    echo " required mem+swap $(( ram_size + swap_size ))KiB and available $(( mem_total + swap_total ))KiB" 1>&2
     return 3
   fi
 }
@@ -2242,7 +2251,7 @@ debian_90_install_agentic_predictive_maintenance_pipeline () {
   if verify_agentic_predictive_maintenance_pipeline && [[ " $* " != *" --reinstall "* ]]; then
     echo "Agentic Predictive Maintenance Pipeline already installed. Skipping" 1>&2
   else
-    ensure_disk_space 60
+    ensure_disk_size 60
     ensure_git_export "$workspace" "$version" "$repository" agentic-predictive-maintenance-pipeline
 
     cd "$workspace"/agentic-predictive-maintenance-pipeline/apps/pipeline-defect-detection
@@ -2294,6 +2303,79 @@ debian_90_remove_agentic_predictive_maintenance_pipeline () {
 }
 
 
+configure_agentic_smart_community () {
+  workspace="$(ensure_project_path)/agentic-smart-community"
+  version="release-2026.2.0"
+  repository="https://github.com/open-edge-platform/metro-ai-suite.git"
+  used_ports=(3100 3101 41091 8192 8999)
+
+  mlvu_workspace="$workspace/agentic-smart-community/.external/edge-ai-libraries"
+  mlvu_version="release-2026.2.0"
+  mlvu_repository="https://github.com/open-edge-platform/edge-ai-libraries.git"
+  mlvu_subpath="microservices/multilevel-video-understanding"
+
+  export HF_HOME="$workspace/models/huggingface"
+  export VIDEO_SUMMARY_CACHE_HOST="$workspace/.cache/.multilevel-video-understanding"
+  export SMART_COMMUNITY_DATA_DIR="$workspace/.mcp-smart-community"
+  export MODEL_DIR="$workspace/models"
+  export PREFILTER_MODEL="$workspace/models/openvino/yolo11s/FP16/yolo11s.xml"
+  export MCP_BIND_HOST="0.0.0.0"
+}
+
+verify_agentic_smart_community () {
+  [ -e "$workspace"/agentic-smart-community/config.yaml.example ]
+  [ -d "$mlvu_workspace"/$mlvu_subpath ]
+}
+
+debian_90_profile_agentic_smart_community () {
+  echo "curl wget git jq python3_venv ffmpeg nodejs docker edge_base mediamtx"
+}
+
+debian_90_install_agentic_smart_community () {
+  configure_agentic_smart_community
+  if verify_agentic_smart_community && [[ " $* " != *" --reinstall "* ]]; then
+    echo "Agentic Smart Community already installed. Skipping" 1>&2
+  else
+    ensure_disk_size 128000
+    ensure_ram_size 62000000 32000000
+
+    ensure_git_export "$workspace" "$version" "$repository" agentic-smart-community
+    mkdir -p "${mlvu_workspace%/*}"
+    ensure_git_clone "$mlvu_workspace" "${mlvu_version}" "$mlvu_repository" "$mlvu_subpath"
+
+    verify_agentic_smart_community
+  fi
+
+  echo "@@HIGHLIGHT worksapce: $workspace"
+  echo "@@HIGHLIGHT $installer_name start|stop|remove"
+}
+
+debian_90_start_agentic_smart_community () {
+  configure_agentic_smart_community
+  ensure_ports_open "${used_ports[*]}" debian_90_stop_agentic_smart_community "$@"
+
+  cd "$workspace"/agentic-smart-community
+  bash setup_docker.sh
+
+  echo "@@HIGHLIGHT UI: http://$(ensure_ip):${used_ports[0]}"
+  echo "@@HIGHLIGHT $installer_name stop|remove"
+
+  # check health
+  curl -fsS -X POST http://localhost:${used_ports[0]}/mcp -H "Content-Type: application/json" -H "Accept: application/json, text/event-stream" -d '{"jsonrpc":"2.0","id":1,"method":"initialize","params":{"protocolVersion":"2024-11-05","capabilities":{},"clientInfo":{"name":"startup-check","version":"1.0"}}}'
+  curl -fsS http://localhost:${used_ports[1]}/health
+}
+
+debian_90_stop_agentic_smart_community () {
+  configure_agentic_smart_community
+  cd "$workspace"/agentic-smart-community && bash setup_docker.sh --down || true
+}
+
+debian_90_remove_agentic_smart_community () {
+  debian_90_stop_agentic_smart_community "$@"
+  ensure_sudo rm -rf "$workspace"
+}
+
+
 configure_anomalib () {
   workspace="$(ensure_project_path)/anomalib"
   version=2.6.2
@@ -2315,7 +2397,7 @@ debian_80_install_anomalib () {
   if verify_anomalib && [[ " $* " != *" --reinstall "* ]]; then
     echo "Anomalib already installed. Skipping"
   else
-    ensure_disk_space 6000
+    ensure_disk_size 6000
     mkdir -p "$workspace"
     cd "$workspace"
     python3 -m venv .venv
@@ -2475,7 +2557,7 @@ debian_90_install_autonomous_mobile_robot () {
   if verify_autonomous_mobile_robot && [[ " $* " != *" --reinstall "* ]]; then
     echo "Autonomous Mobile Robot is already installed. Skipping..."
   else
-    ensure_disk_space $([[ "$amr_sdk_pkg" = *complete ]] && echo 40000 || echo 15000)
+    ensure_disk_size $([[ "$amr_sdk_pkg" = *complete ]] && echo 40000 || echo 15000)
 
     # Intel oneAPI Base Toolkit apt repo (signing key + source + version pins)
     ensure_apt install -y software-properties-common curl gnupg wget
@@ -3389,7 +3471,7 @@ debian_90_install_geti () {
   if verify_geti && [[ " $* " != *" --reinstall "* ]]; then
     echo "Geti already installed. Skipping."
   else
-    ensure_disk_space 40000
+    ensure_disk_size 40000
     ensure_ram_size 16000000
     docker pull $image_name
   fi
@@ -3548,7 +3630,7 @@ debian_90_install_handheld_multi_modal () {
   if verify_handheld_multi_modal $* && [[ " $* " != *" --reinstall "* ]]; then
     echo "handheld_multi_modal already installed. Skipping"
   else
-    ensure_disk_space 300
+    ensure_disk_size 300
 
     ensure_git_clone "$workspace" $version $repository federal-and-aerospace-ai-suite/handheld-multi-modal
     cd "$workspace"/federal-and-aerospace-ai-suite/handheld-multi-modal
@@ -3616,7 +3698,7 @@ debian_90_install_humanoid_imitation_learning () {
   else
     # The base image bundles the OpenVINO dev stack, Intel GPU runtime, oneAPI
     # and a clone of edge-ai-suites; the sample image adds the policy packages.
-    ensure_disk_space 25000
+    ensure_disk_size 25000
     ensure_git_clone "$workspace" "$version" "$repository" samples/robotics/robotics-ai-suite-containers
 
     cd "$container_dir"
@@ -3804,7 +3886,7 @@ debian_90_install_live_video_alert_agent () {
     echo "Live Video Alert Agent is already installed. Skipping"
   else
     # clone the repository
-    ensure_disk_space 64000
+    ensure_disk_size 64000
     ensure_git_clone "$workspace" $version $repository live-video-analysis/live-video-alert-agent
     verify_live_video_alert_agent
   fi
@@ -3879,7 +3961,7 @@ debian_90_install_live_video_captioning () {
     echo "Live Video Captioning is already installed. Skipping"
   else
     # clone the repository
-    ensure_disk_space 64000
+    ensure_disk_size 64000
     ensure_git_clone "$workspace" $version $repository live-video-analysis/live-video-captioning
     export -n socks_server ftp_proxy
 
@@ -3962,7 +4044,7 @@ debian_90_install_live_video_captioning_rag () {
     echo "Live Video Captioning RAG is already installed. Skipping"
   else
     # clone the repository
-    ensure_disk_space 64000
+    ensure_disk_size 64000
     ensure_git_clone "$workspace" $version $repository live-video-analysis/live-video-captioning live-video-analysis/live-video-captioning-rag
     export -n socks_server ftp_proxy
 
@@ -4051,7 +4133,7 @@ debian_90_install_live_video_search () {
     echo "Live Video Search is already installed. Skipping"
   else
     # clone the repository
-    ensure_disk_space 64000
+    ensure_disk_size 64000
     ensure_git_clone "$workspace" $version $repository live-video-analysis/live-video-search
     verify_live_video_search
   fi
@@ -4125,7 +4207,7 @@ debian_90_install_loitering_detection () {
     echo "Loitering detection is already installed. Skipping"
   else
     # clone the repository
-    ensure_disk_space 280
+    ensure_disk_size 280
     ensure_git_export "$workspace" $version $repository metro-vision-ai-app-recipe
 
     # setup
@@ -4241,7 +4323,7 @@ debian_90_install_loss_prevention () {
     echo "Loss prevention is already installed. Skipping"
   else 
     # clone the repository
-    ensure_disk_space 300
+    ensure_disk_size 300
     ensure_git_clone "$workspace" $version $repository
 
     # setup
@@ -4333,6 +4415,31 @@ $(ensure_sbom_format pkg-list make)
 EOF
 }
 
+configure_mediamtx () {
+  version=1.12.2
+  repository="https://github.com/bluenviron/mediamtx/releases/download/v${version}/mediamtx_v${version}_linux_amd64.tar.gz"
+  bin_path="/usr/local/bin"
+}
+
+debian_70_profile_mediamtx () {
+  echo "curl"
+}
+
+debian_70_install_mediamtx () {
+  configure_mediamtx
+  if [ -x "$bin_path/mediamtx" ] && [[ " $* " != *" --reinstall "* ]]; then
+    echo "Mediamtx already installed. Skipping" 1>&2
+  else
+    curl -fsSL --retry 3 "$repository" | ensure_sudo tar xz -C "$bin_path" mediamtx
+    [ -x "$bin_path/mediamtx" ]
+  fi
+}
+
+debian_70_remove_mediamtx () {
+  ensure_sudo rm -f "$bin_path/mediamtx"
+}
+
+
 debian_30_install_msr_tools () {
   ensure_apt_install_package msr-tools
 }
@@ -4396,7 +4503,7 @@ debian_90_install_multimodal_weld_defect_detection () {
   else
     local device="$(ensure_select_device "$@")"
 
-    ensure_disk_space 64000
+    ensure_disk_size 64000
     ensure_ram_size 16777216 # 16 GiB
     ensure_git_export "$workspace" "$version" "$repository" industrial-edge-insights-multimodal
 
@@ -4551,7 +4658,7 @@ debian_90_install_nicu_warmer () {
   fi
 
   # clone the repository
-  ensure_disk_space 160
+  ensure_disk_size 160
   ensure_git_clone "$workspace" $version $repository health-and-life-sciences-ai-suite/NICU-Warmer
 
   # configure and optimization
@@ -4597,6 +4704,16 @@ debian_90_stop_nicu_warmer () {
 debian_90_remove_nicu_warmer () {
   debian_90_stop_nicu_warmer || true
   ensure_sudo rm -rf "$workspace" 2> /dev/null || true
+}
+
+debian_70_install_nodejs () {
+  ensure_apt_install_package nodejs
+}
+
+debian_70_sbom_nodejs () {
+  cat <<EOF
+$(ensure_sbom_format pkg-list nodejs)
+EOF
 }
 
 configure_npu_accel () {
@@ -4797,7 +4914,7 @@ debian_90_install_order_accuracy_dine_in () {
     echo "Order accuracy is already installed. Skipping"
   else 
     # clone the repository
-    ensure_disk_space 10000
+    ensure_disk_size 10000
     ensure_git_clone "$workspace" $version $repository
 
     # initialize .env
@@ -4879,7 +4996,7 @@ debian_90_install_order_accuracy_take_away () {
     echo "Order accuracy is already installed. Skipping"
   else 
     # clone the repository
-    ensure_disk_space 10000
+    ensure_disk_size 10000
     ensure_git_clone "$workspace" $version $repository
 
     # initialize .env
@@ -4959,7 +5076,7 @@ debian_90_install_pallet_defect_detection () {
     echo "Pallet defect detection is already installed. Skipping"
   else
     # clone the repository
-    ensure_disk_space 50
+    ensure_disk_size 50
     ensure_git_export "$workspace" $version $repository industrial-edge-insights-vision
 
     # setup
@@ -5050,7 +5167,7 @@ debian_90_install_pcb_anomaly_detection () {
     echo "PCB anomaly detection is already installed. Skipping"
   else
     # clone the repository
-    ensure_disk_space 60
+    ensure_disk_size 60
     ensure_git_export "$workspace" $version $repository industrial-edge-insights-vision
 
     # setup
@@ -5200,7 +5317,7 @@ debian_91_install_physical_ai_framework () {
   if verify_physical_ai_framework "$@" && [[ " $* " != *" --reinstall "* ]]; then
     echo "Physical AI Framework is already installed. Skipping..."
   else
-    ensure_disk_space 15000
+    ensure_disk_size 15000
 
     mkdir -p "$workspace"
     uv venv --python 3.12 "$paif_venv" || {
@@ -5273,7 +5390,7 @@ debian_92_install_physical_ai_studio () {
   if verify_physical_ai_studio "$@" && [[ " $* " != *" --reinstall "* ]]; then
     echo "Physical AI Studio is already installed. Skipping..."
   else
-    ensure_disk_space 20000
+    ensure_disk_size 20000
     echo "Installing ${pais_pkg}[${pais_extra}] (PyTorch ${pais_extra} build; this may take a while)..."
     uv tool install --python 3.12 \
       --index "$pais_index" --index-strategy unsafe-best-match \
@@ -5871,7 +5988,7 @@ debian_90_install_scenescape () {
   if verify_scenescape && [[ " $* " != *" --reinstall "* ]]; then
     echo "Scenescape already installed. Skipping" 1>&2
   else
-    ensure_disk_space 300
+    ensure_disk_size 300
     ensure_git_export "$workspace" "$version" "$repository"
     verify_scenescape
   fi
@@ -5952,7 +6069,7 @@ debian_90_install_smart_intersection () {
     echo "Smart intersection is already installed. Skipping"
   else
     # clone the repository
-    ensure_disk_space 1500
+    ensure_disk_size 1500
     ensure_git_export "$workspace" $version $repository metro-vision-ai-app-recipe
 
     # setup
@@ -6032,7 +6149,7 @@ debian_90_install_smart_parking () {
     echo "Smart parking is already installed. Skipping..."
   else
     # clone the repository
-    ensure_disk_space 300
+    ensure_disk_size 300
     ensure_git_export "$workspace" $version $repository metro-vision-ai-app-recipe
 
     # setup
@@ -6133,7 +6250,7 @@ debian_90_install_stationary_robot_vision () {
   if verify_stationary_robot_vision && [[ " $* " != *" --reinstall "* ]]; then
     echo "Stationary Robot Vision & Control is already installed. Skipping..."
   else
-    ensure_disk_space 15000
+    ensure_disk_size 15000
 
     # Intel oneAPI Base Toolkit apt repo (signing key + source + version pins)
     ensure_apt install -y software-properties-common curl gnupg wget
@@ -6427,7 +6544,7 @@ debian_85_install_video_search_and_summarization () {
     echo "video_search_and_summarization is already installed. Skipping..."
   else
     # clone the repository
-    ensure_disk_space 8000
+    ensure_disk_size 8000
     ensure_ports_open "$used_ports" return 3
     ensure_git_export "$workspace" $version $repository sample-applications/video-search-and-summarization
 
@@ -6545,7 +6662,7 @@ debian_90_install_wind_turbine_anomaly_detection () {
   if verify_wind_turbine_anomaly_detection && [[ " $* " != *" --reinstall "* ]]; then
     echo "Wind turbine anomaly detection already installed. Skipping..." 1>&2
   else
-    ensure_disk_space 64000
+    ensure_disk_size 64000
     ensure_ram_size 16777216 # 16 GiB
     ensure_git_export "$workspace" "$version" "$repository" industrial-edge-insights-time-series
     cd "$workspace"/industrial-edge-insights-time-series
@@ -6697,7 +6814,16 @@ debian_99_profile_manufacturing_ai_suite () {
 
 debian_99_profile_metro_ai_suite () {
   # metro ai suites cannot start at the same time
-  [ "$1" = "start" ] || echo "vippet smart_intersection smart_parking loitering_detection live_video_captioning live_video_captioning_rag live_video_search live_video_alert_agent video_search_and_summarization agentic_predictive_maintenance_pipeline"
+  [ "$1" = "start" ] || {
+    local modules=(
+      vippet smart_intersection smart_parking loitering_detection
+      live_video_captioning live_video_captioning_rag live_video_search live_video_alert_agent 
+      video_search_and_summarization 
+      agentic_predictive_maintenance_pipeline
+      agentic_smart_community
+    )
+    echo "${modules[*]}"
+  }
 }
 
 
